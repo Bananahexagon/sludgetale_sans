@@ -1,10 +1,11 @@
 type CoreT = {
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
-    Assets: {
-        Images: { [keys: string]: HTMLImageElement, },
-        Audios: { [keys: string]: HTMLAudioElement, },
-        load: Function,
+    Images: { [keys: string]: HTMLImageElement, },
+    Audios: { [keys: string]: HTMLAudioElement, },
+    loadAssets: Function,
+    inputKeys: {
+        up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean,
     },
     init: Function
 }
@@ -13,15 +14,18 @@ const Core: CoreT = ((): CoreT => {
     let ctx = canvas.getContext("2d")!;
     let Images: { [keys: string]: HTMLImageElement, } = {};
     let Audios: { [keys: string]: HTMLAudioElement, } = {};
-    const load = async () => {
-        const index = require("assets.json");
+    let inputKeys = {
+        up: false, down: false, left: false, right: false, z: false, x: false, c: false,
+    }
+    const loadAssets = async () => {
+        const index = require("./assets.json");
         let promises: Promise<void>[] = [];
         type AssetData = {
             type: "image" | "audio",
             src: string,
             name: string,
         }
-        index.forEach((e: AssetData) => promises.push(new Promise((resolve, reject) => {
+        index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
             switch (e.type) {
                 case "image": {
                     let image = new Image();
@@ -43,18 +47,73 @@ const Core: CoreT = ((): CoreT => {
         })));
         await Promise.all(promises);
     };
-    const init = () => {
+    const init = async () => {
         canvas.height = 480;
         canvas.width = 640;
+        window.addEventListener("keydown", e => {
+            switch (e.key) {
+                case "ArrowUp":
+                    inputKeys.up = true;
+                    break;
+                case "ArrowDown":
+                    inputKeys.down = true;
+                    break;
+                case "ArrowLeft":
+                    inputKeys.left = true;
+                    break;
+                case "ArrowRight":
+                    inputKeys.right = true;
+                    break;
+                case "z":
+                case "Z":
+                    inputKeys.z = true;
+                    break;
+                case "x":
+                case "X":
+                    inputKeys.x = true;
+                    break;
+                case "c":
+                case "C":
+                    inputKeys.c = true;
+            }
+        });
+
+        window.addEventListener("keyup", e => {
+            switch (e.key) {
+                case "ArrowUp":
+                    inputKeys.up = false;
+                    break;
+                case "ArrowDown":
+                    inputKeys.down = false;
+                    break;
+                case "ArrowLeft":
+                    inputKeys.left = false;
+                    break;
+                case "ArrowRight":
+                    inputKeys.right = false;
+                    break;
+                case "z":
+                case "Z":
+                    inputKeys.z = false;
+                    break;
+                case "x":
+                case "X":
+                    inputKeys.x = false;
+                    break;
+                case "c":
+                case "C":
+                    inputKeys.c = false;
+            }
+        });
+        await loadAssets();
     }
     return {
         canvas,
         ctx,
-        Assets: {
-            Images,
-            Audios,
-            load,
-        },
+        Images,
+        Audios,
+        loadAssets,
+        inputKeys,
         init,
     }
 })()
