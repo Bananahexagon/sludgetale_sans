@@ -103,5 +103,10 @@
         "type": "image",
         "name": "bone_head_white",
         "src": "./assets/image/bone_head_white.png"
+    },
+    {
+        "type": "image",
+        "name": "bananahexagon",
+        "src": "./assets/image/normal_icon.png"
     }
 ]
