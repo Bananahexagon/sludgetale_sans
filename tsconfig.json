@@ -1,0 +1,16 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES6",              // ターゲットのECMAScriptバージョン
+    "module": "CommonJS",              // モジュールの形式
+    "outDir": "dist",             // コンパイルしたファイルの出力ディレクトリ
+    "strict": true,               // 厳格な型チェック
+    "esModuleInterop": true       // ESモジュールのインポート/エクスポートをInterop可能にする
+  },
+  "include": [
+    "src/**/*.ts"                // TypeScriptファイルが含まれるディレクトリ
+  ],
+  "exclude": [
+    "node_modules"               // TypeScriptコンパイル除外ディレクトリ
+  ]
+}
