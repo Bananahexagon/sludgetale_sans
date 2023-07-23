@@ -1,16 +1,19 @@
 // tsconfig.json
 {
   "compilerOptions": {
-    "target": "ES6",              // ターゲットのECMAScriptバージョン
-    "module": "CommonJS",              // モジュールの形式
-    "outDir": "dist",             // コンパイルしたファイルの出力ディレクトリ
-    "strict": true,               // 厳格な型チェック
-    "esModuleInterop": true       // ESモジュールのインポート/エクスポートをInterop可能にする
+    "target": "ES6", // ターゲットのECMAScriptバージョン
+    "module": "ESNext", // モジュールの形式
+    "outDir": "dist", // コンパイルしたファイルの出力ディレクトリ
+    "strict": true, // 厳格な型チェック
+    "esModuleInterop": true, // ESモジュールのインポート/エクスポートをInterop可能にする
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
   },
   "include": [
-    "src/**/*.ts"                // TypeScriptファイルが含まれるディレクトリ
+    "src/**/*.ts", // TypeScriptファイルが含まれるディレクトリ
+    "src/**/*.json" // TypeScriptファイルが含まれるディレクトリ
   ],
   "exclude": [
-    "node_modules"               // TypeScriptコンパイル除外ディレクトリ
+    "node_modules" // TypeScriptコンパイル除外ディレクトリ
   ]
 }

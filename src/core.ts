@@ -9,7 +9,8 @@ type CoreT = {
     },
     init: Function
 }
-const Core: CoreT = ((): CoreT => {
+
+export const Core: CoreT = ((): CoreT => {
     let canvas = document.getElementById("canvas") as HTMLCanvasElement;
     let ctx = canvas.getContext("2d")!;
     let Images: { [keys: string]: HTMLImageElement, } = {};
@@ -18,13 +19,14 @@ const Core: CoreT = ((): CoreT => {
         up: false, down: false, left: false, right: false, z: false, x: false, c: false,
     }
     const loadAssets = async () => {
-        const index = require("./assets.json");
-        let promises: Promise<void>[] = [];
         type AssetData = {
             type: "image" | "audio",
             src: string,
             name: string,
         }
+        const index: AssetData[] = (await import("./assets.json")).default as unknown as AssetData[];
+        let promises: Promise<void>[] = [];
+        console.log(index)
         index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
             switch (e.type) {
                 case "image": {
@@ -116,6 +118,4 @@ const Core: CoreT = ((): CoreT => {
         inputKeys,
         init,
     }
-})()
-
-module.exports = Core;
+})();

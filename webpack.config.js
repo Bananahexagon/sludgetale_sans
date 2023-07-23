@@ -16,7 +16,7 @@ module.exports = {
         test: /\.ts$/,
         use: 'ts-loader',
         exclude: /node_modules/
-      }
+      }, 
     ]
   },
   mode: 'development'                // 開発モードでビルド
