@@ -36,7 +36,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
     }
 
     /*
-    class FontSuper extends Font {
+    class Super extends Font {
         constructor(name: string, x: number, y: number, d: number, size: number, font, input) {
             super(name);
             this._ = {
@@ -133,7 +133,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
     };
     */
 
-    class FontPlane extends Font {
+    class Plane extends Font {
         str_now: string;
         len_now: number;
         str: string;
@@ -216,7 +216,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
         }
     };
 
-    function fontForEach() {
+    const process = () => {
         for (const name in displayDict) {
             displayDict[name].process()
         };
@@ -227,6 +227,9 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
      *    { str: "text", color: "white", spacing_x: 0, spacing_y: 0, speed: 2 },
      *])
      */
-
-
+    return {
+        Plane,
+        process,
+        displayDict,
+    }
 }

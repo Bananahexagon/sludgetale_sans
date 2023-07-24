@@ -101,18 +101,18 @@ export const boneFnsGen = (cLib: cLibT) => {
             delete boneDict[this.name];
         }
     };
-
-    return {
-        boneDict: (boneDict as {[keys: string]: normalBone}),
-        normalBone,
-    }
-
-    function normalBoneForEach() {
+    const process = () => {
         for (const name in boneDict) {
             boneDict[name].move();
             boneDict[name] ? boneDict[name].draw() : 0;
         };
-    };
+    }
+
+    return {
+        boneDict: (boneDict as {[keys: string]: normalBone}),
+        normalBone,
+        process,
+    }
 
     new normalBone("bone1", 170, 240, 60, 150, 0, 0, -2, 0, Infinity, "white", 200)
     new normalBone("bone2", 370, 240, 60, 150, 0, 0, 5, 0, Infinity, "white", 200, 1)

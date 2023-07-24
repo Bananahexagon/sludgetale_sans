@@ -1,3 +1,4 @@
+
 class Opt<T> {
     is_some: boolean;
     value: T | undefined;
@@ -55,4 +56,15 @@ class Res<Ok, Err> {
             return fn(this.value as Err);
         }
     }
+}
+
+
+type Dict<T> = {
+    [keys: string]: T,
+}
+
+export {
+    Opt,
+    Res,
+    Dict,
 }

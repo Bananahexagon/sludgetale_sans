@@ -53,6 +53,7 @@ export const Core: CoreT = ((): CoreT => {
         canvas.height = 480;
         canvas.width = 640;
         window.addEventListener("keydown", e => {
+            console.log(e)
             switch (e.key) {
                 case "ArrowUp":
                     inputKeys.up = true;
