@@ -13,7 +13,8 @@ type cLibT = {
     [keys: string]: Function;
 }
 
-export const boneFnsGen = (cLib: cLibT, boneDict: {[keys: string]: any}) => {
+export const boneFnsGen = (cLib: cLibT) => {
+    let boneDict: {[keys: string]: any} = {}
     class normalBone {
         x: number;
         y: number;
@@ -99,6 +100,11 @@ export const boneFnsGen = (cLib: cLibT, boneDict: {[keys: string]: any}) => {
         delete() {
             delete boneDict[this.name];
         }
+    };
+
+    return {
+        boneDict: (boneDict as {[keys: string]: normalBone}),
+        normalBone,
     }
 
     function normalBoneForEach() {
