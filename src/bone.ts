@@ -109,7 +109,7 @@ export const boneFnsGen = (cLib: cLibT) => {
     }
 
     return {
-        boneDict: (boneDict as {[keys: string]: normalBone}),
+        dict: boneDict as {[keys: string]: normalBone},
         normalBone,
         process,
     }

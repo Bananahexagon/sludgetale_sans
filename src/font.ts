@@ -35,9 +35,22 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
         }
     }
 
-    /*
     class Super extends Font {
-        constructor(name: string, x: number, y: number, d: number, size: number, font, input) {
+        _: {
+            all_str: string,
+            now: { str: string, color: string, spacing_x: number, spacing_y: number }[],
+            len_allow: number,
+            count: number,
+            current_char: number,
+            current_char_true: number,
+        };
+        x: number;
+        y: number;
+        direction: number;
+        size: number;
+        data: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[]
+        font: FontDataT
+        constructor(name: string, x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[]) {
             super(name);
             this._ = {
                 all_str: input.reduce((a, c) => a + c.str, ""),
@@ -70,13 +83,11 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
             let x = 0;
             let y = 0;
             let count = 0;
-            const charDataf = ((c) => {
-                if (c == "\n" || c == " ") {
-                    return this.font.space;
-                } else if (this.font[c] === undefined) {
-                    return this.font.space;
+            const charDataf = ((c: string): charDataT => {
+                if (c in this.font) {
+                    return this.font[c as keyof FontDataT] as unknown as charDataT;
                 } else {
-                    return this.font[c];
+                    return this.font.space;
                 }
             })
             this._.now.forEach((e) => {
@@ -85,14 +96,14 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
                     const charData = charDataf(c)
                     if (c == "\n") {
                         x = 0;
-                        y += this.font.height_basic + e.spacing_y;
+                        y += this.font.props.height_basic + e.spacing_y;
                     } else {
-                        cLib.stamp(this.font.name + "_" + e.color,
+                        cLib.stamp(this.font.props.name + "_" + e.color,
                             this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
                             this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
                             this.direction, size, 1, charData.left, charData.up, charData.width, charData.height
                         );
-                        if (count + 1 < input_str_length) x += (charData.width + charDataf(this._.all_str[count + 1]).width) / 2 + this.font.width_basic + e.spacing_x;
+                        if (count + 1 < input_str_length) x += (charData.width + charDataf(this._.all_str[count + 1]).width) / 2 + this.font.props.width_basic + e.spacing_x;
                     }
                     count++
                 })
@@ -101,10 +112,10 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
         };
         process() {
             const input_str_length = this.data.reduce((a, c) => a + c.str.length, 0);
-            if (this._.len_allow == input_str_length && cLib.inputKeys.z) {
-                delete displayDict[name];
+            if (this._.len_allow == input_str_length && inputKeys.z) {
+                delete displayDict[this.name];
                 return;
-            } else if (cLib.inputKeys.x) {
+            } else if (inputKeys.x) {
                 this._.len_allow = input_str_length;
                 this._.current_char = input_str_length;
             } else if (this._.len_allow < input_str_length) {
@@ -131,7 +142,6 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
             };
         }
     };
-    */
 
     class Plane extends Font {
         str_now: string;
@@ -228,8 +238,9 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
      *])
      */
     return {
+        Super,
         Plane,
         process,
-        displayDict,
+        dict: displayDict as (Plane | Super)[],
     }
 }
