@@ -10,6 +10,10 @@ type CoreT = {
     init: Function
 }
 
+type configT = {
+    display_quality: number;
+}
+
 export const Core: CoreT = ((): CoreT => {
     let canvas = document.getElementById("canvas") as HTMLCanvasElement;
     let ctx = canvas.getContext("2d")!;
@@ -49,9 +53,9 @@ export const Core: CoreT = ((): CoreT => {
         })));
         await Promise.all(promises);
     };
-    const init = async () => {
-        canvas.height = 480;
-        canvas.width = 640;
+    const init = async (config: configT) => {
+        canvas.height = 480 * config.display_quality;
+        canvas.width = 640 * config.display_quality;
         window.addEventListener("keydown", e => {
             console.log(e)
             switch (e.key) {

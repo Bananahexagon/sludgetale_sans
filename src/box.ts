@@ -41,7 +41,7 @@ const boxFnsGen = (cLib: cLibT) => {
                 return [prx + lx, pry + ly];
             },
             drawLine: () => {
-                cLib.drawLine(lx, ly, d, len, 10, "#ffffff");
+                cLib.drawLine(lx, ly, d, len, 5, "#ffffff");
             },
             drawWhite: () => {
                 cLib.drawRect(lx + (640 * Math.sin(d)), ly - (640 * Math.cos(d)), 1280, 1280, "#ffffff", d * 180 / Math.PI, 0);

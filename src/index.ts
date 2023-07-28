@@ -1,3 +1,5 @@
+import config from "./config.json"
+
 import { Dict } from "./lib/utils"
 
 import { Core } from "./core";
@@ -7,9 +9,9 @@ import { boneFnsGen } from "./bone";
 import { fontFnsGen } from "./font"
 
 window.onload = async () => {
-    await Core.init();
+    await Core.init(config);
 
-    const cLib = cLibGen(Core.ctx, Core.Images);
+    const cLib = cLibGen(Core.ctx, Core.Images, config);
     cLib.stamp("bananahexagon", 60, 160);
     const Box = boxFnsGen(cLib);
     const Bone = boneFnsGen(cLib);
@@ -32,6 +34,7 @@ window.onload = async () => {
         direction: 0,
     };
     const box = Box.boxGet(boxObj);
+    new Bone.normal("bone1", 170, 240, 60, 150, 0, 0, -2, 0, Infinity, "white", 200)
 
     const update = () => {
         Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -47,6 +50,8 @@ window.onload = async () => {
         box.forEach(e => {
             e.drawBlack();
         })
+
+        Bone.process();
 
         new Font.Plane("test", "MEGALOVANIA", 100, 200, 30, 200, "white", 0, 0, 0, "determination").write().delete()
 

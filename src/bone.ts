@@ -14,7 +14,7 @@ type cLibT = {
 }
 
 export const boneFnsGen = (cLib: cLibT) => {
-    let boneDict: {[keys: string]: any} = {}
+    let boneDict: { [keys: string]: any } = {}
     class normalBone {
         x: number;
         y: number;
@@ -89,11 +89,11 @@ export const boneFnsGen = (cLib: cLibT) => {
         draw() {
             if (this.center == 0) {
                 cLib.stamp("bone_head_white", this.x, this.y, this.d - 180, this.size);
-                cLib.drawLine(this.x, this.y, this.d * Math.PI / 180, this.len, this.size / 100 * 10, "#ffffff", 1);
+                cLib.drawLine(this.x, this.y, this.d * Math.PI / 180, this.len, this.size / 100 * 5, "#ffffff", 1);
                 cLib.stamp("bone_head_white", this.x + this.len * Math.sin(this.d * Math.PI / 180), this.y - this.len * Math.cos(this.d * Math.PI / 180), this.d, this.size);
             } else {
                 cLib.stamp("bone_head_white", this.x - this.len * Math.sin(this.d * Math.PI / 180) / 2, this.y + this.len * Math.cos(this.d * Math.PI / 180) / 2, this.d - 180, this.size);
-                cLib.drawLine(this.x, this.y, this.d * Math.PI / 180, this.len, this.size / 100 * 10, "#ffffff", 0);
+                cLib.drawLine(this.x, this.y, this.d * Math.PI / 180, this.len, this.size / 100 * 5, "#ffffff", 0);
                 cLib.stamp("bone_head_white", this.x + this.len * Math.sin(this.d * Math.PI / 180) / 2, this.y - this.len * Math.cos(this.d * Math.PI / 180) / 2, this.d, this.size);
             }
         }
@@ -109,8 +109,8 @@ export const boneFnsGen = (cLib: cLibT) => {
     }
 
     return {
-        dict: boneDict as {[keys: string]: normalBone},
-        normalBone,
+        dict: boneDict as { [keys: string]: normalBone },
+        normal: normalBone,
         process,
     }
 
