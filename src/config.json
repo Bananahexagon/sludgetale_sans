@@ -1,8 +1,8 @@
 {
     "display_quality": 2,
-    "stage_width": 800,
+    "stage_width": 640,
     "stage_height": 480,
-    "display_width": 1000,
-    "display_height": 600,
+    "display_width": 800,
+    "display_height": 400,
     "canvas_name": "canvas"
 }
