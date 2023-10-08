@@ -1,5 +1,8 @@
 import fontDataEn from "./data/font_en.json";
-import fontDataStatus from "./data/font_en.json";
+import fontDataStatus from "./data/font_status.json";
+
+import { cLibT, inputKeysT } from "./lib/types";
+
 
 type charDataT = {
     left: number,
@@ -11,17 +14,7 @@ type charDataT = {
 
 type FontDataT = typeof fontDataEn;
 
-type cLibT = {
-    drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, type?: 0 | 1) => void;
-    drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
-    [keys: string]: Function;
-}
-
-type inputT = {
-    up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean,
-}
-
-export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
+export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
     const fontData = {
         en: fontDataEn,
         status: fontDataStatus
@@ -101,9 +94,9 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
                         cLib.stamp(this.font.props.name + "_" + e.color,
                             this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
                             this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
-                            this.direction, size, 1, charData.left, charData.up, charData.width, charData.height
+                            this.direction, size, 1, "start", { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                         );
-                        if (count + 1 < input_str_length) x += (charData.width + charDataf(this._.all_str[count + 1]).width) / 2 + this.font.props.width_basic + e.spacing_x;
+                        if (count + 1 < input_str_length) x += charData.width + this.font.props.width_basic + e.spacing_x;
                     }
                     count++
                 })
@@ -202,11 +195,11 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputT) => {
                     y += this.font.props.height_basic + this.spacing_y;
                 } else {
                     cLib.stamp(this.font.props.name + "_" + (!this.color ? "white" : this.color),
-                        this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
-                        this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
-                        this.direction, size, 1, charData.left, charData.up, charData.width, charData.height
+                        this.x + (Math.cos(d) * x - Math.sin(d) * (y - charData.gap)) * size / 100,
+                        this.y + (Math.sin(d) * x + Math.cos(d) * (y - charData.gap)) * size / 100,
+                        this.direction, size, 1, "start", { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                     );
-                    if (i + 1 < chars.length) x += (charData.width + charDataf(chars[i + 1]).width) / 2 + this.font.props.width_basic + this.spacing_x;
+                    if (i + 1 < chars.length) x += charData.width + this.font.props.width_basic + this.spacing_x;
                 };
             };
             return this;

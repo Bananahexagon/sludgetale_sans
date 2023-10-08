@@ -2,7 +2,7 @@ import { Dict, Opt } from "./utils"
 type bool = boolean;
 
 type cLibT = {
-    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number,alpha?: number, align?: string, absolute?: boolean) => void;
+    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: string, box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
     drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, type?: string) => void;
     drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
@@ -45,6 +45,15 @@ type CoreT = {
     for: (condition: number, proc: (arg: number) => void, i: number) => void,
     loop: (proc: () => void) => void,
 }
+
+type inputKeysT = {
+    up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean, d: boolean
+};
+
+
+type inputMouseT = { x: number, y: number, clicking: boolean, is_in_rect: (dx: number, dy: number, w: number, h: number, type?: string) => boolean };
+
+
 class SpriteClass {
     x: number;
     y: number;
@@ -74,5 +83,7 @@ export {
     CanvasProps,
     SpriteClassT,
     SpriteT,
-    bool
+    bool,
+    inputKeysT,
+    inputMouseT
 }
