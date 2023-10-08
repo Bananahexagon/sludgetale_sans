@@ -58,9 +58,9 @@ export const boneFnsGen = (cLib: cLibT, Sprite: SpriteClassT) => {
                 this.d + 180, this.width * 100 / 6, 1, "start"
             );
             cLib.drawRect(
-                this.x + sin360(this.d) * this.width * 7 / 6,
-                this.y + cos360(this.d) * this.width * 7 / 6,
-                this.width, this.len, "white", this.d, "start"
+                this.x + sin360(this.d) * this.width * 6 / 6,
+                this.y + cos360(this.d) * this.width * 6 / 6,
+                this.width, this.len + this.width * 2 / 6, "white", this.d, "start"
             );
             cLib.stamp("bone_head_white",
                 this.x + sin360(this.d) * (this.len + this.width * 14 / 6) - cos360(this.d) * this.width * 2 / 6,
