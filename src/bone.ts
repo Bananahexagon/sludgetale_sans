@@ -81,7 +81,7 @@ export const boneFnsGen = (cLib: cLibT, Sprite: SpriteClassT) => {
             switch (move.type) {
                 case "sin":
                 case "cos": {
-                    return 0;
+                    return sin360(move.cycle * age) * move.amp;
                 }
                 case "custom": {
                     return move.fn(age)
