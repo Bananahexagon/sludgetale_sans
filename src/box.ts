@@ -90,6 +90,7 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
     const box = {
         center_x: 320,
         center_y: 240,
+        dire: 0,
         width: 100,
         height: 100,
         thickness: 6,
@@ -110,17 +111,42 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             this.walls.forEach(e => { e.judge() });
         },
         update() {
-            this.walls[0].dx = this.center_x;
-            this.walls[0].dy = this.center_y + this.height / 2;
-
-            this.walls[1].dx = this.center_x + this.width / 2;
-            this.walls[1].dy = this.center_y;
-
-            this.walls[2].dx = this.center_x;
-            this.walls[2].dy = this.center_y - this.height / 2;
-
-            this.walls[3].dx = this.center_x - this.width / 2;
-            this.walls[3].dy = this.center_y;
+            {
+                const d = this.dire;
+                const x = this.center_x;
+                const y = this.center_y;
+                const wall = this.walls[0];
+                wall.dd = d;
+                wall.dx = x + (this.height / 2) * sin360(d);
+                wall.dy = y + (this.height / 2) * cos360(d);
+            }
+            {
+                const d = this.dire + 90;
+                const x = this.center_x;
+                const y = this.center_y;
+                const wall = this.walls[1];
+                wall.dd = d;
+                wall.dx = x + (this.height / 2) * sin360(d);
+                wall.dy = y + (this.height / 2) * cos360(d);
+            }
+            {
+                const d = this.dire + 180;
+                const x = this.center_x;
+                const y = this.center_y;
+                const wall = this.walls[2];
+                wall.dd = d;
+                wall.dx = x + (this.height / 2) * sin360(d);
+                wall.dy = y + (this.height / 2) * cos360(d);
+            }
+            {
+                const d = this.dire + 270;
+                const x = this.center_x;
+                const y = this.center_y;
+                const wall = this.walls[3];
+                wall.dd = d;
+                wall.dx = x + (this.height / 2) * sin360(d);
+                wall.dy = y + (this.height / 2) * cos360(d);
+            }
         },
         init() {
             this.walls.push(new Wall2(0, 0, 0, this.thickness));

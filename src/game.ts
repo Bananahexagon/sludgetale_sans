@@ -21,6 +21,7 @@ export const main = async () => {
         if (Game.inputKeys.down) player.y -= 3.5;
         if (Game.inputKeys.right) player.x += 3.5;
         if (Game.inputKeys.left) player.x -= 3.5;
+        box.dire += 1;
         box.draw();
         box.judge();
         box.update();
