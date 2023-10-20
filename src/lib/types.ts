@@ -44,6 +44,7 @@ type CoreT = {
     inputMouse: { x: number, y: number, clicking: boolean, is_in_rect: (dx: number, dy: number, w: number, h: number, type?: string) => boolean },
     props: Dict<any>,
     cLib: cLibT,
+    aLib: aLibT,
     Sprite: SpriteClassT,
     while: (condition: () => boolean, proc: () => void) => void,
     for: (condition: number, proc: (arg: number) => void, i: number) => void,

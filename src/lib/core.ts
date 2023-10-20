@@ -135,6 +135,7 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse,
         props,
         cLib,
+        aLib,
         Sprite,
         for: frameFor,
         while: frameWhile,
