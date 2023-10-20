@@ -8,6 +8,10 @@ type cLibT = {
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
 }
 
+type aLibT = {
+    play: (name: string) => void;
+}
+
 type configT = {
     display_quality: number,
     stage_width: number,
@@ -85,5 +89,6 @@ export {
     SpriteT,
     bool,
     inputKeysT,
-    inputMouseT
+    inputMouseT,
+    aLibT,
 }

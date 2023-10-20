@@ -108,5 +108,10 @@
         "type": "image",
         "name": "bananahexagon",
         "src": "./assets/images/normal_icon.png"
+    },
+    {
+        "type": "audio",
+        "name": "damage",
+        "src": "./assets/audios/damage.wav"
     }
 ]

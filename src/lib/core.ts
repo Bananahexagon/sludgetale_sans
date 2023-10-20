@@ -1,10 +1,11 @@
 import { Dict } from "./utils";
-import { CoreT, configT, cLibT } from "./types";
+import { CoreT, configT, cLibT, aLibT } from "./types";
 import { frameWhile, frameFor, frameLoop } from "./frame";
 import { loadAssets } from "./loader";
 import { CanvasLibGen } from "./canvas";
 import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
+import { AudioLibGen } from "./audios";
 
 export const init = async (config: configT): Promise<CoreT> => {
     const canvas = document.getElementById(config.canvas_name) as HTMLCanvasElement;
@@ -38,6 +39,7 @@ export const init = async (config: configT): Promise<CoreT> => {
         },
     };
     const cLib: cLibT = CanvasLibGen(canvas, ctx, Images, Fonts, config, props.canvas);
+    const aLib: aLibT = AudioLibGen(Audios);
     const Sprite = SpriteLibGen(cLib);
 
     ctx.imageSmoothingEnabled = false;
