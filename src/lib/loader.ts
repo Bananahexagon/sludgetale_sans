@@ -55,6 +55,5 @@ export const loadAssets = async (): Promise<Assets> => {
         }
     })));
     await Promise.all(promises);
-    console.log(Fonts);
     return { Images, Audios, Fonts };
 };
