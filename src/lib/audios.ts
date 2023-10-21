@@ -1,6 +1,8 @@
 import { configT, aLibT } from "./types";
 import { sin360, cos360, Dict } from "./utils";
 
+//TODO 欠陥が多い
+
 export const AudioLibGen = (Audios: Dict<[HTMLAudioElement, number]>): aLibT => {
     const play = (name: string, start?: number, delay = 0) => {
         if (Audios[name][1] == 0) {
