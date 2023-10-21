@@ -14,10 +14,10 @@ export const main = async () => {
         hp_max: 92,
         soul: new Game.Sprite(320, 240, 0, 80, "soul", true)
     };
-    const Bone = boneFnsGen(Game.cLib, Game.Sprite);
+    const Bone = boneFnsGen(Game.cLib, Game.Sprite,player);
     const Font = fontFnsGen(Game.cLib, Game.inputKeys);
     const Box = BoxFnsGen(Game.cLib, player.soul);
-    new Bone.normal(60, 180, 0, 12, 200, 0, 0, 2, 0, 0);
+    new Bone.normal(260, 180, 60, 12, 200, 0, 0, 0, 0, 0);
     const box = Box.box;
     const hp_bar = hp_bar_gen(Game.cLib, Font.Plane, player);
     let test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
@@ -29,10 +29,10 @@ export const main = async () => {
         if (Game.inputKeys.down) player.soul.y -= 3.5;
         if (Game.inputKeys.right) player.soul.x += 3.5;
         if (Game.inputKeys.left) player.soul.x -= 3.5;
-        box.dire += 1;
-        box.draw();
-        box.judge();
-        box.update();
+        // box.dire += 1;
+        // box.draw();
+        // box.judge();
+        // box.update();
         Bone.process();
         Font.process();
         test.write();

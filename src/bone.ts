@@ -1,4 +1,4 @@
-import { SpriteClassT, cLibT } from "./lib/types";
+import { SpriteClassT, SpriteT, cLibT } from "./lib/types";
 import { sin360, cos360 } from "./lib/utils";
 import { Dict } from "./lib/utils";
 
@@ -11,7 +11,7 @@ type Move = number | {
     fn: (age: number) => number
 };
 
-export const boneFnsGen = (cLib: cLibT, Sprite: SpriteClassT) => {
+export const boneFnsGen = (cLib: cLibT, Sprite: SpriteClassT, player: { soul: SpriteT, hp: number }) => {
     let boneDict: Dict<any> = {}
     class normalBone extends Sprite {
         private start_x: number;
@@ -68,11 +68,35 @@ export const boneFnsGen = (cLib: cLibT, Sprite: SpriteClassT) => {
                 this.d, this.width * 100 / 6, 1, "start"
             );
         }
+        private judge() {
+            cLib.drawRect(
+                this.x,
+                this.y,
+                this.width, this.len + this.width * 14 / 6, "red", this.d, "start"
+            );
+
+            cLib.drawRect(
+                this.x + sin360(this.d) * (this.len / 2 + this.width * 7 / 6) + cos360(this.d) * this.width * 3 / 6,
+                this.y + cos360(this.d) * (this.len / 2 + this.width * 7 / 6) - sin360(this.d) * this.width * 3 / 6,
+                this.width, this.len + this.width * 14 / 6, "blue", this.d, "center++"
+            );
+            {
+                const relative_x = player.soul.x - this.x;
+                const relative_y = player.soul.y - this.y;
+                const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
+                const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
+                if (this.len + this.width * 14 / 6 > turned_y && turned_y > 0 && this.width > turned_x && turned_x > 0) {
+                    player.hp -= 1;
+                }
+            }
+
+        }
         public static process() {
             for (const id in boneDict) {
                 const bone = boneDict[id];
                 bone.move_self();
                 bone.draw();
+                bone.judge();
             }
         }
         private static current_id = 0;
