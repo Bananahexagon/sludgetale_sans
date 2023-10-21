@@ -112,6 +112,6 @@
     {
         "type": "audio",
         "name": "damage",
-        "src": "./assets/audios/damage.wav"
+        "src": "./assets/audios/damage.mp3"
     }
 ]

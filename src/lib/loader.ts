@@ -9,7 +9,7 @@ export const loadAssets = async (): Promise<Assets> => {
         name: string,
     }
     const Images: Dict<HTMLImageElement> = {};
-    const Audios: Dict<HTMLAudioElement> = {};
+    const Audios: Dict<[HTMLAudioElement,number]> = {};
     const Fonts: Dict<FontFace> = {};
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
@@ -25,12 +25,24 @@ export const loadAssets = async (): Promise<Assets> => {
                 }
             } break;
             case "audio": {
-                const audio = new Audio();
-                audio.src = e.src;
-                audio.onload = () => {
-                    Audios[e.name] = audio;
+                const audio = new Audio(e.src);
+                audio.autoplay=false;
+                console.log(audio);
+                audio.addEventListener("loadeddata", () => {
+                    Audios[e.name] = [audio, 0];
                     resolve();
-                }
+                })
+                /*
+                 *audio.onload = () => {
+                 *    Audios[e.name] = audio;
+                 *    resolve();
+                 *}
+                 *audio.onerror = (err) => {
+                 *    console.error(err);
+                 *    Audios[e.name] = audio;
+                 *    resolve();
+                 *}
+                 */
             } break;
             case "font": {
                 (async () => {
@@ -51,7 +63,7 @@ export const loadAssets = async (): Promise<Assets> => {
                     });
                     Promise.all(promises_sub)
                 })().then(resolve)
-            }
+            } break;
         }
     })));
     await Promise.all(promises);

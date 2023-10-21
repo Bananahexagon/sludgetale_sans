@@ -1,6 +1,6 @@
 import { Dict } from "./utils";
 import { CoreT, configT, cLibT, aLibT } from "./types";
-import { frameWhile, frameFor, frameLoop } from "./frame";
+import { frameLibGen } from "./frame";
 import { loadAssets } from "./loader";
 import { CanvasLibGen } from "./canvas";
 import { SpriteLibGen } from "./sprite";
@@ -125,6 +125,7 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse.x = p.x;
         inputMouse.y = p.y;
     });
+    const {frameWhile, frameFor, frameLoop} = frameLibGen(aLib);
     return {
         canvas,
         ctx,

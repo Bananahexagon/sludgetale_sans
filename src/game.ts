@@ -16,9 +16,15 @@ export const main = async () => {
     const box = Box.box;
     let test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
     Game.aLib.play("damage");
+    let timer = 0;
     Game.loop(() => {
+        timer++;
         Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
-        if (Game.inputKeys.up) player.y += 3.5;
+        if (Game.inputKeys.up) {
+            player.y += 3.5;
+            console.log(Game.Audios["damage"]);
+            Game.aLib.play("damage", 0.1, 2);
+        };
         if (Game.inputKeys.down) player.y -= 3.5;
         if (Game.inputKeys.right) player.x += 3.5;
         if (Game.inputKeys.left) player.x -= 3.5;
