@@ -23,7 +23,7 @@ export const main = async () => {
         if (Game.inputKeys.up) {
             player.y += 3.5;
             console.log(Game.Audios["damage"]);
-            Game.aLib.play("damage", 0.1, 2);
+            Game.aLib.play("damage", 0, 5);
         };
         if (Game.inputKeys.down) player.y -= 3.5;
         if (Game.inputKeys.right) player.x += 3.5;
