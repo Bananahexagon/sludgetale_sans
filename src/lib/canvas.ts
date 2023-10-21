@@ -31,6 +31,7 @@ export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
         }
     };
     const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, type: string = "center") => {
+        ctx.globalAlpha = 1;
         ctx.save();
         switch (type) {
             case "center++": {
@@ -58,6 +59,7 @@ export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
         ctx.restore();
     };
     const drawLine = (lx: number, ly: number, d: number, len: number, width: number, color: string, type: number = 0) => {
+        ctx.globalAlpha = 1;
         ctx.beginPath();
         switch (type) {
             case 0: {
@@ -74,6 +76,7 @@ export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
         ctx.stroke();
     }
     const drawText = (tx: string, lx: number, ly: number, size: number, color: string, font: string = "serif", align: "left" | "right" | "center" | "start" | "end" = "left") => {
+        ctx.globalAlpha = 1;
         const [x, y] = [lx * config.display_quality, -ly * config.display_quality + canvas.height];
         ctx.font = `${size * config.display_quality}px ${font}`;
         ctx.textAlign = align;

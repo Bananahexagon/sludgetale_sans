@@ -9,7 +9,7 @@ export const loadAssets = async (): Promise<Assets> => {
         name: string,
     }
     const Images: Dict<HTMLImageElement> = {};
-    const Audios: Dict<[HTMLAudioElement,number]> = {};
+    const Audios: Dict<[HTMLAudioElement, number]> = {};
     const Fonts: Dict<FontFace> = {};
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
@@ -26,9 +26,11 @@ export const loadAssets = async (): Promise<Assets> => {
             } break;
             case "audio": {
                 const audio = new Audio(e.src);
-                audio.autoplay=false;
+                audio.autoplay = false;
+                audio.muted = true;
                 console.log(audio);
                 audio.addEventListener("loadeddata", () => {
+                    audio.muted = false;
                     Audios[e.name] = [audio, 0];
                     resolve();
                 })
