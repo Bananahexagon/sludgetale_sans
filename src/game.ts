@@ -14,7 +14,7 @@ export const main = async () => {
         hp_max: 92,
         soul: new Game.Sprite(320, 240, 0, 80, "soul", true)
     };
-    const Bone = boneFnsGen(Game.cLib, Game.Sprite,player);
+    const Bone = boneFnsGen(Game.cLib, Game.aLib, Game.Sprite, player);
     const Font = fontFnsGen(Game.cLib, Game.inputKeys);
     const Box = BoxFnsGen(Game.cLib, player.soul);
     new Bone.normal(260, 180, 60, 12, 200, 0, 0, 0, 0, 0);

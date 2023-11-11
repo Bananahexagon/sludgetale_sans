@@ -12,7 +12,8 @@ export const init = async (config: configT): Promise<CoreT> => {
     canvas.height = config.stage_height * config.display_quality;
     canvas.width = config.stage_width * config.display_quality;
     const ctx = canvas.getContext("2d")!;
-    const { Images, Audios, Fonts } = await loadAssets();
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const { Images, Audios, Fonts } = await loadAssets(audioContext);
     const inputKeys = {
         up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
     };
