@@ -2,14 +2,14 @@ import { Dict } from "./utils";
 import { Assets } from "./types";
 import json from "../assets.json";
 
-export const loadAssets = async (audioContext:AudioContext): Promise<Assets> => {
+export const loadAssets = async (audioContext: AudioContext): Promise<Assets> => {
     type AssetData = {
         type: "image" | "audio" | "font",
         src: string,
         name: string,
     }
     const Images: Dict<HTMLImageElement> = {};
-    const Audios: Dict<AudioBuffer> = {};
+    const Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }> = {};
     const Fonts: Dict<FontFace> = {};
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
@@ -25,11 +25,20 @@ export const loadAssets = async (audioContext:AudioContext): Promise<Assets> => 
                 }
             } break;
             case "audio": {
-                (async () => {
-                    const response = await fetch(e.src);
-                    const audioData = await response.arrayBuffer();
-                    Audios[e.name] = await audioContext.decodeAudioData(audioData);
-                })().then(resolve);
+                const audio = new Audio(e.src);
+                audio.autoplay = false;
+                audio.muted = true;
+                console.log(audio);
+                audio.addEventListener("loadeddata", () => {
+                    audio.muted = false;
+                    (async () => {
+                        const response = await fetch(e.src);
+                        const audioData = await response.arrayBuffer();
+                        Audios[e.name] = { ctx: await audioContext.decodeAudioData(audioData), data: audio, time: Infinity };
+                        audio.onload = () => resolve();
+                    })().then(resolve);
+                })
+
             } break;
             case "font": {
                 (async () => {
@@ -54,5 +63,5 @@ export const loadAssets = async (audioContext:AudioContext): Promise<Assets> => 
         }
     })));
     await Promise.all(promises);
-    return { Images, Audios, Fonts };
+    return { Images,  Audios, Fonts };
 };

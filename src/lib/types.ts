@@ -9,7 +9,9 @@ type cLibT = {
 }
 
 type aLibT = {
-    play: (name: string, start?:number,delay?:number) => void;
+    play: (name: string, delay?: number) => void;
+    play_ctx: (name: string, delay?: number) => void;
+    tick: () => void;
 }
 
 type configT = {
@@ -22,7 +24,7 @@ type configT = {
 }
 type Assets = {
     Images: Dict<HTMLImageElement>
-    Audios: Dict<AudioBuffer>,
+    Audios: Dict<{ ctx:AudioBuffer,data: HTMLAudioElement, time: number }>,
     Fonts: Dict<FontFace>,
 }
 type CanvasProps = {
@@ -36,7 +38,7 @@ type CoreT = {
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
     Images: Dict<HTMLImageElement>,
-    Audios: Dict<AudioBuffer>,
+    Audios: Dict<{ ctx:AudioBuffer,data: HTMLAudioElement, time: number }>,
     Fonts: Dict<FontFace>,
     inputKeys: {
         up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean, d: boolean

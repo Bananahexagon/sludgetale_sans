@@ -126,7 +126,7 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse.x = p.x;
         inputMouse.y = p.y;
     });
-    const {frameWhile, frameFor, frameLoop} = frameLibGen(aLib);
+    const { frameWhile, frameFor, frameLoop } = frameLibGen(aLib);
     return {
         canvas,
         ctx,
