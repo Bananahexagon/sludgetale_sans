@@ -2,7 +2,7 @@ import { configT, CanvasProps, cLibT } from "./types";
 import { sin360, cos360 } from "./utils";
 
 export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, Images: { [keys: string]: HTMLImageElement, }, Fonts: { [keys: string]: FontFace }, config: configT, props: CanvasProps): cLibT => {
-    const stamp = (name: string, dx: number, dy: number, dd: number = 0, size: number = 100, alpha: number = 1, align: string = "center", box?: { left: number, top: number, width: number, height: number, }, absolute = false) => {
+    const stamp = (name: string, dx: number, dy: number, dd: number = 0, size: number = 100, alpha: number = 1, align: "center" | "start" = "center", box?: { left: number, top: number, width: number, height: number, }, absolute = false) => {
         if (absolute) {
             const costume = Images[name];
             const [sx, sy, sw, sh] = box === undefined ? [0, 0, costume.width, costume.height] : [box.left, box.top, box.width, box.height];

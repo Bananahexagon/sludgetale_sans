@@ -17,7 +17,6 @@ export const main = async () => {
     const Bone = boneFnsGen(Game.cLib, Game.aLib, Game.Sprite, player);
     const Font = fontFnsGen(Game.cLib, Game.inputKeys);
     const Box = BoxFnsGen(Game.cLib, player.soul);
-    new Bone.normal(260, 180, 60, 12, 200, 0, 0, 0, 0, 0);
     const box = Box.box;
     const hp_bar = hp_bar_gen(Game.cLib, Font.Plane, player);
     let test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
@@ -29,16 +28,15 @@ export const main = async () => {
         if (Game.inputKeys.down) player.soul.y -= 3.5;
         if (Game.inputKeys.right) player.soul.x += 3.5;
         if (Game.inputKeys.left) player.soul.x -= 3.5;
-        // box.dire += 1;
-        // box.draw();
-        // box.judge();
-        // box.update();
+        box.judge();
+        box.update();
         Bone.process();
+        box.draw();
         Font.process();
         test.write();
         hp_bar();
         player.soul.stamp();
-        //Game.cLib.stamp("back", 320, 240, 0, 100, 0.2);
+        Game.cLib.stamp("back", 320, 240, 0, 100, 0.2);
     })
 };
 
@@ -63,4 +61,6 @@ const hp_bar_gen = (cLib: cLibT, Font: FontPlaneT, player: { hp: number, hp_max:
     tmp6.delete();
     cLib.drawRect(256, 59, player.hp_max * 1.2, 21, "red", 0, "start");
     cLib.drawRect(256, 59, player.hp * 1.2, 21, "yellow", 0, "start");
+    cLib.stamp("hp_white",224,74, 0,100,1,"start");
+    cLib.stamp("kr_white",377,74, 0,100,1,"start");
 };

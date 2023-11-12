@@ -69,17 +69,16 @@ export const boneFnsGen = (cLib: cLibT,aLib: aLibT, Sprite: SpriteClassT, player
             );
         }
         private judge() {
-            cLib.drawRect(
-                this.x,
-                this.y,
-                this.width, this.len + this.width * 14 / 6, "red", this.d, "start"
-            );
-
-            cLib.drawRect(
-                this.x + sin360(this.d) * (this.len / 2 + this.width * 7 / 6) + cos360(this.d) * this.width * 3 / 6,
-                this.y + cos360(this.d) * (this.len / 2 + this.width * 7 / 6) - sin360(this.d) * this.width * 3 / 6,
-                this.width, this.len + this.width * 14 / 6, "blue", this.d, "center++"
-            );
+            //cLib.drawRect(
+            //    this.x,
+            //    this.y,
+            //    this.width, this.len + this.width * 14 / 6, "red", this.d, "start"
+            //);
+            //cLib.drawRect(
+            //    this.x + sin360(this.d) * (this.len / 2 + this.width * 7 / 6) + cos360(this.d) * this.width * 3 / 6,
+            //    this.y + cos360(this.d) * (this.len / 2 + this.width * 7 / 6) - sin360(this.d) * this.width * 3 / 6,
+            //    this.width, this.len + this.width * 14 / 6, "blue", this.d, "center++"
+            //);
             {
                 const relative_x = player.soul.x - this.x;
                 const relative_y = player.soul.y - this.y;
@@ -87,7 +86,7 @@ export const boneFnsGen = (cLib: cLibT,aLib: aLibT, Sprite: SpriteClassT, player
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
                 if (this.len + this.width * 14 / 6 > turned_y && turned_y > 0 && this.width > turned_x && turned_x > 0) {
                     player.hp -= 1;
-                    aLib.play_ctx("damage",4);
+                    aLib.play_ctx("damage",2);
                 }
             }
 

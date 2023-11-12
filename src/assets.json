@@ -86,18 +86,13 @@
     },
     {
         "type": "image",
-        "name": "hp_kr_white",
-        "src": "./assets/images/hp_kr_white.png"
+        "name": "kr_white",
+        "src": "./assets/images/kr_white.png"
     },
     {
         "type": "image",
-        "name": "hp_kr_red",
-        "src": "./assets/images/hp_kr_red.png"
-    },
-    {
-        "type": "image",
-        "name": "hp_kr_purple",
-        "src": "./assets/images/hp_kr_purple.png"
+        "name": "hp_white",
+        "src": "./assets/images/hp_white.png"
     },
     {
         "type": "image",
