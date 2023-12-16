@@ -11,7 +11,9 @@ type Move = number | {
     fn: (age: number) => number
 };
 
-export const boneFnsGen = (cLib: cLibT,aLib: aLibT, Sprite: SpriteClassT, player: { soul: SpriteT, hp: number }) => {
+export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
+    damage(arg0: number): unknown; soul: SpriteT, hp: number
+}) => {
     let boneDict: Dict<any> = {}
     class normalBone extends Sprite {
         private start_x: number;
@@ -85,8 +87,7 @@ export const boneFnsGen = (cLib: cLibT,aLib: aLibT, Sprite: SpriteClassT, player
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
                 if (this.len + this.width * 14 / 6 > turned_y && turned_y > 0 && this.width > turned_x && turned_x > 0) {
-                    player.hp -= 1;
-                    aLib.play_ctx("damage",2);
+                    player.damage(2);
                 }
             }
 

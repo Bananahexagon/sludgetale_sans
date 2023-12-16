@@ -108,5 +108,15 @@
         "type": "audio",
         "name": "damage",
         "src": "./assets/audios/p_damage.wav"
+    },
+    {
+        "type": "audio",
+        "name": "heartbreak_1",
+        "src": "./assets/audios/heartbreak_1.wav"
+    },
+    {
+        "type": "audio",
+        "name": "heartbreak_2",
+        "src": "./assets/audios/heartbreak_2.wav"
     }
 ]
