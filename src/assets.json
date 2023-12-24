@@ -105,6 +105,31 @@
         "src": "./assets/images/normal_icon.png"
     },
     {
+        "type": "image",
+        "name": "death_0",
+        "src": "./assets/images/death_0.png"
+    },
+    {
+        "type": "image",
+        "name": "death_1",
+        "src": "./assets/images/death_1.png"
+    },
+    {
+        "type": "image",
+        "name": "death_2",
+        "src": "./assets/images/death_2.png"
+    },
+    {
+        "type": "image",
+        "name": "death_3",
+        "src": "./assets/images/death_3.png"
+    },
+    {
+        "type": "image",
+        "name": "death_4",
+        "src": "./assets/images/death_4.png"
+    },
+    {
         "type": "audio",
         "name": "damage",
         "src": "./assets/audios/p_damage.wav"
