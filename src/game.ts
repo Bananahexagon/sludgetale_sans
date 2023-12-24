@@ -37,6 +37,8 @@ export const main = async () => {
         }
     };
     {
+        timer = 0;
+        scene = "battle"
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Box = BoxFnsGen(Core.cLib, player.soul);
