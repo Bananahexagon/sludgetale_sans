@@ -79,16 +79,6 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
             this.stamp()
         }
         private judge() {
-            //cLib.drawRect(
-            //    this.x,
-            //    this.y,
-            //    this.width, this.len + this.width * 14 / 6, "red", this.d, "start"
-            //);
-            //cLib.drawRect(
-            //    this.x + sin360(this.d) * (this.len / 2 + this.width * 7 / 6) + cos360(this.d) * this.width * 3 / 6,
-            //    this.y + cos360(this.d) * (this.len / 2 + this.width * 7 / 6) - sin360(this.d) * this.width * 3 / 6,
-            //    this.width, this.len + this.width * 14 / 6, "blue", this.d, "center++"
-            //);
             {
                 const len = 4800;
                 const relative_x = player.soul.x - this.x;

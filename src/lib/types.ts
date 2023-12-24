@@ -3,7 +3,7 @@ type bool = boolean;
 
 type cLibT = {
     stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start", box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
-    drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number,alpha?:number, type?: string) => void;
+    drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, alpha?: number, type?: string) => void;
     drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
 }
@@ -24,7 +24,7 @@ type configT = {
 }
 type Assets = {
     Images: Dict<HTMLImageElement>
-    Audios: Dict<{ ctx:AudioBuffer,data: HTMLAudioElement, time: number }>,
+    Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }>,
     Fonts: Dict<FontFace>,
 }
 type CanvasProps = {
@@ -38,12 +38,10 @@ type CoreT = {
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
     Images: Dict<HTMLImageElement>,
-    Audios: Dict<{ ctx:AudioBuffer,data: HTMLAudioElement, time: number }>,
+    Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }>,
     Fonts: Dict<FontFace>,
-    inputKeys: {
-        up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean, d: boolean
-    };
-    inputMouse: { x: number, y: number, clicking: boolean, is_in_rect: (dx: number, dy: number, w: number, h: number, type?: string) => boolean },
+    inputKeys: inputKeysT
+    inputMouse: inputMouseT
     props: Dict<any>,
     cLib: cLibT,
     aLib: aLibT,
@@ -55,6 +53,9 @@ type CoreT = {
 
 type inputKeysT = {
     up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean, d: boolean
+    f: {
+        up: boolean, down: boolean, left: boolean, right: boolean, z: boolean, x: boolean, c: boolean, d: boolean
+    }
 };
 
 

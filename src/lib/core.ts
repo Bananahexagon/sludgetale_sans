@@ -16,6 +16,9 @@ export const init = async (config: configT): Promise<CoreT> => {
     const { Images, Audios, Fonts } = await loadAssets(audioContext);
     const inputKeys = {
         up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
+        f: {
+            up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
+        }
     };
     const inputMouse = {
         x: 0, y: 0, clicking: false, is_in_rect(dx: number, dy: number, w: number, h: number, type: string = "center") {
@@ -49,31 +52,39 @@ export const init = async (config: configT): Promise<CoreT> => {
         switch (e.key) {
             case "ArrowUp": {
                 inputKeys.up = true;
+                inputKeys.f.up = true;
             } break;
             case "ArrowDown": {
                 inputKeys.down = true;
+                inputKeys.f.down = true;
             } break;
             case "ArrowLeft": {
                 inputKeys.left = true;
+                inputKeys.f.left = true;
             } break;
             case "ArrowRight": {
                 inputKeys.right = true;
+                inputKeys.f.right = true;
             } break;
             case "z":
             case "Z": {
                 inputKeys.z = true;
+                inputKeys.f.z = true;
             } break;
             case "x":
             case "X": {
                 inputKeys.x = true;
+                inputKeys.f.x = true;
             } break;
             case "c":
             case "C": {
                 inputKeys.c = true;
+                inputKeys.f.c = true;
             } break;
             case "d":
             case "D": {
                 inputKeys.d = true;
+                inputKeys.f.d = true;
             } break;
         }
     });
@@ -126,7 +137,25 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse.x = p.x;
         inputMouse.y = p.y;
     });
-    const { frameWhile, frameFor, frameLoop } = frameLibGen(aLib);
+    let b_tick:()=>void;
+    let a_tick:()=>void;
+    {
+        let bk = {
+            up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
+        }
+        b_tick = () => {
+            (["up", "down", "left", "right", "z", "x", "c", "d"] as ("up" | "down" | "left" | "right" | "z" | "x" | "c" | "d")[]).forEach(e => {
+                if (bk[e]) {
+                    inputKeys.f[e] = false;
+                }
+            })
+            bk = { ...inputKeys.f }
+        }
+        a_tick = () => {
+            aLib.tick();
+        }
+    }
+    const { frameWhile, frameFor, frameLoop } = frameLibGen(b_tick,a_tick);
     return {
         canvas,
         ctx,
