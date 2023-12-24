@@ -53,7 +53,7 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             }
         }
         draw() {
-            cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd, "center++");
+            cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd,1, "center++");
         }
     }
     class Wall2 {
@@ -84,7 +84,7 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
         draw() {
             const x = this.dx + 320 * sin360(this.dd)
             const y = this.dy + 320 * cos360(this.dd)
-            cLib.drawRect(x, y, 640, 640, "#ffffff88", this.dd, "center++");
+            cLib.drawRect(x, y, 640, 640, "#ffffff88", this.dd, 1,"center++");
         }
     }
     const box = {
@@ -99,12 +99,12 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
                 const wy = e.dy + 640 * cos360(e.dd);
-                cLib.drawRect(wx, wy, 1280, 1280, "#ffffff", e.dd, "center++");
+                cLib.drawRect(wx, wy, 1280, 1280, "#ffffff", e.dd, 1,"center++");
             });
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
                 const wy = e.dy + 640 * cos360(e.dd);
-                cLib.drawRect(wx, wy, 1280 - e.width * 2, 1280 - e.width * 2, "#000000", e.dd, "center++");
+                cLib.drawRect(wx, wy, 1280 - e.width * 2, 1280 - e.width * 2, "#000000", e.dd,1, "center++");
             });
         },
         judge() {

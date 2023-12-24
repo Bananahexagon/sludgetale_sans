@@ -12,7 +12,7 @@ type Move = number | {
 };
 
 export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number): unknown; soul: SpriteT, hp: number
+    damage(arg0: number): void; soul: SpriteT, hp: number
 }) => {
     let boneDict: Dict<any> = {}
     class normalBone extends Sprite {
@@ -62,7 +62,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             cLib.drawRect(
                 this.x + sin360(this.d) * this.width * 6 / 6,
                 this.y + cos360(this.d) * this.width * 6 / 6,
-                this.width, this.len + this.width * 2 / 6, "white", this.d, "start"
+                this.width, this.len + this.width * 2 / 6, "white", this.d, 1,"start"
             );
             cLib.stamp("bone_head_white",
                 this.x + sin360(this.d) * (this.len + this.width * 14 / 6) - cos360(this.d) * this.width * 2 / 6,

@@ -14,6 +14,7 @@ export default defineConfig((opt) => {
                     entryFileNames: '[name].js',
                 },
             },
+            sourcemap:"inline"
         },
     }
 })

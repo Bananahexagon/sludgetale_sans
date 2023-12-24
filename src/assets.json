@@ -130,6 +130,36 @@
         "src": "./assets/images/death_4.png"
     },
     {
+        "type": "image",
+        "name": "gb_1",
+        "src": "./assets/images/gb_1.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_2",
+        "src": "./assets/images/gb_2.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_3",
+        "src": "./assets/images/gb_3.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_4",
+        "src": "./assets/images/gb_4.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_5",
+        "src": "./assets/images/gb_5.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_6",
+        "src": "./assets/images/gb_6.png"
+    },
+    {
         "type": "audio",
         "name": "damage",
         "src": "./assets/audios/p_damage.wav"
@@ -143,5 +173,15 @@
         "type": "audio",
         "name": "heartbreak_2",
         "src": "./assets/audios/heartbreak_2.wav"
+    },
+    {
+        "type": "audio",
+        "name": "gb_charge",
+        "src": "./assets/audios/gb_charge.wav"
+    },
+    {
+        "type": "audio",
+        "name": "gb_fire",
+        "src": "./assets/audios/gb_fire.wav"
     }
 ]

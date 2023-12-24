@@ -5,6 +5,7 @@ import config from "./config.json";
 import { boneFnsGen } from "./bone";
 import { fontFnsGen, Plane as FontPlaneT } from "./font";
 import { BoxFnsGen } from "./box";
+import { gbFnsGen } from "./gb";
 
 export const main = async () => {
     const Core = await init(config);
@@ -22,6 +23,7 @@ export const main = async () => {
             }
         }
     };
+    const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
     const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
     const Font = fontFnsGen(Core.cLib, Core.inputKeys);
     const Box = BoxFnsGen(Core.cLib, player.soul);
@@ -29,7 +31,8 @@ export const main = async () => {
     const hp_bar = hp_bar_gen(Core.cLib, Font.Plane, player);
     let test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
     let timer = 0;
-    let test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
+    //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
+    const test_gb = new Blaster.gb(100,200,0,400,600,90,100,1,60,60,60)
     await Core.while(() => (scene === "battle"), () => {
         timer++;
         Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -37,10 +40,11 @@ export const main = async () => {
         if (Core.inputKeys.down) player.soul.y -= 3.5;
         if (Core.inputKeys.right) player.soul.x += 3.5;
         if (Core.inputKeys.left) player.soul.x -= 3.5;
-        box.judge();
-        box.update();
+        //box.judge();
+        //box.update();
         Bone.process();
-        box.draw();
+        //box.draw();
+        Blaster.process();
         Font.process();
         test.write();
         hp_bar();
@@ -96,9 +100,8 @@ const hp_bar_gen = (cLib: cLibT, Font: FontPlaneT, player: { hp: number, hp_max:
     const tmp6 = new Font("_", `${('00' + player.hp_max).slice(-2)}`, player.hp_max * 1.2 + 369, 77, 0, 300, "white", 0, 0, 0, "status");
     tmp6.write();
     tmp6.delete();
-    cLib.drawRect(256, 59, player.hp_max * 1.2, 21, "red", 0, "start");
-    cLib.drawRect(256, 59, player.hp * 1.2, 21, "yellow", 0, "start");
+    cLib.drawRect(256, 59, player.hp_max * 1.2, 21, "red", 0,1, "start");
+    cLib.drawRect(256, 59, player.hp * 1.2, 21, "yellow", 0,1, "start");
     cLib.stamp("hp_white", 224, 74, 0, 100, 1, "start");
     cLib.stamp("kr_white", player.hp_max * 1.2 + 267, 74, 0, 100, 1, "start");
-    console.log(player.hp_max * 1.2 + 267, 377)
 };

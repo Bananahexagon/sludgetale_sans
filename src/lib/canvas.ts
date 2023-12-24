@@ -30,8 +30,8 @@ export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
             stamp(name, x, y, d, size * props.size / 100, alpha, align, box, true);
         }
     };
-    const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, type: string = "center") => {
-        ctx.globalAlpha = 1;
+    const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number, type: string = "center") => {
+        ctx.globalAlpha = alpha === undefined ? 1 : alpha;
         ctx.save();
         switch (type) {
             case "center++": {
