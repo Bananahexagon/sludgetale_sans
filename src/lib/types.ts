@@ -9,8 +9,7 @@ type cLibT = {
 }
 
 type aLibT = {
-    play: (name: string, delay?: number) => void;
-    play_ctx: (name: string, delay?: number) => void;
+    play: (name: string, delay?: number, gain?:number) => void;
     tick: () => void;
 }
 

@@ -13,7 +13,6 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
     const Fonts: Dict<FontFace> = {};
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
-    console.log(index)
     index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
         switch (e.type) {
             case "image": {
@@ -28,7 +27,6 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                 const audio = new Audio(e.src);
                 audio.autoplay = false;
                 audio.muted = true;
-                console.log(audio);
                 audio.addEventListener("loadeddata", () => {
                     audio.muted = false;
                     (async () => {

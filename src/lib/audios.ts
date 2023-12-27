@@ -2,21 +2,16 @@ import { configT, aLibT } from "./types";
 import { sin360, cos360, Dict } from "./utils";
 
 export const AudioLibGen = (Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }>): aLibT => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const play_ctx = (name: string, delay: number = 0) => {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const play = (name: string, delay: number = 0, gain:number=1) => {
         if (delay <= Audios[name].time) {
-            const source = audioContext.createBufferSource();
+            const gainNode = ctx.createGain();
+            const source = ctx.createBufferSource();
             source.buffer = Audios[name].ctx;
-
-            source.connect(audioContext.destination);
+            gainNode.gain.setValueAtTime(gain, ctx.currentTime);
+            source.connect(gainNode)
+            gainNode.connect(ctx.destination);
             source.start(0);
-            Audios[name].time = 0;
-        }
-    }
-    const play = (name: string, delay: number = 0) => {
-        if (delay <= Audios[name].time) {
-            Audios[name].data.currentTime = 0;
-            Audios[name].data.play();
             Audios[name].time = 0;
         }
     }
@@ -25,6 +20,6 @@ export const AudioLibGen = (Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElem
             Audios[n].time++;
         }
     }
-    return { play, play_ctx, tick }
+    return { play, tick }
 
 }

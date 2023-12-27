@@ -37,7 +37,7 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
             this.id = Blaster.current_id;
             gbDict[Blaster.current_id] = this;
             Blaster.current_id++
-            aLib.play_ctx("gb_charge", 1)
+            aLib.play("gb_charge", 1)
         }
         private move_self() {
             if (this.age < this.c_t) {
@@ -45,7 +45,6 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
                 this.x = ratio * this.s_x + (1 - ratio) * this.t_x;
                 this.y = ratio * this.s_y + (1 - ratio) * this.t_y;
                 this.d = ratio * this.s_d + (1 - ratio) * this.t_d;
-                console.log(ratio);
             } else if (this.age == this.c_t) {
                 this.x = this.t_x;
                 this.y = this.t_y;
@@ -98,7 +97,7 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
                 gb.draw();
                 gb.judge();
                 gb.age++;
-                if (gb.b_d + gb.b_s == gb.age) aLib.play_ctx("gb_fire", 1)
+                if (gb.b_d + gb.b_s == gb.age) aLib.play("gb_fire", 1)
                 if (gb.b_d + gb.b_s + gb.c_t <= gb.age) delete gbDict[id]
             }
         }

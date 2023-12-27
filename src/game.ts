@@ -1,6 +1,6 @@
 import { init } from "./lib/core";
 import { CoreT, SpriteT, SpriteClassT, cLibT } from "./lib/types";
-import { Dict, Opt, sin360, distance } from "./lib/utils";
+import { Dict, Opt, sin360, distance, cos360 } from "./lib/utils";
 import config from "./config.json";
 import { boneFnsGen } from "./bone";
 import { fontFnsGen, Plane as FontPlaneT } from "./font";
@@ -11,16 +11,19 @@ export const main = async () => {
     const Core = await init(config);
     let scene = "menu";
     const Font = fontFnsGen(Core.cLib, Core.inputKeys);
-    //{
-    //    let cursor = 0;
-    //    await Core.while(() => (scene === "menu"), () => {
-    //        Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-    //        if (Core.inputKeys.f.up)   cursor--;
-    //        if (Core.inputKeys.f.down) cursor++;
-    //        Core.cLib.stamp("soul",0, -cursor * 50)
-    //        console.log(cursor)
-    //    });
-    //}
+    {
+        let cursor = 0;
+        await Core.while(() => (scene === "menu"), () => {
+            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+            if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
+            if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
+            Core.cLib.stamp("soul", 220, -cursor * 50 + 240);
+            const tmp = new Font.Plane("_", "play", 270, 250, 0, 200, "yellow", 0, 0, 0, "en");
+            tmp.write();
+            tmp.delete();
+            if (Core.inputKeys.f.z) { scene = "battle"; Core.aLib.play("cursor_confirm") }
+        });
+    }
     let timer = 0;
 
     const player = {
@@ -30,7 +33,7 @@ export const main = async () => {
         soul: new Core.Sprite(320, 240, 0, 80, "soul", true),
         damage(d: number) {
             this.hp -= d;
-            Core.aLib.play_ctx("damage", 2);
+            Core.aLib.play("damage", 2);
             if (this.hp <= 0) {
                 scene = "game_over";
             }
@@ -38,7 +41,6 @@ export const main = async () => {
     };
     {
         timer = 0;
-        scene = "battle"
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Box = BoxFnsGen(Core.cLib, player.soul);
@@ -46,7 +48,7 @@ export const main = async () => {
         const hp_bar = hp_bar_gen(Core.cLib, Font.Plane, player);
         //const test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
-        //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 1, 60, 60, 60);
+        const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 1, 60, 60, 60);
         await Core.while(() => (scene === "battle"), () => {
             timer++;
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -72,11 +74,11 @@ export const main = async () => {
         await Core.while(() => (scene === "game_over"), () => {
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (timer == 0) {
-                Core.aLib.play_ctx("heartbreak_1", 2)
+                Core.aLib.play("heartbreak_1", 2)
             } else if (timer < 60) {
                 Core.cLib.stamp("death_0", player.soul.x, player.soul.y, 0, 80)
             } else if (timer == 60) {
-                Core.aLib.play_ctx("heartbreak_2", 2)
+                Core.aLib.play("heartbreak_2", 2)
                 for (let i = 0; i < 4; i++) {
                     let xs = Math.random() * 12 - 6;
                     let ys = Math.random() * 8 + 4;

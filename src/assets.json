@@ -183,5 +183,15 @@
         "type": "audio",
         "name": "gb_fire",
         "src": "./assets/audios/gb_fire.wav"
+    },
+    {
+        "type": "audio",
+        "name": "cursor_move",
+        "src": "./assets/audios/cursor_move.wav"
+    },
+    {
+        "type": "audio",
+        "name": "cursor_confirm",
+        "src": "./assets/audios/cursor_confirm.wav"
     }
 ]
