@@ -1,2 +1,2 @@
-import { main as game } from "./game";
+import { main as game } from "./main";
 window.onload = game;

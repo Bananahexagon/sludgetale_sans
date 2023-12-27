@@ -30,7 +30,7 @@ export const main = async () => {
         lv: 1,
         hp: 20,
         hp_max: 20,
-        soul: new Core.Sprite(320, 240, 0, 80, "soul", 1,1),
+        soul: new Core.Sprite(320, 240, 0, 80, "soul", 1, 1),
         damage(d: number) {
             this.hp -= d;
             Core.aLib.play("damage", 2);
@@ -64,6 +64,8 @@ export const main = async () => {
             Font.process();
             //test.write();
             hp_bar();
+            const command = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "start", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+            command(32, 49, 0, false); command(183, 49, 1, false); command(343, 49, 2, false); command(495, 49, 3, false);
             player.soul.stamp();
             Core.cLib.stamp("back", 320, 240, 0, 100, 0.2);
         });
@@ -82,7 +84,7 @@ export const main = async () => {
                 for (let i = 0; i < 4; i++) {
                     let xs = Math.random() * 12 - 6;
                     let ys = Math.random() * 8 + 4;
-                    broken_hearts.push(new Core.Sprite(player.soul.x, player.soul.y, Math.random() * 360, 80, `death_${i + 1}`, 1,1, (self) => {
+                    broken_hearts.push(new Core.Sprite(player.soul.x, player.soul.y, Math.random() * 360, 80, `death_${i + 1}`, 1, 1, (self) => {
                         self.x += xs;
                         self.y += ys;
                         self.d += xs;
