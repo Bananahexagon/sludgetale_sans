@@ -17,12 +17,12 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
         private t_d: number;
         private age: number;
         private id: number;
-        private width: number;
+        private gb_width: number;
         private c_t: number;
         private b_s: number;
         private b_d: number;
         constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number) {
-            super(fx, fy, fd, size, "gb_1", true);
+            super(fx, fy, fd, size, "gb_1", 1,width);
             this.s_x = fx;
             this.s_y = fy;
             this.s_d = fd;
@@ -32,10 +32,10 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
             this.c_t = ct;
             this.b_s = bs;
             this.b_d = bd;
-            this.width = width;
+            this.gb_width = width;
             this.age = 0;
             this.id = Blaster.current_id;
-            gbDict[Blaster.current_id] = this;
+            gbDict[this.id] = this;
             Blaster.current_id++
             aLib.play("gb_charge", 1)
         }
@@ -79,13 +79,12 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
         }
         private judge() {
             {
-                const len = 4800;
                 const relative_x = player.soul.x - this.x;
                 const relative_y = player.soul.y - this.y;
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-                if (this.b_s + this.c_t <= this.age && 0 > turned_y && this.width * this.size / 10 > turned_x && turned_x > -this.width * this.size / 10) {
-                    player.damage(2);
+                if (this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
+                    player.damage(1);
                 }
             }
 

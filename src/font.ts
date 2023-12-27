@@ -94,7 +94,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                         cLib.stamp(this.font.props.name + "_" + e.color,
                             this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
                             this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
-                            this.direction, size, 1, "start", { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
+                            this.direction, size, 1, "start",1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                         );
                         if (count + 1 < input_str_length) x += charData.width + this.font.props.width_basic + e.spacing_x;
                     }
@@ -197,7 +197,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                     cLib.stamp(this.font.props.name + "_" + (!this.color ? "white" : this.color),
                         this.x + (Math.cos(d) * x - Math.sin(d) * (y - charData.gap)) * size / 100,
                         this.y + (Math.sin(d) * x + Math.cos(d) * (y - charData.gap)) * size / 100,
-                        this.direction, size, 1, "start", { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
+                        this.direction, size, 1, "start",1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                     );
                     if (i + 1 < chars.length) x += charData.width + this.font.props.width_basic + this.spacing_x;
                 };

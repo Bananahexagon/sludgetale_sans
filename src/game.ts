@@ -30,7 +30,7 @@ export const main = async () => {
         lv: 1,
         hp: 20,
         hp_max: 20,
-        soul: new Core.Sprite(320, 240, 0, 80, "soul", true),
+        soul: new Core.Sprite(320, 240, 0, 80, "soul", 1,1),
         damage(d: number) {
             this.hp -= d;
             Core.aLib.play("damage", 2);
@@ -48,7 +48,7 @@ export const main = async () => {
         const hp_bar = hp_bar_gen(Core.cLib, Font.Plane, player);
         //const test = new Font.Plane("test", "Hello, world!", 60, 180, 0, 400, "white", 0, 0, 5, "en");
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
-        const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 1, 60, 60, 60);
+        const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         await Core.while(() => (scene === "battle"), () => {
             timer++;
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -82,7 +82,7 @@ export const main = async () => {
                 for (let i = 0; i < 4; i++) {
                     let xs = Math.random() * 12 - 6;
                     let ys = Math.random() * 8 + 4;
-                    broken_hearts.push(new Core.Sprite(player.soul.x, player.soul.y, Math.random() * 360, 80, `death_${i + 1}`, true, (self) => {
+                    broken_hearts.push(new Core.Sprite(player.soul.x, player.soul.y, Math.random() * 360, 80, `death_${i + 1}`, 1,1, (self) => {
                         self.x += xs;
                         self.y += ys;
                         self.d += xs;

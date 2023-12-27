@@ -27,9 +27,9 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         private len: number;
         private age: number;
         private id: number;
-        private width: number;
+        private b_width: number;
         constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number) {
-            super(x, y, d, width, undefined, true);
+            super(x, y, d, width, undefined, 1,1);
             this.start_x = x;
             this.start_y = y;
             this.start_d = d;
@@ -41,7 +41,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.len = len;
             this.age = 0;
             this.id = normalBone.current_id;
-            this.width = width;
+            this.b_width = width;
             boneDict[this.id] = this;
             normalBone.current_id++;
         }
@@ -55,19 +55,19 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         private draw() {
             cos360(this.d)
             cLib.stamp("bone_head_white",
-                this.x + cos360(this.d) * this.width * 8 / 6,
-                this.y - sin360(this.d) * this.width * 8 / 6,
-                this.d + 180, this.width * 100 / 6, 1, "start"
+                this.x + cos360(this.d) * this.b_width * 8 / 6,
+                this.y - sin360(this.d) * this.b_width * 8 / 6,
+                this.d + 180, this.b_width * 100 / 6, 1, "start"
             );
             cLib.drawRect(
-                this.x + sin360(this.d) * this.width * 6 / 6,
-                this.y + cos360(this.d) * this.width * 6 / 6,
-                this.width, this.len + this.width * 2 / 6, "white", this.d, 1,"start"
+                this.x + sin360(this.d) * this.b_width * 6 / 6,
+                this.y + cos360(this.d) * this.b_width * 6 / 6,
+                   this.b_width, this.len + this.b_width * 2 / 6, "white", this.d, 1,"start"
             );
             cLib.stamp("bone_head_white",
-                this.x + sin360(this.d) * (this.len + this.width * 14 / 6) - cos360(this.d) * this.width * 2 / 6,
-                this.y + cos360(this.d) * (this.len + this.width * 14 / 6) + sin360(this.d) * this.width * 2 / 6,
-                this.d, this.width * 100 / 6, 1, "start"
+                this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
+                this.y + cos360(this.d) * (this.len + this.b_width * 14 / 6) + sin360(this.d) * this.b_width * 2 / 6,
+                this.d, this.b_width * 100 / 6, 1, "start"
             );
         }
         private judge() {
@@ -86,8 +86,8 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
                 const relative_y = player.soul.y - this.y;
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-                if (this.len + this.width * 14 / 6 > turned_y && turned_y > 0 && this.width > turned_x && turned_x > 0) {
-                    player.damage(2);
+                if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
+                    player.damage(1);
                 }
             }
 

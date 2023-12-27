@@ -2,7 +2,7 @@ import { Dict, Opt } from "./utils"
 type bool = boolean;
 
 type cLibT = {
-    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start", box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
+    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start",ex_width?:number, box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
     drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, alpha?: number, type?: string) => void;
     drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
@@ -67,7 +67,8 @@ type Self = {
     d: number,
     size: number,
     costume: string,
-    visible: boolean,
+    alpha: number;
+    width: number;
     stamp: () => void,
     move: (f: number) => void;
 };
@@ -77,17 +78,20 @@ class SpriteClass {
     d: number;
     size: number;
     costume: string;
-    visible: boolean;
+    alpha: number;
+    width: number;
     act_: undefined | ((self: Self) => void);
-    constructor(x: number, y: number, d: number = 0, size: number = 100, costume: string = "", visible: boolean = false, act?: (self: Self) => void) {
+    constructor(x: number, y: number, d: number = 0, size: number = 100, costume: string = "", alpha: number=0,width:number=1, act?: (self: Self) => void) {
         this.x = x;
         this.y = y;
         this.d = d;
         this.size = size;
         this.costume = costume;
-        this.visible = visible;
+        this.alpha = alpha;
+        this.width = width;
         this.act_ = act;
     }
+    
     stamp() {
     }
     move(far: number) {
