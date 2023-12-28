@@ -203,5 +203,10 @@
         "type": "audio",
         "name": "text",
         "src": "./assets/audios/text.wav"
+    },
+    {
+        "type": "audio",
+        "name": "heal",
+        "src": "./assets/audios/heal.wav"
     }
 ]

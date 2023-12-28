@@ -6,7 +6,7 @@ import { boneFnsGen } from "./bone";
 import { fontFnsGen, Plane as FontPlaneT } from "./font";
 import { BoxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
-import Game from "./game.json"
+import { Game } from "./game.json"
 
 export const main = async () => {
     const Core = await init(config);
@@ -114,24 +114,31 @@ export const main = async () => {
                             if (Core.inputKeys.f.z) choice.push(0);
                         } else if (choice[0] == 2) {
                             menu(Game.items)
-                            if (Core.inputKeys.f.z) choice.push(0);
+                            if (Core.inputKeys.f.z) {
+                                choice.push(0);
+                                const behavior = Game.items[choice[1]].behavior;
+                                if (behavior == "default") {
+                                    player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
+                                    Core.aLib.play("heal");
+                                } else behavior();
+                            };
                         } else if (choice[0] == 3) {
 
                         }
-                    }else if (choice.length == 3) {
+                    } else if (choice.length == 3) {
                         player.soul.alpha = 0;
 
                         if (choice[0] == 1) {
                             Font.write("*", 50, 205, 0, 200);
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
-                            } else {result.process()}
+                            } else { result.process() }
                             result.write();
                         } else if (choice[0] == 2) {
                             Font.write("*", 50, 205, 0, 200);
                             if (result === undefined) {
-                                result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
-                            } else {result.process()}
+                                result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
+                            } else { result.process() }
                             result.write();
                         } else if (choice[0] == 3) {
 
@@ -143,35 +150,35 @@ export const main = async () => {
                     player.soul.stamp()
                     hp_bar();
                 })
-            }{
-            //timer++;
-            //Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-            //switch (sub_scene) {
-            //    case "enemy_attack": {
-            //        if (Core.inputKeys.up) player.soul.y += 3.5;
-            //        if (Core.inputKeys.down) player.soul.y -= 3.5;
-            //        if (Core.inputKeys.right) player.soul.x += 3.5;
-            //        if (Core.inputKeys.left) player.soul.x -= 3.5;
-            //        box.judge();
-            //    } break;
-            //    case "command": {
-            //        if (Core.inputKeys.right) player.soul.x += 3.5;
-            //        if (Core.inputKeys.left) player.soul.x -= 3.5;
-            //    }
-            //}
-            //box.update();
-            //Bone.process();
-            //box.draw();
-            //Blaster.process();
-            //Font.process();
-            //test_f.write();
-            //Font.write("*", 50, 205, 0, 200);
-            //hp_bar();
-            //const command = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-            //[0, 1, 2, 3].forEach(i => { command(320 + (i - 1.5) * 155, 27, i, false) });
-            //player.soul.stamp();
-            //Core.cLib.stamp("back", 320, 240, 0, 100, 0.2);
-        }
+            } {
+                //timer++;
+                //Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                //switch (sub_scene) {
+                //    case "enemy_attack": {
+                //        if (Core.inputKeys.up) player.soul.y += 3.5;
+                //        if (Core.inputKeys.down) player.soul.y -= 3.5;
+                //        if (Core.inputKeys.right) player.soul.x += 3.5;
+                //        if (Core.inputKeys.left) player.soul.x -= 3.5;
+                //        box.judge();
+                //    } break;
+                //    case "command": {
+                //        if (Core.inputKeys.right) player.soul.x += 3.5;
+                //        if (Core.inputKeys.left) player.soul.x -= 3.5;
+                //    }
+                //}
+                //box.update();
+                //Bone.process();
+                //box.draw();
+                //Blaster.process();
+                //Font.process();
+                //test_f.write();
+                //Font.write("*", 50, 205, 0, 200);
+                //hp_bar();
+                //const command = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                //[0, 1, 2, 3].forEach(i => { command(320 + (i - 1.5) * 155, 27, i, false) });
+                //player.soul.stamp();
+                //Core.cLib.stamp("back", 320, 240, 0, 100, 0.2);
+            }
         };
     }
     {
