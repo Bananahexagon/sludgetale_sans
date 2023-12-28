@@ -128,6 +128,11 @@ export const main = async () => {
                             } else {result.process()}
                             result.write();
                         } else if (choice[0] == 2) {
+                            Font.write("*", 50, 205, 0, 200);
+                            if (result === undefined) {
+                                result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
+                            } else {result.process()}
+                            result.write();
                         } else if (choice[0] == 3) {
 
                         }
