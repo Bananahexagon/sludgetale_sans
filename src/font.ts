@@ -1,7 +1,7 @@
 import fontDataEn from "./data/font_en.json";
 import fontDataStatus from "./data/font_status.json";
 
-import { cLibT, inputKeysT } from "./lib/types";
+import { aLibT, cLibT, inputKeysT } from "./lib/types";
 
 
 type charDataT = {
@@ -14,11 +14,12 @@ type charDataT = {
 
 type FontDataT = typeof fontDataEn;
 
-export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
+export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     const fontData = {
         en: fontDataEn,
         status: fontDataStatus
     };
+    let current_id = 0;
     let displayDict: { [keys: string]: any } = {}
     class Font {
         name: string
@@ -66,7 +67,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                         return fontData.en;
                 }
             })(font)
-            displayDict[name] = this;
+            displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
             this.process();
         }
         write() {
@@ -94,7 +95,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                         cLib.stamp(this.font.props.name + "_" + e.color,
                             this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
                             this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
-                            this.direction, size, 1, "start",1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
+                            this.direction, size, 1, "start", 1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                         );
                         if (count + 1 < input_str_length) x += charData.width + this.font.props.width_basic + e.spacing_x;
                     }
@@ -150,7 +151,8 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
         speed: number;
         font: FontDataT;
         len_allow: number;
-        constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string) {
+        voice: string | undefined;
+        constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "en", voice?: string) {
             super(name);
             this.str_now = "";
             this.len_now = 0;
@@ -172,7 +174,8 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                 }
             })(font)
             this.len_allow = 0;
-            displayDict[name] = this;
+            displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
+            this.voice = voice;
             this.process();
         }
         write() {
@@ -192,12 +195,12 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
                 const charData: charDataT = charDataf(chars[i] as keyof FontDataT)
                 if (chars[i] == "\n") {
                     x = 0;
-                    y += this.font.props.height_basic + this.spacing_y;
+                    y -= this.font.props.height_basic + this.spacing_y;
                 } else {
                     cLib.stamp(this.font.props.name + "_" + (!this.color ? "white" : this.color),
                         this.x + (Math.cos(d) * x - Math.sin(d) * (y - charData.gap)) * size / 100,
                         this.y + (Math.sin(d) * x + Math.cos(d) * (y - charData.gap)) * size / 100,
-                        this.direction, size, 1, "start",1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
+                        this.direction, size, 1, "start", 1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                     );
                     if (i + 1 < chars.length) x += charData.width + this.font.props.width_basic + this.spacing_x;
                 };
@@ -207,17 +210,28 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
         process() {
             if (this.len_allow == this.str.length && inputKeys.z) {
                 delete displayDict[this.name];
-                return;
             } else if (inputKeys.x) {
-                this.len_allow = this.str.length
+                this.len_allow = this.str.length;
             } else if (this.len_allow < this.str.length) {
                 this.len_allow += 1 / this.speed;
             }
-            while (this.str_now.length < Math.min(this.len_allow, this.str.length)) {
-                this.str_now += this.str[this.str_now.length];
-            };
+            if (this.str_now.length < Math.min(this.len_allow, this.str.length)) {
+                let s = false;
+                while (this.str_now.length < Math.min(this.len_allow, this.str.length)) {
+                    this.str_now += this.str[this.str_now.length];
+                    s = s || this.str[this.str_now.length] !== " ";
+                };
+                this.voice && s && aLib.play(this.voice);
+            }
         }
     };
+
+    const write = (str: string, x: number, y: number, d: number, size: number, color: string = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "en") => {
+        const _ = new Plane("_", str, x, y, d, size, color, spacing_x, spacing_y, 0, font);
+        _.write();
+        _.delete();
+    };
+
 
     const process = () => {
         for (const name in displayDict) {
@@ -231,6 +245,7 @@ export const fontFnsGen = (cLib: cLibT, inputKeys: inputKeysT) => {
      *])
      */
     return {
+        write,
         Super,
         Plane,
         process,
@@ -267,8 +282,8 @@ const tmp = class Plane {
         this.font = undefined as unknown as FontDataT;
         this.len_allow = 0;
     }
-    write() {};
-    process() {};
-    delete() {};
+    write() { };
+    process() { };
+    delete() { };
 }
 export type Plane = typeof tmp;

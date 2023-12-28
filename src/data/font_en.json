@@ -303,7 +303,7 @@
         "up": 68,
         "width": 6,
         "height": 10,
-        "gap": 5
+        "gap": 2
     },
     "h": {
         "left": 80,
@@ -441,7 +441,7 @@
     "space": {
         "left": 0,
         "up": 0,
-        "width": 1,
+        "width": 6,
         "height": 1,
         "gap": 0
     },
@@ -499,7 +499,7 @@
         "up": 2,
         "width": 2,
         "height": 4,
-        "gap": -5
+        "gap": 0
     },
     "(": {
         "left": 80,
@@ -520,7 +520,7 @@
         "up": 4,
         "width": 8,
         "height": 5,
-        "gap": 0
+        "gap": 3
     },
     "+": {
         "left": 110,

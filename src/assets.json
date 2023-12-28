@@ -193,5 +193,15 @@
         "type": "audio",
         "name": "cursor_confirm",
         "src": "./assets/audios/cursor_confirm.wav"
+    },
+    {
+        "type": "audio",
+        "name": "talk_default",
+        "src": "./assets/audios/talk_default.wav"
+    },
+    {
+        "type": "audio",
+        "name": "text",
+        "src": "./assets/audios/text.wav"
     }
 ]
