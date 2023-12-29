@@ -199,7 +199,9 @@ export const main = async () => {
                 })
                 box.set(320, 160, 0, 562, 132)
             } else if (sub_scene == "enemy_attack") {
+                box.set(320, 160, 0, 132, 132)
                 let timer = 0;
+                let test_b = new Bone.normal(320,160,0,10,80,0,0,5,0,180);
                 await Core.for(0, i => i < Game.enemy_attack[0] && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     const soul_speed = Core.inputKeys.x ? 2 : 3.5;
@@ -208,8 +210,9 @@ export const main = async () => {
                     if (Core.inputKeys.right) player.soul.x += soul_speed;
                     if (Core.inputKeys.left) player.soul.x -= soul_speed;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-                    box.draw();
                     box.judge();
+                    Bone.process();
+                    box.draw();
                     enemy.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
