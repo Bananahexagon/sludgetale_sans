@@ -119,7 +119,7 @@ export const main = async () => {
                             choice[1]++;
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300);
                             Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300);
-                            if (Core.inputKeys.f.z) { choice.push(choice[1]); Core.aLib.play("slash") }
+                            if (Core.inputKeys.f.z) { choice.push(0); Core.aLib.play("slash") }
                         } else if (choice[0] == 1 && choice.length == 2) {
                             menu(Game.actions);
                             if (Core.inputKeys.f.z) choice.push(0);
