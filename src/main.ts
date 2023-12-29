@@ -50,7 +50,7 @@ export const main = async () => {
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
         //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         box.set(320, 160, 0, 562, 132);
-        const enemy = new Core.Sprite(300, 300, 0, 200, "enemy", 1);
+        const enemy = new Core.Sprite(310, 300, 0, 200, "enemy", 1);
         while (scene == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -59,7 +59,13 @@ export const main = async () => {
                 let command = 0;
                 let result: undefined | Plane = undefined;
                 await Core.while(() => sub_scene == "command" && (scene == "battle" && sub_scene == "command"), () => {
+
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                    box.draw();
+                    enemy.stamp();
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
+                    hp_bar();
                     if (choice.length == 0) {
                         if (Core.inputKeys.f.right) { command = (command + 1 + 4) % 4; Core.aLib.play("cursor_move"); }
                         if (Core.inputKeys.f.left) { command = (command - 1 + 4) % 4; Core.aLib.play("cursor_move"); }
@@ -140,9 +146,10 @@ export const main = async () => {
                         player.soul.alpha = 0;
                         if (choice[0] == 0) {
                             player.soul.alpha = 0;
-                            choice[1]++;
+                            choice[2]++;
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300);
-                            Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 4 % 2)}`, 80 + choice[2] * 5, 160, 0, 300);
+                            Core.cLib.stamp(`attack_bar_${Math.floor((choice[1] + choice[2]) / 4 % 2)}`, 80 + choice[1] * 5, 160, 0, 300);
+                            Core.cLib.stamp(`slash_${Math.floor(choice[2]/8) % 6}`, 320, 300, 0, 200)
                         }
                         else if (choice[0] == 1) {
                             if (result === undefined) {
@@ -162,16 +169,9 @@ export const main = async () => {
                                 result.write();
                                 Font.write("*", 50, 205, 0, 200);
                             } else sub_scene = "enemy_speak"
-                        } else if (choice[0] == 3) {
-
-                        }
+                        } else if (choice[0] == 3) { }
                     }
-                    box.draw();
-                    enemy.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
                     player.soul.stamp()
-                    hp_bar();
                 })
             } else if (sub_scene == "enemy_speak") {
                 player.soul.alpha = 1;

@@ -1,4 +1,6 @@
-[
+
+
+export default [
     {
         "type": "image",
         "name": "soul",
@@ -189,6 +191,48 @@
         "name": "attack_bar_1",
         "src": "./assets/images/attack_bar_1.png"
     },
+    {
+        "type": "image",
+        "name": "slash_0",
+        "src": "./assets/images/slash_0.png"
+    },
+    {
+        "type": "image",
+        "name": "slash_1",
+        "src": "./assets/images/slash_1.png"
+    },
+    {
+        "type": "image",
+        "name": "slash_2",
+        "src": "./assets/images/slash_2.png"
+    },
+    {
+        "type": "image",
+        "name": "slash_3",
+        "src": "./assets/images/slash_3.png"
+    },
+    {
+        "type": "image",
+        "name": "slash_4",
+        "src": "./assets/images/slash_4.png"
+    },
+    {
+        "type": "image",
+        "name": "slash_5",
+        "src": "./assets/images/slash_5.png"
+    },
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
     {
         "type": "audio",
         "name": "damage",
