@@ -180,6 +180,16 @@
         "src": "./assets/images/attack_gauge.png"
     },
     {
+        "type": "image",
+        "name": "attack_bar_0",
+        "src": "./assets/images/attack_bar_0.png"
+    },
+    {
+        "type": "image",
+        "name": "attack_bar_1",
+        "src": "./assets/images/attack_bar_1.png"
+    },
+    {
         "type": "audio",
         "name": "damage",
         "src": "./assets/audios/p_damage.wav"
@@ -228,5 +238,10 @@
         "type": "audio",
         "name": "heal",
         "src": "./assets/audios/heal.wav"
+    },
+    {
+        "type": "audio",
+        "name": "slash",
+        "src": "./assets/audios/slash.wav"
     }
 ]

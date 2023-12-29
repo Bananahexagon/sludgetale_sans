@@ -109,7 +109,11 @@ export const main = async () => {
                             Core.aLib.play("cursor_move");
                         }
                         if (choice[0] == 0) {
-                            //TODO
+                            player.soul.alpha = 0;
+                            choice[1]++;
+                            Core.cLib.stamp("attack_gauge", 320, 160, 0, 300);
+                            Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300);
+                            if (Core.inputKeys.f.z) { choice.push(choice[1]); Core.aLib.play("slash") }
                         } else if (choice[0] == 1 && choice.length == 2) {
                             menu(Game.actions);
                             if (Core.inputKeys.f.z) choice.push(0);
@@ -134,7 +138,13 @@ export const main = async () => {
                         }
                     } else if (choice.length == 3) {
                         player.soul.alpha = 0;
-                        if (choice[0] == 1) {
+                        if (choice[0] == 0) {
+                            player.soul.alpha = 0;
+                            choice[1]++;
+                            Core.cLib.stamp("attack_gauge", 320, 160, 0, 300);
+                            Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 4 % 2)}`, 80 + choice[2] * 5, 160, 0, 300);
+                        }
+                        else if (choice[0] == 1) {
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
                             } else { result.process() }
