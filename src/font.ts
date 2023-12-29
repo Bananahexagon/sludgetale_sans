@@ -152,6 +152,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         font: FontDataT;
         len_allow: number;
         voice: string | undefined;
+        promise: Promise<void>;
+        solved: boolean;
+        resolve: (value: void | PromiseLike<void>) => void;
         constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "en", voice?: string) {
             super(name);
             this.str_now = "";
@@ -176,6 +179,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             this.len_allow = 0;
             displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
             this.voice = voice;
+            this.resolve = () => { };
+            this.promise = (() => new Promise((resolve) => { this.resolve = resolve }))();
+            this.solved = false;
             this.process();
         }
         write() {
@@ -208,7 +214,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             return this;
         };
         process() {
-            if (this.len_allow == this.str.length && inputKeys.z) {
+            if (this.str.length <= this.len_allow && inputKeys.z) {
+                this.resolve();
+                this.solved = true;
                 delete displayDict[this.name];
             } else if (inputKeys.x) {
                 this.len_allow = this.str.length;

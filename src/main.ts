@@ -50,6 +50,7 @@ export const main = async () => {
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
         //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         box.set(320, 160, 0, 562, 132);
+        const enemy = new Core.Sprite(300, 300, 0, 200, "enemy", 1);
         while (scene == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -57,7 +58,7 @@ export const main = async () => {
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
-                await Core.while(() => sub_scene == "command", () => {
+                await Core.while(() => sub_scene == "command" && (scene == "battle" && sub_scene == "command"), () => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     if (choice.length == 0) {
                         if (Core.inputKeys.f.right) { command = (command + 1 + 4) % 4; Core.aLib.play("cursor_move"); }
@@ -108,7 +109,7 @@ export const main = async () => {
                             Core.aLib.play("cursor_move");
                         }
                         if (choice[0] == 0) {
-
+                            //TODO
                         } else if (choice[0] == 1 && choice.length == 2) {
                             menu(Game.actions);
                             if (Core.inputKeys.f.z) choice.push(0);
@@ -123,62 +124,103 @@ export const main = async () => {
                                 } else behavior();
                             };
                         } else if (choice[0] == 3) {
-
+                            if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
+                            if (Core.inputKeys.f.z) sub_scene = "enemy_speak";
+                            [0, 1].forEach(i => {
+                                if (i != choice[1]) Font.write("*", 50, 205 - i * 40, 0, 200);
+                                Font.write(`${["Spare", "Quit"][i]}`, 80, 205 - i * 40, 0, 200);
+                            });
+                            [player.soul.x, player.soul.y] = [55, 195 - choice[1] * 40];
                         }
                     } else if (choice.length == 3) {
                         player.soul.alpha = 0;
-
                         if (choice[0] == 1) {
-                            Font.write("*", 50, 205, 0, 200);
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
                             } else { result.process() }
-                            result.write();
+                            if (!result.solved) {
+                                result.write();
+                                Font.write("*", 50, 205, 0, 200);
+                            } else sub_scene = "enemy_speak"
                         } else if (choice[0] == 2) {
-                            Font.write("*", 50, 205, 0, 200);
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
-                            } else { result.process() }
-                            result.write();
+                            } else {
+                                result.process();
+                            }
+                            if (!result.solved) {
+                                result.write();
+                                Font.write("*", 50, 205, 0, 200);
+                            } else sub_scene = "enemy_speak"
                         } else if (choice[0] == 3) {
 
                         }
                     }
                     box.draw();
+                    enemy.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
                     player.soul.stamp()
                     hp_bar();
                 })
-            } {
-                //timer++;
-                //Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-                //switch (sub_scene) {
-                //    case "enemy_attack": {
-                //        if (Core.inputKeys.up) player.soul.y += 3.5;
-                //        if (Core.inputKeys.down) player.soul.y -= 3.5;
-                //        if (Core.inputKeys.right) player.soul.x += 3.5;
-                //        if (Core.inputKeys.left) player.soul.x -= 3.5;
-                //        box.judge();
-                //    } break;
-                //    case "command": {
-                //        if (Core.inputKeys.right) player.soul.x += 3.5;
-                //        if (Core.inputKeys.left) player.soul.x -= 3.5;
-                //    }
-                //}
-                //box.update();
-                //Bone.process();
-                //box.draw();
-                //Blaster.process();
-                //Font.process();
-                //test_f.write();
-                //Font.write("*", 50, 205, 0, 200);
-                //hp_bar();
-                //const command = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-                //[0, 1, 2, 3].forEach(i => { command(320 + (i - 1.5) * 155, 27, i, false) });
-                //player.soul.stamp();
-                //Core.cLib.stamp("back", 320, 240, 0, 100, 0.2);
-            }
+            } else if (sub_scene == "enemy_speak") {
+                player.soul.alpha = 1;
+                let timer = 0;
+                [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
+                const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, "en", "talk_default");
+                await Core.while(() => sub_scene == "enemy_speak" && (scene == "battle" && sub_scene == "enemy_speak"), () => {
+                    timer++;
+                    const ratio = Math.min(timer / 30, 1);
+                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                    box.set(320, 160, 0, 132 * ratio + 562 * (1 - ratio), 132)
+                    box.draw();
+                    enemy.stamp();
+                    Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
+                    player.soul.stamp();
+                    hp_bar();
+                    quote.process();
+                    if (!(quote.solved && ratio == 1)) {
+                        quote.write();
+                    } else {
+                        sub_scene = "enemy_attack"
+                    }
+                })
+                box.set(320, 160, 0, 562, 132)
+            } else if (sub_scene == "enemy_attack") {
+                let timer = 0;
+                await Core.for(0, i => i < Game.enemy_attack[0] && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
+                    timer++;
+                    const soul_speed = Core.inputKeys.x ? 2 : 3.5;
+                    if (Core.inputKeys.up) player.soul.y += soul_speed;
+                    if (Core.inputKeys.down) player.soul.y -= soul_speed;
+                    if (Core.inputKeys.right) player.soul.x += soul_speed;
+                    if (Core.inputKeys.left) player.soul.x -= soul_speed;
+                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                    box.draw();
+                    box.judge();
+                    enemy.stamp();
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
+                    player.soul.stamp();
+                    hp_bar();
+                })
+                await Core.for(0, i => i < 30 && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
+                    const ratio = Math.min(i / 30, 1);
+                    box.set(320, 160, 0, 562 * ratio + 132 * (1 - ratio), 132)
+                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                    box.draw();
+                    box.judge();
+                    enemy.stamp();
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
+                    player.soul.stamp();
+                    hp_bar();
+                })
+                box.set(320, 160, 0, 132, 132)
+                sub_scene = "command";
+            } else throw new Error()
         };
     }
     {

@@ -10,10 +10,10 @@ export const frameLibGen = (b_tick:()=>void,a_tick:()=>void) => {
             fW(condition, proc, resolve);
         })
     }
-    const fF = (condition: number, proc: (arg: number) => void, i: number, resolve: () => void) => {
-        if (i < condition) { b_tick(); proc(i); a_tick(); requestAnimationFrame(() => fF(condition, proc, i + 1, resolve)) } else {resolve()}
+    const fF = (condition: (arg:number)=>boolean, proc: (arg: number) => void, i: number, resolve: () => void) => {
+        if (condition(i)) { b_tick(); proc(i); a_tick(); requestAnimationFrame(() => fF(condition, proc, i + 1, resolve)) } else {resolve()}
     }
-    const frameFor = (condition: number, proc: (arg: number) => void, i: number = 0): Promise<void> => {
+    const frameFor = ( i: number,condition: (arg:number)=>boolean, proc: (arg: number) => void): Promise<void> => {
         return new Promise((resolve) => {
             fF(condition, proc, i, resolve);
         })

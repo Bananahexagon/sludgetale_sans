@@ -2,14 +2,14 @@ import { Dict, Opt } from "./utils"
 type bool = boolean;
 
 type cLibT = {
-    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start",ex_width?:number, box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
+    stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start", ex_width?: number, box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
     drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, alpha?: number, type?: string) => void;
     drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
 }
 
 type aLibT = {
-    play: (name: string, delay?: number, gain?:number) => void;
+    play: (name: string, delay?: number, gain?: number) => void;
     tick: () => void;
 }
 
@@ -46,7 +46,7 @@ type CoreT = {
     aLib: aLibT,
     Sprite: SpriteClassT,
     while: (condition: () => boolean, proc: () => void) => Promise<void>,
-    for: (condition: number, proc: (arg: number) => void, i: number) => Promise<void>,
+    for: (i: number, condition: (arg: number) => boolean, proc: (arg: number) => void) => Promise<void>,
     loop: (proc: () => void) => void,
 }
 
@@ -81,7 +81,7 @@ class SpriteClass {
     alpha: number;
     width: number;
     act_: undefined | ((self: Self) => void);
-    constructor(x: number, y: number, d: number = 0, size: number = 100, costume: string = "", alpha: number=0,width:number=1, act?: (self: Self) => void) {
+    constructor(x: number, y: number, d: number = 0, size: number = 100, costume: string = "", alpha: number = 0, width: number = 1, act?: (self: Self) => void) {
         this.x = x;
         this.y = y;
         this.d = d;
@@ -91,7 +91,7 @@ class SpriteClass {
         this.width = width;
         this.act_ = act;
     }
-    
+
     stamp() {
     }
     move(far: number) {
