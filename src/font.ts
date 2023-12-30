@@ -1,5 +1,6 @@
 import fontDataEn from "./data/font_en.json";
 import fontDataStatus from "./data/font_status.json";
+import fontDataDamage from "./data/font_damage.json";
 
 import { aLibT, cLibT, inputKeysT } from "./lib/types";
 
@@ -17,7 +18,8 @@ type FontDataT = typeof fontDataEn;
 export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     const fontData = {
         en: fontDataEn,
-        status: fontDataStatus
+        status: fontDataStatus,
+        damage: fontDataDamage
     };
     let current_id = 0;
     let displayDict: { [keys: string]: any } = {}
@@ -172,6 +174,8 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
                 switch (f) {
                     case "status":
                         return fontData.status;
+                    case "damage":
+                        return fontData.damage as FontDataT;
                     default:
                         return fontData.en;
                 }

@@ -1,5 +1,15 @@
 export const Game = {
-    enemy_name: "dummy",
+    bgm: "megalovania",
+    player: {
+        attack: 2500,
+        lv: 19,
+        hp_max:92,
+    },
+    enemy: {
+        x: 310,
+        y: 320,
+        name: "dummy"
+    },
     items: [
         {
             name: "test_food",

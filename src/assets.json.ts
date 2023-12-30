@@ -221,6 +221,11 @@ export default [
         "name": "slash_5",
         "src": "./assets/images/slash_5.png"
     },
+    {
+        "type": "image",
+        "name": "damage_red",
+        "src": "./assets/images/font/damage_red.png"
+    },
     //
     //
     //
@@ -287,5 +292,15 @@ export default [
         "type": "audio",
         "name": "slash",
         "src": "./assets/audios/slash.wav"
+    },
+    {
+        "type": "audio",
+        "name": "e_damage",
+        "src": "./assets/audios/e_damage.wav"
+    },
+    {
+        "type": "audio",
+        "name": "megalovania",
+        "src": "./assets/audios/megalovania.wav"
     }
 ]

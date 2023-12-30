@@ -28,8 +28,9 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         private age: number;
         private id: number;
         private b_width: number;
+        private life: number;
         constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number) {
-            super(x, y, d, width, undefined, 1,1);
+            super(x, y, d, width, undefined, 1, 1);
             this.start_x = x;
             this.start_y = y;
             this.start_d = d;
@@ -42,6 +43,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.age = 0;
             this.id = normalBone.current_id;
             this.b_width = width;
+            this.life = life;
             boneDict[this.id] = this;
             normalBone.current_id++;
         }
@@ -62,7 +64,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             cLib.drawRect(
                 this.x + sin360(this.d) * this.b_width * 6 / 6,
                 this.y + cos360(this.d) * this.b_width * 6 / 6,
-                   this.b_width, this.len + this.b_width * 2 / 6, "white", this.d, 1,"start"
+                this.b_width, this.len + this.b_width * 2 / 6, "white", this.d, 1, "start"
             );
             cLib.stamp("bone_head_white",
                 this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
@@ -94,10 +96,13 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         }
         public static process() {
             for (const id in boneDict) {
-                const bone = boneDict[id];
-                bone.move_self();
-                bone.draw();
-                bone.judge();
+                const bone = boneDict[id] as normalBone;
+                if (bone.age < bone.life) {
+                    bone.move_self();
+                    bone.draw();
+                    bone.judge();
+                }
+                else delete boneDict[id];
             }
         }
         private static current_id = 0;

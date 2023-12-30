@@ -1,0 +1,84 @@
+{
+    "props": {
+        "height_basic": 5,
+        "width_basic": 1,
+        "name": "damage"
+    },
+    "0": {
+        "left": 0,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "1": {
+        "left": 8,
+        "up": 0,
+        "width": 4,
+        "height": 7,
+        "gap": 0
+    },
+    "2": {
+        "left": 13,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "3": {
+        "left": 21,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "4": {
+        "left": 29,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "5": {
+        "left": 37,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "6": {
+        "left": 45,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "7": {
+        "left": 53,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "8": {
+        "left": 61,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "9": {
+        "left": 69,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    },
+    "irregular": {
+        "left": 77,
+        "up": 0,
+        "width": 7,
+        "height": 7,
+        "gap": 0
+    }
+}
