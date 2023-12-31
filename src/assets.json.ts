@@ -226,6 +226,11 @@ export default [
         "name": "damage_red",
         "src": "./assets/images/font/damage_red.png"
     },
+    {
+        "type": "image",
+        "name": "damage_miss",
+        "src": "./assets/images/damage_miss.png"
+    },
     //
     //
     //
@@ -302,5 +307,10 @@ export default [
         "type": "audio",
         "name": "megalovania",
         "src": "./assets/audios/megalovania.wav"
+    },
+    {
+        "type": "audio",
+        "name": "dust",
+        "src": "./assets/audios/dust.wav"
     }
 ]

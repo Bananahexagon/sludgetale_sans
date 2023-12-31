@@ -1,5 +1,5 @@
 export const Game = {
-    bgm: "megalovania",
+    bgm: undefined as string|undefined,
     player: {
         attack: 2500,
         lv: 19,
@@ -8,7 +8,8 @@ export const Game = {
     enemy: {
         x: 310,
         y: 320,
-        name: "dummy"
+        name: "dummy",
+        hp: 1000,
     },
     items: [
         {

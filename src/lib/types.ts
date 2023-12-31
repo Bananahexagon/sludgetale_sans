@@ -3,7 +3,7 @@ type bool = boolean;
 
 type cLibT = {
     stamp: (name: string, dx: number, dy: number, dd?: number, size?: number, alpha?: number, align?: "center" | "start", ex_width?: number, box?: { left: number, top: number, width: number, height: number, }, absolute?: boolean) => void;
-    drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, alpha?: number, type?: string) => void;
+    drawRect: (dx: number, dy: number, width: number, height: number, color: string, direction?: number, alpha?: number, type?: "center++"| "center" | "start") => void;
     drawLine: (lx: number, ly: number, d: number, len: number, width: number, color: string, type?: number) => void;
     drawText: (tx: string, lx: number, ly: number, size: number, color: string, font?: string, align?: "left" | "right" | "center" | "start" | "end") => void;
 }

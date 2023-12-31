@@ -38,10 +38,17 @@ export const main = async () => {
             if (this.hp <= 0) {
                 scene = "game_over";
             }
+        },
+        move() {
+            const soul_speed = Core.inputKeys.x ? 1 : 2.5;
+            if (Core.inputKeys.up) this.soul.y += soul_speed;
+            if (Core.inputKeys.down) this.soul.y -= soul_speed;
+            if (Core.inputKeys.right) this.soul.x += soul_speed;
+            if (Core.inputKeys.left) this.soul.x -= soul_speed;
         }
     };
     {
-        Core.aLib.play(Game.bgm);setInterval(()=>Core.aLib.play(Game.bgm),Core.Audios[Game.bgm].data.duration*1000);
+        if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
@@ -51,7 +58,11 @@ export const main = async () => {
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
         //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         box.set(320, 160, 0, 562, 132);
-        const enemy = new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, 200, "enemy", 1);
+        const enemy = {
+            s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, 200, "enemy", 1),
+            hp: Game.enemy.hp,
+            hp_max: Game.enemy.hp,
+        };
         while (scene == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -63,7 +74,7 @@ export const main = async () => {
 
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
-                    enemy.stamp();
+                    enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
                     hp_bar();
@@ -86,6 +97,10 @@ export const main = async () => {
                         if (choice[0] == 0 || choice[0] == 1) {
                             Font.write(`${Game.enemy.name}`, 80, 205, 0, 200);
                             [player.soul.x, player.soul.y] = [55, 195];
+                        }
+                        if (choice[0] == 0) {
+                            Core.cLib.drawRect(220, 185, 80, 20, "#ff0000", 0, 1, "start")
+                            Core.cLib.drawRect(220, 185, enemy.hp / enemy.hp_max * 80, 20, "#4dff5e", 0, 1, "start")
                         }
                     } else if (choice.length == 2) {
                         const menu = (v: { name: string }[]) => {
@@ -118,16 +133,23 @@ export const main = async () => {
                         if (choice[0] == 0) {
                             player.soul.alpha = 0;
                             choice[1]++;
-                            Core.cLib.stamp("attack_gauge", 320, 160, 0, 300);
-                            Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300);
-                            if (Core.inputKeys.f.z) {
+                            const ratio = 1 - Math.min(20, Math.max(0, choice[1] - 96)) / 20;
+                            if (choice[1] < 96 && Core.inputKeys.f.z) {
                                 choice.push(0);
                                 choice.push(Math.floor(
-                                    Game.player.attack * (1 - + Math.abs(choice[1] - 48) * 0.5 / 48) * (1 + (Math.random() - 0.5) / 10)
+                                    Game.player.attack * (1 - Math.abs(choice[1] - 48) * 0.8 / 48) * (1 + (Math.random() - 0.5) / 10)
                                 ));
-                                console.log(choice[3])
+                                enemy.hp -= choice[3];
                                 Core.aLib.play("slash")
                             }
+                            if (96 <= choice[1] && choice[1] < 156) {
+                                const jump = Math.max(0, -(choice[1] - 96) * (choice[1] - 126) / 5);
+                                Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)
+                            } else if (choice[1] == 156) {
+                                sub_scene = "enemy_speak"
+                            }
+                            Core.cLib.stamp("attack_gauge", 320, 160, 0, 300, ratio, "center", ratio);
+                            Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300, ratio);
                         } else if (choice[0] == 1 && choice.length == 2) {
                             menu(Game.actions);
                             if (Core.inputKeys.f.z) choice.push(0);
@@ -153,6 +175,7 @@ export const main = async () => {
                     } else if (choice.length == 3) {
                         if (choice[0] == 0) throw new Error();
                         else if (choice[0] == 1) {
+                            player.soul.alpha = 0;
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
                             } else { result.process() }
@@ -161,6 +184,7 @@ export const main = async () => {
                                 Font.write("*", 50, 205, 0, 200);
                             } else sub_scene = "enemy_speak"
                         } else if (choice[0] == 2) {
+                            player.soul.alpha = 0;
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, "en", "text");
                             } else {
@@ -175,15 +199,25 @@ export const main = async () => {
                         if (choice[0] == 0) {
                             player.soul.alpha = 0;
                             if (choice[2] < 48) Core.cLib.stamp(`slash_${Math.floor(choice[2] / 8) % 6}`, 320, 300, 0, 200)
-                            else if (choice[2] == 48) Core.aLib.play("e_damage")
+                            else if (choice[2] == 48 && 1 <= choice[3]) Core.aLib.play("e_damage")
                             if (48 <= choice[2] && choice[2] < 108) {
-                                const px = (`${choice[3]}`.length * 8) - ((`${choice[3]}`.match(/1/) ?? []).length * 3) - 1
-                                Font.write(`${choice[3]}`, Game.enemy.x - px * 2, Game.enemy.y, 0, 400, "red", 0, 0, "damage");
-                                const ratio = ((107 - choice[2]) ** 6) / (60 ** 6);
-                                enemy.x = Game.enemy.x + (choice[2] % 2 * 2 - 1) * ratio * 20;
+                                if (1 <= choice[3]) {
+                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, 120, 20, "#ff0000", 0, 1, "start")
+                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, Math.max(0, enemy.hp / enemy.hp_max * 120), 20, "#4dff5e", 0, 1, "start")
+                                    const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
+                                    const px = (`${choice[3]}`.length * 8) - ((`${choice[3]}`.match(/1/) ?? []).length * 3) - 1
+                                    Font.write(`${choice[3]}`, Game.enemy.x - px * 2, Game.enemy.y + 20 + jump, 0, 400, "red", 0, 0, "damage");
+                                    const ratio = ((107 - choice[2]) ** 6) / (60 ** 6);
+                                    enemy.s.x = Game.enemy.x + (choice[2] % 2 * 2 - 1) * ratio * 20;
+                                    if (enemy.hp <= 0 && choice[2] == 93) Core.aLib.play("dust")
+                                } else {
+                                    const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
+                                    Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)
+                                }
                             };
+                            enemy.s.alpha = 0 < enemy.hp ? 1 : 1 - Math.min(1, Math.max(choice[2] - 93, 0) / 25);
                             if (choice[2] == 128) {
-                                sub_scene="enemy_speak"
+                                sub_scene = enemy.hp <= 0 ? "clear" : "enemy_speak";
                             };
                             const ratio = 1 - Math.min(20, Math.max(0, choice[2] - 108)) / 20;
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300, ratio, "center", ratio);
@@ -191,7 +225,8 @@ export const main = async () => {
                             choice[2]++;
                         }
                     }
-                    player.soul.stamp()
+                    player.soul.stamp();
+
                 })
             } else if (sub_scene == "enemy_speak") {
                 player.soul.alpha = 1;
@@ -199,12 +234,13 @@ export const main = async () => {
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
                 const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, "en", "talk_default");
                 await Core.while(() => sub_scene == "enemy_speak" && (scene == "battle" && sub_scene == "enemy_speak"), () => {
+                    player.move()
                     timer++;
-                    const ratio = Math.min(timer / 30, 1);
+                    const ratio = 1 - Math.max(1 - timer / 15, 0) ** 4;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.set(320, 160, 0, 132 * ratio + 562 * (1 - ratio), 132)
                     box.draw();
-                    enemy.stamp();
+                    enemy.s.stamp();
                     Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
@@ -224,37 +260,39 @@ export const main = async () => {
                 let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180);
                 await Core.for(0, i => i < Game.enemy_attack[0] && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
-                    const soul_speed = Core.inputKeys.x ? 2 : 3.5;
-                    if (Core.inputKeys.up) player.soul.y += soul_speed;
-                    if (Core.inputKeys.down) player.soul.y -= soul_speed;
-                    if (Core.inputKeys.right) player.soul.x += soul_speed;
-                    if (Core.inputKeys.left) player.soul.x -= soul_speed;
+                    player.move()
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.judge();
                     Bone.process();
                     box.draw();
-                    enemy.stamp();
+                    enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     player.soul.stamp();
                     hp_bar();
                 })
-                Bone.boneDict={};
-                Blaster.gbDict={};
-                await Core.for(0, i => i < 30 && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
-                    const ratio = Math.min(i / 30, 1);
+                Bone.boneDict = {};
+                Blaster.gbDict = {};
+                await Core.for(0, i => i < 15 && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
+                    const ratio = 1 - Math.max(1 - (i + 1) / 15, 0) ** 4;
+                    player.move()
                     box.set(320, 160, 0, 562 * ratio + 132 * (1 - ratio), 132)
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     box.judge();
-                    enemy.stamp();
+                    enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     player.soul.stamp();
                     hp_bar();
                 })
-                box.set(320, 160, 0, 562, 132)
                 sub_scene = "command";
+            } else if (sub_scene == "clear") {
+                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                box.draw();
+                const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("commands", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
+                hp_bar();
             } else throw new Error()
         };
     }
