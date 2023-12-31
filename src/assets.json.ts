@@ -33,6 +33,36 @@ export default [
     },
     {
         "type": "image",
+        "name": "dt_jp_white",
+        "src": "./assets/images/font/dt_jp_white.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_jp_red",
+        "src": "./assets/images/font/dt_jp_red.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_jp_orange",
+        "src": "./assets/images/font/dt_jp_orange.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_jp_blue",
+        "src": "./assets/images/font/dt_jp_blue.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_jp_yellow",
+        "src": "./assets/images/font/dt_jp_yellow.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_jp_black",
+        "src": "./assets/images/font/dt_jp_black.png"
+    },
+    {
+        "type": "image",
         "name": "determination_white",
         "src": "./assets/images/font/determination_white.png"
     },

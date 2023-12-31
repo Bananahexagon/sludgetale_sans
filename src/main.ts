@@ -19,9 +19,8 @@ export const main = async () => {
             if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
             if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
             Core.cLib.stamp("soul", 220, -cursor * 50 + 240);
-            const tmp = new Font.Plane("_", "play", 270, 250, 0, 200, "yellow", 0, 0, 0, "en");
-            tmp.write();
-            tmp.delete();
+            //Font.write("play", 270, 250, 0, 200, "yellow", 0, 0, "en");
+            Font.write("こんにちは世界Hello", 270, 250, 0, 200, "white", 0, 0, "jp");
             if (Core.inputKeys.f.z) { scene = "battle"; Core.aLib.play("cursor_confirm") }
         });
     }
