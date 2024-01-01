@@ -1,4 +1,5 @@
 export const Game = {
+    lang: "ja" as "ja" | "en",
     bgm: undefined as string|undefined,
     player: {
         attack: 2500,
@@ -23,6 +24,7 @@ export const Game = {
     enemy_attack:[300],
     actions: [
         { name: "check", text: "Dummy 0 ATK 0 DEF\ntest enemy." }
-    ]
+    ],
+    clear_text: "お前の勝ちだ!!You win!!!おめでとう!!!"
 }
 

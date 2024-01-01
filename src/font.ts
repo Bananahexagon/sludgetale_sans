@@ -1,7 +1,9 @@
+import { Game } from "./game.json";
+
 import fontDataEn from "./data/font_en.json";
 import fontDataStatus from "./data/font_status.json";
 import fontDataDamage from "./data/font_damage.json";
-import fontDataJp from "./data/font_jp.json";
+import fontDataJa from "./data/font_ja.json";
 
 import { aLibT, cLibT, inputKeysT } from "./lib/types";
 
@@ -21,7 +23,7 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         en: fontDataEn,
         status: fontDataStatus,
         damage: fontDataDamage,
-        jp: fontDataJp
+        ja: fontDataJa
     };
     let current_id = 0;
     let displayDict: { [keys: string]: any } = {}
@@ -178,10 +180,13 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
                         return fontData.status;
                     case "damage":
                         return fontData.damage as FontDataT;
+                    case "ja":
                     case "jp":
-                        return fontData.jp as unknown as FontDataT;
-                    default:
+                        return fontData.ja as unknown as FontDataT;
+                    case "en":
                         return fontData.en;
+                    default:
+                        return fontData[Game.lang]as unknown as FontDataT;
                 }
             })(font)
             this.len_allow = 0;
@@ -198,25 +203,25 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             const d = this.direction * Math.PI / 180;
             let x, y;
             [x, y] = [0, 0];
-            const charDataf = ((c: string): [charDataT,string] => {
-                if (this.font.props.name = "dt_jp") {
+            const charDataf = ((c: string): [charDataT, string] => {
+                if (this.font.props.name == "dt_ja") {
                     if (c in fontDataEn) {
                         return [fontDataEn[c as keyof FontDataT] as unknown as charDataT, "determination"];
-                    } else if (c in fontDataJp) {
-                        return [fontDataJp[c as keyof typeof fontDataJp] as unknown as charDataT, "dt_jp"];
+                    } else if (c in fontDataJa) {
+                        return [fontDataJa[c as keyof typeof fontDataJa] as unknown as charDataT, "dt_ja"];
                     } else {
                         return [fontDataEn.space, "determination"]
                     }
                 } else {
                     if (c in this.font) {
-                        return [this.font[c as keyof FontDataT] as unknown as charDataT, this.font.props.name];
+                        return [this.font[c as keyof FontDataT] as charDataT, this.font.props.name];
                     } else {
                         return [this.font.space, this.font.props.name];
                     }
                 }
             })
             for (let i = 0; i < chars.length; i++) {
-                const [charData,fn] = charDataf(chars[i] as keyof FontDataT)
+                const [charData, fn] = charDataf(chars[i])
                 if (chars[i] == "\n") {
                     x = 0;
                     y -= this.font.props.height_basic + this.spacing_y;

@@ -13,8 +13,13 @@ export default [
     },
     {
         "type": "image",
-        "name": "commands",
-        "src": "./assets/images/commands.png"
+        "name": "cmd_en",
+        "src": "./assets/images/cmd_en.png"
+    },
+    {
+        "type": "image",
+        "name": "cmd_ja",
+        "src": "./assets/images/cmd_ja.png"
     },
     {
         "type": "image",
@@ -33,33 +38,33 @@ export default [
     },
     {
         "type": "image",
-        "name": "dt_jp_white",
-        "src": "./assets/images/font/dt_jp_white.png"
+        "name": "dt_ja_white",
+        "src": "./assets/images/font/dt_ja_white.png"
     },
     {
         "type": "image",
-        "name": "dt_jp_red",
-        "src": "./assets/images/font/dt_jp_red.png"
+        "name": "dt_ja_red",
+        "src": "./assets/images/font/dt_ja_red.png"
     },
     {
         "type": "image",
-        "name": "dt_jp_orange",
-        "src": "./assets/images/font/dt_jp_orange.png"
+        "name": "dt_ja_orange",
+        "src": "./assets/images/font/dt_ja_orange.png"
     },
     {
         "type": "image",
-        "name": "dt_jp_blue",
-        "src": "./assets/images/font/dt_jp_blue.png"
+        "name": "dt_ja_blue",
+        "src": "./assets/images/font/dt_ja_blue.png"
     },
     {
         "type": "image",
-        "name": "dt_jp_yellow",
-        "src": "./assets/images/font/dt_jp_yellow.png"
+        "name": "dt_ja_yellow",
+        "src": "./assets/images/font/dt_ja_yellow.png"
     },
     {
         "type": "image",
-        "name": "dt_jp_black",
-        "src": "./assets/images/font/dt_jp_black.png"
+        "name": "dt_ja_black",
+        "src": "./assets/images/font/dt_ja_black.png"
     },
     {
         "type": "image",
