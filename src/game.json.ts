@@ -9,23 +9,23 @@ export const Game = {
     enemy: {
         x: 310,
         y: 320,
-        name: "dummy",
-        hp: 1000,
+        name: "サンズモドキ",
+        hp: 10000,
     },
     items: [
         {
-            name: "test_food",
-            heal: 99,
-            text: "You ate a test.",
+            name: "腐ったパン",
+            heal: -20,
+            text: "パンはパンでも食べられないパンはな～んだ",
             behavior: "default" as "default" | (() => void),
         }
     ],
-    enemy_speak: ["Lorem Ipsum dolor sit\namet."],
+    enemy_speak: ["街並みをやがて"],
     enemy_attack: [300],
     actions: [
-        { name: "check", text: "Dummy 0 ATK 0 DEF\ntest enemy." },
+        { name: "しらべる", text: "サンズモドキ 0 ATK 0 DEF\nサンズに似てる。なんだろうね？これ" },
         { name: "悪鬼滅殺", text: "？？？「鬼滅の刃のパクリじゃーん！」" }
     ],
-    clear_text: "お前の勝ちだ!!You win!!!おめでとう!!!"
+    clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!"
 }
 

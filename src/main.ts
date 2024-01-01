@@ -72,7 +72,7 @@ export const main = async () => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     enemy.s.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
                     hp_bar();
                     if (choice.length == 0) {
@@ -96,8 +96,8 @@ export const main = async () => {
                             [player.soul.x, player.soul.y] = [55, 195];
                         }
                         if (choice[0] == 0) {
-                            Core.cLib.drawRect(220, 185, 80, 20, "#ff0000", 0, 1, "start")
-                            Core.cLib.drawRect(220, 185, enemy.hp / enemy.hp_max * 80, 20, "#4dff5e", 0, 1, "start")
+                            Core.cLib.drawRect(280, 185, 80, 20, "#ff0000", 0, 1, "start")
+                            Core.cLib.drawRect(280, 185, enemy.hp / enemy.hp_max * 80, 20, "#4dff5e", 0, 1, "start")
                         }
                     } else if (choice.length == 2) {
                         const menu = (v: { name: string }[]) => {
@@ -239,7 +239,7 @@ export const main = async () => {
                     box.draw();
                     enemy.s.stamp();
                     Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     player.soul.stamp();
                     hp_bar();
@@ -263,7 +263,7 @@ export const main = async () => {
                     Bone.process();
                     box.draw();
                     enemy.s.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     player.soul.stamp();
                     hp_bar();
@@ -278,7 +278,7 @@ export const main = async () => {
                     box.draw();
                     box.judge();
                     enemy.s.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     player.soul.stamp();
                     hp_bar();
@@ -289,7 +289,7 @@ export const main = async () => {
                 await Core.loop(() => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     hp_bar();
                     Font.write("*", 50, 205, 0, 200);
