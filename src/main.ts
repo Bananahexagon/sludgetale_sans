@@ -52,7 +52,7 @@ export const main = async () => {
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Box = BoxFnsGen(Core.cLib, player.soul);
         const box = Box.box;
-        const hp_bar = hp_bar_gen(Core.cLib, Font.Plane, player);
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player);
         //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
         //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         box.set(320, 160, 0, 562, 132);
@@ -64,12 +64,11 @@ export const main = async () => {
         while (scene == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", "You feel like you're going to\nhave a bad time.", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, "text");
+                const txt = new Font.Plane("_", "You feel like you're going to\nhave a bad time.", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
                 await Core.while(() => sub_scene == "command" && (scene == "battle" && sub_scene == "command"), () => {
-
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     enemy.s.stamp();
@@ -175,7 +174,7 @@ export const main = async () => {
                         else if (choice[0] == 1) {
                             player.soul.alpha = 0;
                             if (result === undefined) {
-                                result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, "text");
+                                result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
                             } else { result.process() }
                             if (!result.solved) {
                                 result.write();
@@ -184,7 +183,7 @@ export const main = async () => {
                         } else if (choice[0] == 2) {
                             player.soul.alpha = 0;
                             if (result === undefined) {
-                                result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, "text");
+                                result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
                             } else {
                                 result.process();
                             }
@@ -230,7 +229,7 @@ export const main = async () => {
                 player.soul.alpha = 1;
                 let timer = 0;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
-                const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, "talk_default");
+                const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
                 await Core.while(() => sub_scene == "enemy_speak" && (scene == "battle" && sub_scene == "enemy_speak"), () => {
                     player.move()
                     timer++;
@@ -286,13 +285,14 @@ export const main = async () => {
                 })
                 sub_scene = "command";
             } else if (sub_scene == "clear") {
-                const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, "text");
+                const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 await Core.loop(() => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp("cmd_en", x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                     hp_bar();
+                    Font.write("*", 50, 205, 0, 200);
                     result.process();
                     result.write();
                 });
@@ -332,25 +332,14 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, Font: FontPlaneT, player: { hp: number, hp_max: number, lv: number }) => () => {
-    const tmp1 = new Font("_", "chara", 32, 75, 0, 300, "white", 0, 0, 0, "status");
-    tmp1.write();
-    tmp1.delete();
-    const tmp2 = new Font("_", "lV", 134, 75, 0, 300, "white", 0, 0, 0, "status");
-    tmp2.write();
-    tmp2.delete();
-    const tmp3 = new Font("_", `${('00' + player.lv).slice(-2)}`, 173, 75, 0, 300, "white", 0, 0, 0, "status");
-    tmp3.write();
-    tmp3.delete();
-    const tmp4 = new Font("_", `${('00' + player.hp).slice(-2)}`, player.hp_max * 1.2 + 306, 77, 0, 300, "white", 0, 0, 0, "status");
-    tmp4.write();
-    tmp4.delete();
-    const tmp5 = new Font("_", "/", player.hp_max * 1.2 + 345, 77, 0, 300, "white", 0, 0, 0, "status");
-    tmp5.write();
-    tmp5.delete();
-    const tmp6 = new Font("_", `${('00' + player.hp_max).slice(-2)}`, player.hp_max * 1.2 + 369, 77, 0, 300, "white", 0, 0, 0, "status");
-    tmp6.write();
-    tmp6.delete();
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?:number, spacing_y?: number, font?: string) => void, player: { hp: number, hp_max: number, lv: number }) => () => {
+    write("chara", 32, 75, 0, 300, "white", 0, 0, "status");
+    write("lV", 134, 75, 0, 300, "white", 0, 0, "status");
+    write(`${('00' + player.lv).slice(-2)}`, 173, 75, 0, 300, "white", 0, 0, "status");
+    write(`${('00' + player.hp).slice(-2)}`, player.hp_max * 1.2 + 306, 77, 0, 300, "white", 0, 0, "status");
+    write("/", player.hp_max * 1.2 + 345, 77, 0, 300, "white", 0, 0, "status");
+    write(`${('00' + player.hp_max).slice(-2)}`, player.hp_max * 1.2 + 369, 77, 0, 300, "white", 0, 0, "status");
+
     cLib.drawRect(256, 59, player.hp_max * 1.2, 21, "red", 0, 1, "start");
     cLib.drawRect(256, 59, player.hp * 1.2, 21, "yellow", 0, 1, "start");
     cLib.stamp("hp_white", 224, 74, 0, 100, 1, "start");

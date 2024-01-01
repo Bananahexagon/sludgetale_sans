@@ -7,6 +7,11 @@ import fontDataJa from "./data/font_ja.json";
 
 import { aLibT, cLibT, inputKeysT } from "./lib/types";
 
+const set_ja = (() => {
+    let s = new Set<string>();
+    for (const c in fontDataJa) s.add(c);
+    return s;
+})();
 
 type charDataT = {
     left: number,
@@ -49,8 +54,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         direction: number;
         size: number;
         data: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[]
-        font: FontDataT
-        constructor(name: string, x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[]) {
+        font: FontDataT;
+        z: boolean;
+        constructor(name: string, x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[], z: boolean) {
             super(name);
             this._ = {
                 all_str: input.reduce((a, c) => a + c.str, ""),
@@ -69,11 +75,19 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
                 switch (f) {
                     case "status":
                         return fontData.status;
-                    default:
+                    case "damage":
+                        return fontData.damage as FontDataT;
+                    case "ja":
+                    case "jp":
+                        return fontData.ja as unknown as FontDataT;
+                    case "en":
                         return fontData.en;
+                    default:
+                        return fontData[Game.lang] as unknown as FontDataT;
                 }
             })(font)
             displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
+            this.z = z;
             this.process();
         }
         write() {
@@ -83,22 +97,32 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             let x = 0;
             let y = 0;
             let count = 0;
-            const charDataf = ((c: string): charDataT => {
-                if (c in this.font) {
-                    return this.font[c as keyof FontDataT] as unknown as charDataT;
+            const charDataf = ((c: string): [charDataT, string] => {
+                if (this.font.props.name == "dt_ja") {
+                    if (c in fontDataEn) {
+                        return [fontDataEn[c as keyof FontDataT] as unknown as charDataT, "determination"];
+                    } else if (set_ja.has(c)) {
+                        return [fontDataJa[c as keyof typeof fontDataJa] as unknown as charDataT, "dt_ja"];
+                    } else {
+                        return [fontDataEn.space, "determination"]
+                    }
                 } else {
-                    return this.font.space;
+                    if (c in this.font) {
+                        return [this.font[c as keyof FontDataT] as charDataT, this.font.props.name];
+                    } else {
+                        return [this.font.space, this.font.props.name];
+                    }
                 }
             })
             this._.now.forEach((e) => {
                 const s = e.str.split("");
                 s.forEach((c) => {
-                    const charData = charDataf(c)
+                    const [charData, fn] = charDataf(c)
                     if (c == "\n") {
                         x = 0;
                         y += this.font.props.height_basic + e.spacing_y;
                     } else {
-                        cLib.stamp(this.font.props.name + "_" + e.color,
+                        cLib.stamp(fn + "_" + e.color,
                             this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
                             this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
                             this.direction, size, 1, "start", 1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
@@ -112,7 +136,7 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         };
         process() {
             const input_str_length = this.data.reduce((a, c) => a + c.str.length, 0);
-            if (this._.len_allow == input_str_length && inputKeys.z) {
+            if (this._.len_allow == input_str_length && inputKeys.z && this.z) {
                 delete displayDict[this.name];
                 return;
             } else if (inputKeys.x) {
@@ -160,8 +184,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         voice: string | undefined;
         promise: Promise<void>;
         solved: boolean;
+        z: boolean;
         resolve: (value: void | PromiseLike<void>) => void;
-        constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "en", voice?: string) {
+        constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "default", z: boolean, voice?: string) {
             super(name);
             this.str_now = "";
             this.len_now = 0;
@@ -185,8 +210,9 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
                         return fontData.ja as unknown as FontDataT;
                     case "en":
                         return fontData.en;
+                    case "default":
                     default:
-                        return fontData[Game.lang]as unknown as FontDataT;
+                        return fontData[Game.lang] as unknown as FontDataT;
                 }
             })(font)
             this.len_allow = 0;
@@ -195,6 +221,7 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             this.resolve = () => { };
             this.promise = (() => new Promise((resolve) => { this.resolve = resolve }))();
             this.solved = false;
+            this.z = z;
             this.process();
         }
         write() {
@@ -207,7 +234,7 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
                 if (this.font.props.name == "dt_ja") {
                     if (c in fontDataEn) {
                         return [fontDataEn[c as keyof FontDataT] as unknown as charDataT, "determination"];
-                    } else if (c in fontDataJa) {
+                    } else if (set_ja.has(c)) {
                         return [fontDataJa[c as keyof typeof fontDataJa] as unknown as charDataT, "dt_ja"];
                     } else {
                         return [fontDataEn.space, "determination"]
@@ -237,7 +264,7 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
             return this;
         };
         process() {
-            if (this.str.length <= this.len_allow && inputKeys.z) {
+            if (this.str.length <= this.len_allow && inputKeys.z && this.z) {
                 this.resolve();
                 this.solved = true;
                 delete displayDict[this.name];
@@ -257,8 +284,8 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
         }
     };
 
-    const write = (str: string, x: number, y: number, d: number, size: number, color: string = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "en") => {
-        const _ = new Plane("_", str, x, y, d, size, color, spacing_x, spacing_y, 0, font);
+    const write = (str: string, x: number, y: number, d: number, size: number, color: string = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "default") => {
+        const _ = new Plane("_", str, x, y, d, size, color, spacing_x, spacing_y, 0, font, false);
         _.write();
         _.delete();
     };
