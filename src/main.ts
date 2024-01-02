@@ -53,8 +53,6 @@ export const main = async () => {
         const Box = BoxFnsGen(Core.cLib, player.soul);
         const box = Box.box;
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player);
-        //const test_b = new Bone.normal(300, 200, 90, 20, 250, 0, 0, 2, 0, Infinity);
-        //const test_gb = new Blaster.gb(100, 200, 0, 400, 600, 90, 100, 2, 60, 60, 60);
         box.set(320, 160, 0, 562, 132);
         const enemy = {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, 200, "enemy", 1),
