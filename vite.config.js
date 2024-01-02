@@ -14,7 +14,8 @@ export default defineConfig((opt) => {
                     entryFileNames: '[name].js',
                 },
             },
-            sourcemap:"inline"
+            sourcemap: "inline",
+            chunkSizeWarningLimit: 1000,
         },
     }
 })

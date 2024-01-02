@@ -29,14 +29,18 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Re
     const b_jump = (() => {
         let j = 0;
         return () => {
-            if (box.is_jumpable() && Core.inputKeys.up) {
+            const jumpable = box.is_jumpable();
+            if (jumpable && Core.inputKeys.up) {
                 j = 7;
-            } else if (0 < j && !Core.inputKeys.up) {
-                j = 0;
-            } else {
-                j -= 0.25;
+                soul.y += Math.sign(j) * Math.abs(j) ** 1.5 * 0.45;
+            } else if (!jumpable) {
+                if (0 < j && !Core.inputKeys.up) {
+                    j = 0;
+                } else {
+                    j -= 0.25;
+                }
+                soul.y += Math.sign(j) * Math.abs(j) ** 1.5 * 0.45;
             }
-            soul.y += Math.sign(j) * Math.abs(j) ** 1.5 * 0.45;
             const soul_speed = Core.inputKeys.x ? 1 : 2.5;
             if (Core.inputKeys.right) soul.x += soul_speed;
             if (Core.inputKeys.left) soul.x -= soul_speed;
