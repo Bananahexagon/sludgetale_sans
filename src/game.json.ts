@@ -11,7 +11,7 @@ export const Game = {
     enemy: {
         x: 310,
         y: 320,
-        name: "サンズモドキ",
+        name: "百均のマネキン",
         hp: 10000,
     },
     items: [
@@ -25,11 +25,17 @@ export const Game = {
     enemy_speak: ["街並みをやがて"],
     enemy_attack: [300],
     actions: [
-        { name: "しらべる", text: "サンズモドキ 0 ATK 0 DEF\nサンズに似てる。なんだろうね？これ", behavior: "default" },
-        { name: "悪鬼滅殺", text: "？？？「鬼滅の刃のパクリじゃーん！」", behavior: "default" },
-        { name: "決意", text: "決意。", behavior: (Core) => { Core.aLib.play("determination") } }
+        { name: "しらべる", text: "百均のマネキン 0 ATK 0 DEF\n安物のマネキンだ。", behavior: "default" },
+        {
+            name: "筋トレ", text: "筋トレをした。HPが増えた！", behavior: (Core, player) => {
+                Core.aLib.play("determination")
+                player.hp_max+=12;
+                player.hp += 12;
+                
+            }
+        },
     ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!"
 }
 
-type behavior = "default" | ((Core: CoreT) => void);
+type behavior = "default" | ((Core: CoreT, player: { hp: number, hp_max: number }) => void);

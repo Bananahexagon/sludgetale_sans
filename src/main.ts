@@ -152,7 +152,7 @@ export const main = async () => {
                             if (Core.inputKeys.f.z) {
                                 choice.push(0);
                                 const behavior = Game.actions[choice[1]].behavior;
-                                if (behavior !== "default") behavior(Core)
+                                if (behavior !== "default") behavior(Core, player);
                             };
                         } else if (choice[0] == 2) {
                             menu(Game.items)
@@ -162,7 +162,7 @@ export const main = async () => {
                                 if (behavior == "default") {
                                     player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
                                     Core.aLib.play("heal");
-                                } else behavior(Core);
+                                } else behavior(Core, player);
                             };
                         } else if (choice[0] == 3) {
                             if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
@@ -339,13 +339,17 @@ export const main = async () => {
 const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { hp: number, hp_max: number, lv: number }) => () => {
     write("chara", 32, 75, 0, 300, "white", 0, 0, "status");
     write("lV", 134, 75, 0, 300, "white", 0, 0, "status");
-    write(`${('00' + player.lv).slice(-2)}`, 173, 75, 0, 300, "white", 0, 0, "status");
-    write(`${('00' + player.hp).slice(-2)}`, player.hp_max * 1.2 + 306, 77, 0, 300, "white", 0, 0, "status");
-    write("/", player.hp_max * 1.2 + 345, 77, 0, 300, "white", 0, 0, "status");
-    write(`${('00' + player.hp_max).slice(-2)}`, player.hp_max * 1.2 + 369, 77, 0, 300, "white", 0, 0, "status");
+    const hp_len = Math.max(2, `${player.hp_max}`.length);
+    const lv_len = Math.max(2, `${player.lv}`.length);
+    hp_len * 3 * 5;
+    lv_len * 3 * 5;
+    write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 173, 75, 0, 300, "white", 0, 0, "status");
+    write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`, player.hp_max * 1.2 + 276 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+    write("/", player.hp_max * 1.2 + 285 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+    write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`, player.hp_max * 1.2 + 309 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
 
-    cLib.drawRect(256, 59, player.hp_max * 1.2, 21, "red", 0, 1, "start");
-    cLib.drawRect(256, 59, player.hp * 1.2, 21, "yellow", 0, 1, "start");
-    cLib.stamp("hp_white", 224, 74, 0, 100, 1, "start");
-    cLib.stamp("kr_white", player.hp_max * 1.2 + 267, 74, 0, 100, 1, "start");
+    cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp_max * 1.2, 21, "red", 0, 1, "start");
+    cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp * 1.2, 21, "yellow", 0, 1, "start");
+    cLib.stamp("hp_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start");
+    cLib.stamp("kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start");
 };
