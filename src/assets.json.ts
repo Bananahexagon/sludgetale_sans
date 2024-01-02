@@ -266,6 +266,11 @@ export default [
         "name": "damage_miss",
         "src": "./assets/images/damage_miss.png"
     },
+    {
+        "type": "image",
+        "name": "bone_stab_white",
+        "src": "./assets/images/bone_stab_white.png"
+    },
     //
     //
     //
@@ -352,5 +357,15 @@ export default [
         "type": "audio",
         "name": "determination",
         "src": "./assets/audios/determination.wav"
+    },
+    {
+        "type": "audio",
+        "name": "stab",
+        "src": "./assets/audios/stab.wav"
+    },
+    {
+        "type": "audio",
+        "name": "warning",
+        "src": "./assets/audios/warning.wav"
     }
 ]
