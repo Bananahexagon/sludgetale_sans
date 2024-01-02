@@ -1,3 +1,5 @@
+import { CoreT } from "./lib/types";
+
 export const Game = {
     lang: "ja" as "ja" | "en",
     bgm: undefined as string | undefined,
@@ -17,15 +19,17 @@ export const Game = {
             name: "腐ったパン",
             heal: -20,
             text: "パンはパンでも食べられないパンはな～んだ",
-            behavior: "default" as "default" | (() => void),
-        }
-    ],
+            behavior: "default"
+        },
+    ] as { name: string, heal: number, text: string, behavior: behavior }[],
     enemy_speak: ["街並みをやがて"],
     enemy_attack: [300],
     actions: [
-        { name: "しらべる", text: "サンズモドキ 0 ATK 0 DEF\nサンズに似てる。なんだろうね？これ" },
-        { name: "悪鬼滅殺", text: "？？？「鬼滅の刃のパクリじゃーん！」" }
-    ],
+        { name: "しらべる", text: "サンズモドキ 0 ATK 0 DEF\nサンズに似てる。なんだろうね？これ", behavior: "default" },
+        { name: "悪鬼滅殺", text: "？？？「鬼滅の刃のパクリじゃーん！」", behavior: "default" },
+        { name: "決意", text: "決意。", behavior: (Core) => { Core.aLib.play("determination") } }
+    ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!"
 }
 
+type behavior = "default" | ((Core: CoreT) => void);

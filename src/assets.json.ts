@@ -347,5 +347,10 @@ export default [
         "type": "audio",
         "name": "dust",
         "src": "./assets/audios/dust.wav"
+    },
+    {
+        "type": "audio",
+        "name": "determination",
+        "src": "./assets/audios/determination.wav"
     }
 ]

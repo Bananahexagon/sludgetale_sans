@@ -96,8 +96,8 @@ export const main = async () => {
                             [player.soul.x, player.soul.y] = [55, 195];
                         }
                         if (choice[0] == 0) {
-                            Core.cLib.drawRect(280, 185, 80, 20, "#ff0000", 0, 1, "start")
-                            Core.cLib.drawRect(280, 185, enemy.hp / enemy.hp_max * 80, 20, "#4dff5e", 0, 1, "start")
+                            Core.cLib.drawRect(380, 185, 120, 20, "#ff0000", 0, 1, "start")
+                            Core.cLib.drawRect(380, 185, enemy.hp / enemy.hp_max * 120, 20, "#4dff5e", 0, 1, "start")
                         }
                     } else if (choice.length == 2) {
                         const menu = (v: { name: string }[]) => {
@@ -149,7 +149,11 @@ export const main = async () => {
                             Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300, ratio);
                         } else if (choice[0] == 1 && choice.length == 2) {
                             menu(Game.actions);
-                            if (Core.inputKeys.f.z) choice.push(0);
+                            if (Core.inputKeys.f.z) {
+                                choice.push(0);
+                                const behavior = Game.actions[choice[1]].behavior;
+                                if (behavior !== "default") behavior(Core)
+                            };
                         } else if (choice[0] == 2) {
                             menu(Game.items)
                             if (Core.inputKeys.f.z) {
@@ -158,7 +162,7 @@ export const main = async () => {
                                 if (behavior == "default") {
                                     player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
                                     Core.aLib.play("heal");
-                                } else behavior();
+                                } else behavior(Core);
                             };
                         } else if (choice[0] == 3) {
                             if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
@@ -332,7 +336,7 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?:number, spacing_y?: number, font?: string) => void, player: { hp: number, hp_max: number, lv: number }) => () => {
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { hp: number, hp_max: number, lv: number }) => () => {
     write("chara", 32, 75, 0, 300, "white", 0, 0, "status");
     write("lV", 134, 75, 0, 300, "white", 0, 0, "status");
     write(`${('00' + player.lv).slice(-2)}`, 173, 75, 0, 300, "white", 0, 0, "status");
