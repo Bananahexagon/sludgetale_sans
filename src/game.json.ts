@@ -20,9 +20,14 @@ export const Game = {
             heal: -20,
             text: "パンはパンでも食べられないパンはな～んだ",
             behavior: "default"
+        },{
+            name: "唐揚げ",
+            heal: 20,
+            text: "生殖器の唐揚げｱｱｱｱｧｧｧｰｰｰｰwwwwwwwwwwww",
+            behavior: "default"
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
-    enemy_speak: ["街並みをやがて"],
+    enemy_speak: ["唐揚げ食べたい"],
     enemy_attack: [300],
     actions: [
         { name: "しらべる", text: "百均のマネキン 0 ATK 0 DEF\n安物のマネキンだ。", behavior: "default" },
@@ -31,7 +36,6 @@ export const Game = {
                 Core.aLib.play("determination")
                 player.hp_max+=12;
                 player.hp += 12;
-                
             }
         },
     ] as { name: string, text: string, behavior: behavior }[],
