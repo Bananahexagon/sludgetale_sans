@@ -23,7 +23,7 @@ export const Game = {
         },{
             name: "唐揚げ",
             heal: 20,
-            text: "生殖器の唐揚げｱｱｱｱｧｧｧｰｰｰｰwwwwwwwwwwww",
+            text: "生殖器の唐揚げｱｱｱｱｧｧｧ----wwwwwwwwwwww",
             behavior: "default"
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
