@@ -55,6 +55,18 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
         draw() {
             cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd, 1, "center++");
         }
+        is_jumpable() {
+            const d = this.dd
+            const relative_x = soul.x - this.dx;
+            const relative_y = soul.y - 3 - this.dy;
+            const turned_x = relative_x * cos360(d) + relative_y * -sin360(d);
+            const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
+            return (
+                this.len / 2 > turned_x && turned_x > -this.len / 2 && (
+                    this.relative == "minus" && turned_y > -(this.width / 2 + this.soul_size) ||
+                    this.relative == "plus" && (this.width / 2 + this.soul_size) > turned_y
+                ) && 135 <= d && d <= 225);
+        }
     }
     class Wall2 {
         dx: number;
@@ -85,6 +97,14 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             const x = this.dx + 320 * sin360(this.dd)
             const y = this.dy + 320 * cos360(this.dd)
             cLib.drawRect(x, y, 640, 640, "#ffffff88", this.dd, 1, "center++");
+        }
+        is_jumpable() {
+            const d = this.dd
+            const relative_x = soul.x - this.dx;
+            const relative_y = soul.y - 3 - this.dy;
+            const turned_x = relative_x * cos360(d) + relative_y * -sin360(d);
+            const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
+            return (turned_y > -this.width) && 135 <= d && d <= 225;
         }
     }
     const box = {
@@ -171,6 +191,9 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             this.walls.push(new Wall2(0, 0, 180, this.thickness));
             this.walls.push(new Wall2(0, 0, 270, this.thickness));
         },
+        is_jumpable() {
+            return this.walls.some(v => v.is_jumpable())
+        }
     }
     box.init();
     return { Wall, box };

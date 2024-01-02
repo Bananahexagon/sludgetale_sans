@@ -92,6 +92,10 @@ type Dict<T> = {
     [keys: string]: T,
 }
 
+type Ref<T> = {
+    v: T
+}
+
 const sin360 = (d: number) => Math.sin(d / 360 * Math.PI * 2);
 const cos360 = (d: number) => Math.cos(d / 360 * Math.PI * 2);
 const tan360 = (d: number) => Math.tan(d / 360 * Math.PI * 2);
@@ -108,4 +112,5 @@ export {
     cos360,
     tan360,
     distance,
+    Ref
 }

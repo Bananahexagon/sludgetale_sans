@@ -7,51 +7,33 @@ import { fontFnsGen, Plane as FontPlaneT } from "./font";
 import { BoxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game } from "./game.json"
+import { soulObjGen } from "./soul";
 
 export const main = async () => {
     const Core = await init(config);
-    let [scene, sub_scene] = ["menu", "command"];
+    let [scene, sub_scene] = [{v:"menu"}, "command"];
     const Font = fontFnsGen(Core.cLib, Core.aLib, Core.inputKeys);
     {
         let cursor = 0;
-        await Core.while(() => (scene === "menu"), () => {
+        await Core.while(() => (scene.v === "menu"), () => {
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
             if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
             Core.cLib.stamp("soul", 220, -cursor * 50 + 240);
             Font.write("play", 270, 250, 0, 200, "yellow", 0, 0, "en");
-            if (Core.inputKeys.f.z) { scene = "battle"; Core.aLib.play("cursor_confirm") }
+            if (Core.inputKeys.f.z) { scene.v = "battle"; Core.aLib.play("cursor_confirm") }
         });
     }
     let timer = 0;
-
-    const player = {
-        lv: Game.player.lv,
-        hp: Game.player.hp_max,
-        hp_max: Game.player.hp_max,
-        soul: new Core.Sprite(320, 240, 0, 80, "soul", 1, 1),
-        damage(d: number) {
-            this.hp -= d;
-            Core.aLib.play("damage", 2);
-            if (this.hp <= 0) {
-                scene = "game_over";
-            }
-        },
-        move() {
-            const soul_speed = Core.inputKeys.x ? 1 : 2.5;
-            if (Core.inputKeys.up) this.soul.y += soul_speed;
-            if (Core.inputKeys.down) this.soul.y -= soul_speed;
-            if (Core.inputKeys.right) this.soul.x += soul_speed;
-            if (Core.inputKeys.left) this.soul.x -= soul_speed;
-        }
-    };
+    const soul =  new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
+    const Box = BoxFnsGen(Core.cLib, soul);
+    const box = Box.box;
+    const player = soulObjGen(soul,Game,Core,scene,Box.box);
     {
         if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
-        const Box = BoxFnsGen(Core.cLib, player.soul);
-        const box = Box.box;
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player);
         box.set(320, 160, 0, 562, 132);
         const enemy = {
@@ -59,14 +41,14 @@ export const main = async () => {
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
-        while (scene == "battle") {
+        while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
                 const txt = new Font.Plane("_", "You feel like you're going to\nhave a bad time.", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
-                await Core.while(() => sub_scene == "command" && (scene == "battle" && sub_scene == "command"), () => {
+                await Core.while(() => sub_scene == "command" && (scene.v == "battle" && sub_scene == "command"), () => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     enemy.s.stamp();
@@ -224,7 +206,7 @@ export const main = async () => {
                             choice[2]++;
                         }
                     }
-                    player.soul.stamp();
+                    player.stamp();
 
                 })
             } else if (sub_scene == "enemy_speak") {
@@ -232,18 +214,19 @@ export const main = async () => {
                 let timer = 0;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
                 const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
-                await Core.while(() => sub_scene == "enemy_speak" && (scene == "battle" && sub_scene == "enemy_speak"), () => {
+                await Core.while(() => sub_scene == "enemy_speak" && (scene.v == "battle" && sub_scene == "enemy_speak"), () => {
                     player.move()
                     timer++;
                     const ratio = 1 - Math.max(1 - timer / 15, 0) ** 4;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.set(320, 160, 0, 132 * ratio + 562 * (1 - ratio), 132)
                     box.draw();
+                    box.judge();
                     enemy.s.stamp();
                     Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.soul.stamp();
+                    player.stamp();
                     hp_bar();
                     quote.process();
                     if (!(quote.solved && ratio == 1)) {
@@ -257,7 +240,7 @@ export const main = async () => {
                 box.set(320, 160, 0, 132, 132)
                 let timer = 0;
                 let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180);
-                await Core.for(0, i => i < Game.enemy_attack[0] && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
+                await Core.for(0, i => i < Game.enemy_attack[0] && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     player.move()
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -267,12 +250,12 @@ export const main = async () => {
                     enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.soul.stamp();
+                    player.stamp();
                     hp_bar();
                 })
                 Bone.boneDict = {};
                 Blaster.gbDict = {};
-                await Core.for(0, i => i < 15 && (scene == "battle" && sub_scene == "enemy_attack"), (i) => {
+                await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     const ratio = 1 - Math.max(1 - (i + 1) / 15, 0) ** 4;
                     player.move()
                     box.set(320, 160, 0, 562 * ratio + 132 * (1 - ratio), 132)
@@ -282,7 +265,7 @@ export const main = async () => {
                     enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.soul.stamp();
+                    player.stamp();
                     hp_bar();
                 })
                 sub_scene = "command";
@@ -305,7 +288,7 @@ export const main = async () => {
     {
         timer = 0;
         let broken_hearts: SpriteT[] = [];
-        await Core.while(() => (scene === "game_over"), () => {
+        await Core.while(() => (scene.v === "game_over"), () => {
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (timer == 0) {
                 Core.aLib.play("heartbreak_1", 2)
@@ -327,7 +310,7 @@ export const main = async () => {
             } else if (60 < timer && timer < 180) {
                 broken_hearts.forEach(s => s.act());
             } else if (timer == 180) {
-                scene = "waiting";
+                scene.v = "waiting";
             }
             timer++;
         })
