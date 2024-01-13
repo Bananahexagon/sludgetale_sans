@@ -80,16 +80,13 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
             this.stamp()
         }
         private judge() {
-            {
-                const relative_x = player.soul.x - this.x;
-                const relative_y = player.soul.y - this.y;
-                const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
-                const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-                if (this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
-                    player.damage(1);
-                }
+            const relative_x = player.soul.x - this.x;
+            const relative_y = player.soul.y - this.y;
+            const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
+            const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
+            if (this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
+                player.damage(1);
             }
-
         }
         public static process() {
             for (const id in gbDict) {
