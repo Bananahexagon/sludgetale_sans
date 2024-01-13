@@ -9,7 +9,7 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Re
         hp: Game.player.hp_max,
         hp_max: Game.player.hp_max,
         soul: soul,
-        damage(d: number) {
+        damage(d: number, color: "white" | "blue" | "orange" = "white") {
             this.hp -= d;
             Core.aLib.play("damage", 2);
             if (this.hp <= 0) {

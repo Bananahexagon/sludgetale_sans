@@ -138,6 +138,16 @@ export default [
     },
     {
         "type": "image",
+        "name": "bone_head_blue",
+        "src": "./assets/images/bone_head_blue.png"
+    },
+    {
+        "type": "image",
+        "name": "bone_head_orange",
+        "src": "./assets/images/bone_head_orange.png"
+    },
+    {
+        "type": "image",
         "name": "bone_head_white",
         "src": "./assets/images/bone_head_white.png"
     },

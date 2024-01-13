@@ -239,7 +239,7 @@ export const main = async () => {
             } else if (sub_scene == "enemy_attack") {
                 box.set(320, 160, 0, 132, 132)
                 let timer = 0;
-                let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180);
+                let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180,"blue");
                 await Core.for(0, i => i < Game.enemy_attack[0] && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);

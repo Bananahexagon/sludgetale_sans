@@ -12,7 +12,7 @@ type Move = number | {
 };
 
 export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number): void; soul: SpriteT, hp: number
+    damage(arg0: number, color?:"white"|"blue"|"orange"): void; soul: SpriteT, hp: number
 }) => {
     interface Bone {
         life: number,
@@ -36,7 +36,8 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         id: string;
         b_width: number;
         life: number;
-        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number) {
+        color: "white"|"blue"|"orange";
+        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number,color:"white"|"blue"|"orange"="white") {
             super(x, y, d, width, undefined, 1, 1);
             this.start_x = x;
             this.start_y = y;
@@ -51,6 +52,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.id = `NB$${normalBone.current_id++}`;
             this.b_width = width;
             this.life = life;
+            this.color=color
             boneDict[this.id] = this;
         }
         move_self() {
@@ -62,7 +64,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         }
         draw() {
             cos360(this.d)
-            cLib.stamp("bone_head_white",
+            cLib.stamp(`bone_head_${this.color}`,
                 this.x + cos360(this.d) * this.b_width * 8 / 6,
                 this.y - sin360(this.d) * this.b_width * 8 / 6,
                 this.d + 180, this.b_width * 100 / 6, 1, "start"
@@ -72,7 +74,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
                 this.y + cos360(this.d) * this.b_width * 6 / 6,
                 this.b_width, this.len + this.b_width * 2 / 6, "white", this.d, 1, "start"
             );
-            cLib.stamp("bone_head_white",
+            cLib.stamp(`bone_head_${this.color}`,
                 this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
                 this.y + cos360(this.d) * (this.len + this.b_width * 14 / 6) + sin360(this.d) * this.b_width * 2 / 6,
                 this.d, this.b_width * 100 / 6, 1, "start"
@@ -95,7 +97,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
                 if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
-                    player.damage(1);
+                    player.damage(1,this.color);
                 }
             }
 
@@ -127,8 +129,9 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         t3: number;
         t4: number;
         life: number;
-        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number, t3: number, t4: number) {
-            super(x, y, d, 100, "bone_stab_white", 1, 1);
+        color:"white"|"blue"|"orange";
+        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number, t3: number, t4: number,color:"white"|"blue"|"orange"="white") {
+            super(x, y, d, 100, `bone_stab_${color}`, 1, 1);
             this.b_x = x;
             this.b_y = y;
             this.b_d = d;
@@ -141,6 +144,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.t3 = t3;
             this.t4 = t4;
             this.life = t1 + t2 + t3 + t4;
+            this.color=color;
             boneDict[this.id] = this;
             aLib.play("warning");
         }
@@ -185,7 +189,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             //const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
             if (turned_y<0) {
-                player.damage(1);
+                player.damage(1,this.color);
             }
             this.move(-640);
         }
