@@ -28,7 +28,7 @@ export const main = async () => {
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
     const Box = BoxFnsGen(Core.cLib, soul);
     const box = Box.box;
-    const player = soulObjGen(soul, Game, Core, scene, Box.box);
+    const player = soulObjGen(soul, Game, Core, scene, Box.box,Core.b_tick);
     {
         if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;

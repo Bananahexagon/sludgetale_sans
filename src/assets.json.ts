@@ -183,38 +183,98 @@ export default [
     },
     {
         "type": "image",
-        "name": "gb_1",
-        "src": "./assets/images/gb_1.png"
+        "name": "gb_white_1",
+        "src": "./assets/images/gb_white_1.png"
     },
     {
         "type": "image",
-        "name": "gb_2",
-        "src": "./assets/images/gb_2.png"
+        "name": "gb_white_2",
+        "src": "./assets/images/gb_white_2.png"
     },
     {
         "type": "image",
-        "name": "gb_3",
-        "src": "./assets/images/gb_3.png"
+        "name": "gb_white_3",
+        "src": "./assets/images/gb_white_3.png"
     },
     {
         "type": "image",
-        "name": "gb_4",
-        "src": "./assets/images/gb_4.png"
+        "name": "gb_white_4",
+        "src": "./assets/images/gb_white_4.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_white_5",
+        "src": "./assets/images/gb_white_5.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_white_6",
+        "src": "./assets/images/gb_white_6.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_1",
+        "src": "./assets/images/gb_blue_1.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_2",
+        "src": "./assets/images/gb_blue_2.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_3",
+        "src": "./assets/images/gb_blue_3.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_4",
+        "src": "./assets/images/gb_blue_4.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_5",
+        "src": "./assets/images/gb_blue_5.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_blue_6",
+        "src": "./assets/images/gb_blue_6.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_1",
+        "src": "./assets/images/gb_orange_1.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_2",
+        "src": "./assets/images/gb_orange_2.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_3",
+        "src": "./assets/images/gb_orange_3.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_4",
+        "src": "./assets/images/gb_orange_4.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_5",
+        "src": "./assets/images/gb_orange_5.png"
+    },
+    {
+        "type": "image",
+        "name": "gb_orange_6",
+        "src": "./assets/images/gb_orange_6.png"
     },
     {
         "type": "image",
         "name": "enemy",
         "src": "./assets/images/enemy.png"
-    },
-    {
-        "type": "image",
-        "name": "gb_5",
-        "src": "./assets/images/gb_5.png"
-    },
-    {
-        "type": "image",
-        "name": "gb_6",
-        "src": "./assets/images/gb_6.png"
     },
     {
         "type": "image",

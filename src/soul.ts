@@ -3,19 +3,13 @@ import { Ref } from "./lib/utils";
 import { Game as G } from "./game.json";
 import { SpriteT } from "./lib/types";
 
-export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }) => {
+export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
+    scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }, b_tick: (() => void)[]) => {
     const player = ({
         lv: Game.player.lv,
         hp: Game.player.hp_max,
         hp_max: Game.player.hp_max,
         soul: soul,
-        damage(d: number, color: "white" | "blue" | "orange" = "white") {
-            this.hp -= d;
-            Core.aLib.play("damage", 2);
-            if (this.hp <= 0) {
-                scene.v = "game_over";
-            }
-        },
         stamp() {
             this.soul.costume = {
                 0: "soul_red",
@@ -24,6 +18,8 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Re
             this.soul.stamp();
         },
         type: 1,
+
+        damage(d: number, color: "white" | "blue" | "orange" = "white") { },
         move() { }
     })
     const b_jump = (() => {
@@ -60,5 +56,18 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Re
             }
         }
     }
+    let [bx, by] = [0, 0];
+    b_tick.push(() => { bx = soul.x, by = soul.y });
+    player.damage = function (d: number, color: "white" | "blue" | "orange" = "white") {
+        if (
+            color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y)) {
+            this.hp -= d;
+            Core.aLib.play("damage", 2);
+            color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y)
+            if (this.hp <= 0) {
+                scene.v = "game_over";
+            }
+        }
+    };
     return player
 };

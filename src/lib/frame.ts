@@ -1,9 +1,9 @@
 import { Dict } from "./utils"
 import { aLibT } from "./types";
 
-export const frameLibGen = (b_tick: () => void, a_tick: () => void) => {
+export const frameLibGen = (b_tick: (() => void)[], a_tick: (() => void)[]) => {
     const fW = (condition: () => boolean, proc: () => void, resolve: () => void) => {
-        if (condition()) { b_tick(); proc(); a_tick(); requestAnimationFrame(() => fW(condition, proc, resolve)) } else { resolve() }
+        if (condition()) { b_tick.forEach(e=>e()); proc(); a_tick.forEach(e=>e()); requestAnimationFrame(() => fW(condition, proc, resolve)) } else { resolve() }
     }
     const frameWhile = (condition: () => boolean, proc: () => void): Promise<void> => {
         return new Promise((resolve) => {
@@ -11,7 +11,7 @@ export const frameLibGen = (b_tick: () => void, a_tick: () => void) => {
         })
     }
     const fF = (condition: (arg: number) => boolean, proc: (arg: number) => void, i: number, resolve: () => void) => {
-        if (condition(i)) { b_tick(); proc(i); a_tick(); requestAnimationFrame(() => fF(condition, proc, i + 1, resolve)) } else { resolve() }
+        if (condition(i)) { b_tick.forEach(e=>e()); proc(i); a_tick.forEach(e=>e()); requestAnimationFrame(() => fF(condition, proc, i + 1, resolve)) } else { resolve() }
     }
 
     const frameFor = (i: number, condition: (arg: number) => boolean, proc: (arg: number) => void): Promise<void> => {
@@ -20,7 +20,7 @@ export const frameLibGen = (b_tick: () => void, a_tick: () => void) => {
         })
     }
     const fL = (proc: () => void): void => {
-        b_tick(); proc(); a_tick(); requestAnimationFrame(() => frameLoop(proc))
+        b_tick.forEach(e=>e()); proc(); a_tick.forEach(e=>e()); requestAnimationFrame(() => frameLoop(proc))
     };
     const frameLoop = (proc: () => void): Promise<never> => {
         return new Promise(()=>{

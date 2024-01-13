@@ -137,25 +137,25 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse.x = p.x;
         inputMouse.y = p.y;
     });
-    let b_tick:()=>void;
-    let a_tick:()=>void;
+    let b_tick: (() => void)[]=[];
+    let a_tick: (() => void)[]=[];
     {
         let bk = {
             up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
         }
-        b_tick = () => {
+        b_tick.push( () => {
             (["up", "down", "left", "right", "z", "x", "c", "d"] as ("up" | "down" | "left" | "right" | "z" | "x" | "c" | "d")[]).forEach(e => {
                 if (bk[e]) {
                     inputKeys.f[e] = false;
                 }
             })
             bk = { ...inputKeys.f }
-        }
-        a_tick = () => {
+        })
+        a_tick.push( () => {
             aLib.tick();
-        }
+        })
     }
-    const { frameWhile, frameFor, frameLoop } = frameLibGen(b_tick,a_tick);
+    const { frameWhile, frameFor, frameLoop } = frameLibGen(b_tick, a_tick);
     return {
         canvas,
         ctx,
@@ -171,5 +171,7 @@ export const init = async (config: configT): Promise<CoreT> => {
         for: frameFor,
         while: frameWhile,
         loop: frameLoop,
+        a_tick,
+        b_tick
     }
 }

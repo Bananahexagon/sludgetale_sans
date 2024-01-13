@@ -12,7 +12,7 @@ type Move = number | {
 };
 
 export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number, color?:"white"|"blue"|"orange"): void; soul: SpriteT, hp: number
+    damage(arg0: number, color?: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
 }) => {
     interface Bone {
         life: number,
@@ -36,8 +36,8 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         id: string;
         b_width: number;
         life: number;
-        color: "white"|"blue"|"orange";
-        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number,color:"white"|"blue"|"orange"="white") {
+        color: "white" | "blue" | "orange";
+        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number, color: "white" | "blue" | "orange" = "white") {
             super(x, y, d, width, undefined, 1, 1);
             this.start_x = x;
             this.start_y = y;
@@ -52,7 +52,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.id = `NB$${normalBone.current_id++}`;
             this.b_width = width;
             this.life = life;
-            this.color=color
+            this.color = color
             boneDict[this.id] = this;
         }
         move_self() {
@@ -72,7 +72,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             cLib.drawRect(
                 this.x + sin360(this.d) * this.b_width * 6 / 6,
                 this.y + cos360(this.d) * this.b_width * 6 / 6,
-                this.b_width, this.len + this.b_width * 2 / 6, "white", this.d, 1, "start"
+                this.b_width, this.len + this.b_width * 2 / 6, { "white": "#ffffff", "blue": "#008cff", "orange": "#ff8a00" }[this.color], this.d, 1, "start"
             );
             cLib.stamp(`bone_head_${this.color}`,
                 this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
@@ -97,7 +97,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
                 if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
-                    player.damage(1,this.color);
+                    player.damage(1, this.color);
                 }
             }
 
@@ -129,8 +129,8 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         t3: number;
         t4: number;
         life: number;
-        color:"white"|"blue"|"orange";
-        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number, t3: number, t4: number,color:"white"|"blue"|"orange"="white") {
+        color: "white" | "blue" | "orange";
+        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number, t3: number, t4: number, color: "white" | "blue" | "orange" = "white") {
             super(x, y, d, 100, `bone_stab_${color}`, 1, 1);
             this.b_x = x;
             this.b_y = y;
@@ -144,7 +144,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             this.t3 = t3;
             this.t4 = t4;
             this.life = t1 + t2 + t3 + t4;
-            this.color=color;
+            this.color = color;
             boneDict[this.id] = this;
             aLib.play("warning");
         }
@@ -154,7 +154,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
                 this.y = this.b_y;
                 this.move(-640);
             } else if (this.age < this.t1 + this.t2) {
-                if (this.age==this.t1) aLib.play("stab")
+                if (this.age == this.t1) aLib.play("stab")
                 this.x = this.b_x;
                 this.y = this.b_y;
                 this.move(-640);
@@ -176,7 +176,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         draw(): void {
             if (this.age < this.t1) {
                 cLib.strokeRect(this.b_x - cos360(this.d) * this.w / 2, this.b_y + sin360(this.d) * this.w / 2, this.w, this.h, this.age % 8 < 4 ? "red" : "yellow", this.b_d, 1, "start", 2, "inner");
-                } else {
+            } else {
                 this.stamp();
             }
             //cLib.strokeRect(this.b_x - cos360(this.d) * this.w / 2, this.b_y + sin360(this.d) * this.w / 2, this.w, this.h, this.age % 8 < 4 ? "red" : "yellow", this.b_d, 1, "start", 2, "inner");
@@ -188,8 +188,8 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             const relative_y = player.soul.y - this.y;
             //const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-            if (turned_y<0) {
-                player.damage(1,this.color);
+            if (turned_y < 0) {
+                player.damage(1, this.color);
             }
             this.move(-640);
         }

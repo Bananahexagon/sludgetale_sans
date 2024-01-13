@@ -21,8 +21,9 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
         private c_t: number;
         private b_s: number;
         private b_d: number;
-        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number) {
-            super(fx, fy, fd, size, "gb_1", 1,width);
+        private color: "white" | "blue" | "orange";
+        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number, color: "white" | "blue" | "orange") {
+            super(fx, fy, fd, size, `gb_${color}_1`, 1, width);
             this.s_x = fx;
             this.s_y = fy;
             this.s_d = fd;
@@ -35,6 +36,7 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
             this.gb_width = width;
             this.age = 0;
             this.id = Blaster.current_id;
+            this.color = color;
             gbDict[this.id] = this;
             Blaster.current_id++
             aLib.play("gb_charge", 1)
@@ -65,16 +67,16 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
                     this.y + cos360(this.d) * len / -2,
                     this.width * this.size / 5 * (1 + sin360(this.age * 10) * 0.2),
                     len,
-                    "white",
+                    { "white": "#ffffff", "blue": "#008cff", "orange": "#ff8a00" }[this.color],
                     this.d + 180,
                     Math.min((this.b_d + this.b_s + this.c_t - this.age) / 15, 1),
                     "center++"
                 );
             }
-            if (this.age == this.b_s + this.c_t - 2) this.costume = "gb_2";
-            if (this.age == this.b_s + this.c_t - 1) this.costume = "gb_3";
-            if (this.age == this.b_s + this.c_t) this.costume = "gb_4";
-            if (this.b_s + this.c_t < this.age) this.costume = `gb_${(this.age - (this.b_s + this.c_t)) % 2 + 5}`;
+            if (this.age == this.b_s + this.c_t - 2) this.costume = `gb_${this.color}_2`;
+            if (this.age == this.b_s + this.c_t - 1) this.costume = `gb_${this.color}_2`;
+            if (this.age == this.b_s + this.c_t) this.costume = `gb_${this.color}_2`;
+            if (this.b_s + this.c_t < this.age) this.costume = `gb_${this.color}_${(this.age - (this.b_s + this.c_t)) % 2 + 5}`;
             this.stamp()
         }
         private judge() {
