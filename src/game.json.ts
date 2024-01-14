@@ -4,16 +4,18 @@ export const Game = {
     lang: "ja" as "ja" | "en",
     bgm: undefined as string | undefined,
     player: {
-        name: "frisk",
+        name: "bhex",
         attack: 2500,
         lv: 19,
         hp_max: 92,
     },
     enemy: {
-        x: 310,
+        x: 320,
         y: 320,
-        name: "百均のマネキン",
+        name: "サンズ",
         hp: 10000,
+        costume: "sans",
+        size: 200,
     },
     items: [
         {
@@ -41,11 +43,26 @@ export const Game = {
         },
     ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!",
+    styles: {
+        player_hp: "green"  ,
+        player_kr: "purple" ,
+        player_hp_back:  "red_dark",
+        enemy_hp: "yellow",
+        enemy_hp_back: "red_dark"
+    },
     color: {
         white: "#99867a",
         blue: "#5c7d99",
-        orange: "#997d5c"
+        orange: "#997d5c",
+        yellow: "#99935c",
+        green:"#5c9962",
+        red: "#995c5c",
+        red_dark: "#803333",
+        purple: "#995c5c"
     },
+    flavor: [
+        "一ターン目のテキスト(5ﾆｯｺﾘ"
+    ]
 }
 
 type behavior = "default" | ((Core: CoreT, player: { hp: number, hp_max: number }) => void);

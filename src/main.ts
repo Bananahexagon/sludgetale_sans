@@ -34,17 +34,17 @@ export const main = async () => {
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
-        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player);
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Game);
         box.set(320, 160, 0, 562, 132);
         const enemy = {
-            s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, 200, "enemy", 1),
+            s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", "You feel like you're going to\nhave a bad time.", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const txt = new Font.Plane("_",Game.flavor[0], 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
@@ -72,12 +72,13 @@ export const main = async () => {
                         if (Core.inputKeys.f.x) { choice.pop(); Core.aLib.play("cursor_move"); }
                         if (Core.inputKeys.f.z) { choice.push(0); Core.aLib.play("cursor_confirm"); }
                         if (choice[0] == 0 || choice[0] == 1) {
-                            Font.write(`${Game.enemy.name}`, 80, 205, 0, 200);
+                            Font.write("*", 80, 205, 0, 200);
+                            Font.write(`${Game.enemy.name}`, 110, 205, 0, 200);
                             [player.soul.x, player.soul.y] = [55, 195];
                         }
                         if (choice[0] == 0) {
-                            Core.cLib.drawRect(380, 185, 120, 20, "#ff0000", 0, 1, "start")
-                            Core.cLib.drawRect(380, 185, enemy.hp / enemy.hp_max * 120, 20, "#4dff5e", 0, 1, "start")
+                            Core.cLib.drawRect(380, 185, 120, 20, Game.color[Game.styles.enemy_hp_back as keyof typeof Game.color] ?? Game.styles.enemy_hp_back, 0, 1, "start")
+                            Core.cLib.drawRect(380, 185, enemy.hp / enemy.hp_max * 120, 20, Game.color[Game.styles.enemy_hp as keyof typeof Game.color] ?? Game.styles.enemy_hp, 0, 1, "start")
                         }
                     } else if (choice.length == 2) {
                         const menu = (v: { name: string }[]) => {
@@ -89,14 +90,14 @@ export const main = async () => {
                             [player.soul.x, player.soul.y] = [55 + choice[1] % 2 * 281, 195 - Math.floor((choice[1] % 4) / 2) * 40];
                             if (choice[1] < 4) [0, 1, 2, 3].forEach(i => {
                                 if (i < v.length) {
-                                    if (i != choice[1]) Font.write("*", 50 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
-                                    Font.write(`${v[i].name}`, 80 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
+                                    Font.write("*", 80 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
+                                    Font.write(`${v[i].name}`, 110 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
                                 }
                             })
                             else[4, 5, 6, 7].forEach(i => {
                                 if (i < v.length) {
-                                    if (i != choice[1]) Font.write("*", 50 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
-                                    Font.write(`${v[i].name}`, 80 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
+                                    Font.write("*", 80 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
+                                    Font.write(`${v[i].name}`, 110 + i % 2 * 281, 205 - Math.floor((i % 4) / 2) * 40, 0, 200);
                                 }
                             })
 
@@ -147,10 +148,10 @@ export const main = async () => {
                         } else if (choice[0] == 3) {
                             if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
                             if (Core.inputKeys.f.z) sub_scene = "enemy_speak";
-                            [0, 1].forEach(i => {
-                                if (i != choice[1]) Font.write("*", 50, 205 - i * 40, 0, 200);
-                                Font.write(`${["Spare", "Quit"][i]}`, 80, 205 - i * 40, 0, 200);
-                            });
+                            Font.write("*", 80, 205, 0, 200);
+                            Font.write("Spare", 110, 205, 0, 200);
+                            Font.write("*", 80, 165, 0, 200);
+                            Font.write("Quit", 110, 165, 0, 200);
                             [player.soul.x, player.soul.y] = [55, 195 - choice[1] * 40];
                         }
                     } else if (choice.length == 3) {
@@ -183,8 +184,8 @@ export const main = async () => {
                             else if (choice[2] == 48 && 1 <= choice[3]) Core.aLib.play("e_damage")
                             if (48 <= choice[2] && choice[2] < 108) {
                                 if (1 <= choice[3]) {
-                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, 120, 20, "#ff0000", 0, 1, "start")
-                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, Math.max(0, enemy.hp / enemy.hp_max * 120), 20, "#4dff5e", 0, 1, "start")
+                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, 120, 20, Game.color[Game.styles.enemy_hp_back as keyof typeof Game.color] ?? Game.styles.enemy_hp_back, 0, 1, "start")
+                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, Math.max(0, enemy.hp / enemy.hp_max * 120), 20, Game.color[Game.styles.enemy_hp as keyof typeof Game.color] ?? Game.styles.enemy_hp, 0, 1, "start")
                                     const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
                                     const px = (`${choice[3]}`.length * 8) - ((`${choice[3]}`.match(/1/) ?? []).length * 3) - 1
                                     Font.write(`${choice[3]}`, Game.enemy.x - px * 2, Game.enemy.y + 20 + jump, 0, 400, "red", 0, 0, "damage");
@@ -317,20 +318,26 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number }) => () => {
-    write(player.name, 32, 75, 0, 300, "white", 0, 0, "status");
-    write("lv", 134, 75, 0, 300, "white", 0, 0, "status");
-    const hp_len = Math.max(2, `${player.hp_max}`.length);
-    const lv_len = Math.max(2, `${player.lv}`.length);
-    hp_len * 3 * 5;
-    lv_len * 3 * 5;
-    write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 173, 75, 0, 300, "white", 0, 0, "status");
-    write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`, player.hp_max * 1.2 + 276 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
-    write("/", player.hp_max * 1.2 + 285 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
-    write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`, player.hp_max * 1.2 + 309 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number },
+    Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }) => {
+    const hp_color = Game.color[Game.styles.player_hp] ?? Game.styles.player_hp;
+    const kr_color = Game.color[Game.styles.player_kr] ?? Game.styles.player_kr;
+    const hp_back = Game.color[Game.styles.player_hp_back] ?? Game.styles.player_hp_back;
+    return () => {
+        write(player.name, 32, 75, 0, 300, "white", 0, 0, "status");
+        write("lv", 134, 75, 0, 300, "white", 0, 0, "status");
+        const hp_len = Math.max(2, `${player.hp_max}`.length);
+        const lv_len = Math.max(2, `${player.lv}`.length);
+        hp_len * 3 * 5;
+        lv_len * 3 * 5;
+        write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 173, 75, 0, 300, "white", 0, 0, "status");
+        write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`, player.hp_max * 1.2 + 276 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+        write("/", player.hp_max * 1.2 + 285 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+        write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`, player.hp_max * 1.2 + 309 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
 
-    cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp_max * 1.2, 21, "red", 0, 1, "start");
-    cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp * 1.2, 21, "yellow", 0, 1, "start");
-    cLib.stamp("hp_kr_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1,                       { left: 0, top: 0 , width: 23, height: 10 });
-    cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
-};
+        cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp_max * 1.2, 21, hp_back, 0, 1, "start");
+        cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp * 1.2, 21, hp_color, 0, 1, "start");
+        cLib.stamp("hp_kr_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
+        cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
+    };
+}
