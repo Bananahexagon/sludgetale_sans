@@ -4,6 +4,7 @@ export const Game = {
     lang: "ja" as "ja" | "en",
     bgm: undefined as string | undefined,
     player: {
+        name: "frisk",
         attack: 2500,
         lv: 19,
         hp_max: 92,

@@ -317,9 +317,9 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { hp: number, hp_max: number, lv: number }) => () => {
-    write("chara", 32, 75, 0, 300, "white", 0, 0, "status");
-    write("lV", 134, 75, 0, 300, "white", 0, 0, "status");
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name:string,hp: number, hp_max: number, lv: number }) => () => {
+    write(player.name, 32, 75, 0, 300, "white", 0, 0, "status");
+    write("lv", 134, 75, 0, 300, "white", 0, 0, "status");
     const hp_len = Math.max(2, `${player.hp_max}`.length);
     const lv_len = Math.max(2, `${player.lv}`.length);
     hp_len * 3 * 5;

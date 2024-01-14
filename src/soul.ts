@@ -6,6 +6,7 @@ import { SpriteT } from "./lib/types";
 export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
     scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }, b_tick: (() => void)[]) => {
     const player = ({
+        name:Game.player.name,
         lv: Game.player.lv,
         hp: Game.player.hp_max,
         hp_max: Game.player.hp_max,
