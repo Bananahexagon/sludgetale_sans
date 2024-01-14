@@ -33,6 +33,11 @@ export default [
     },
     {
         "type": "image",
+        "name": "hp_kr_white",
+        "src": "./assets/images/hp_kr_white.png"
+    },
+    {
+        "type": "image",
         "name": "hp_kr_purple",
         "src": "./assets/images/hp_kr_purple.png"
     },
@@ -125,16 +130,6 @@ export default [
         "type": "image",
         "name": "status_purple",
         "src": "./assets/images/font/status_purple.png"
-    },
-    {
-        "type": "image",
-        "name": "kr_white",
-        "src": "./assets/images/kr_white.png"
-    },
-    {
-        "type": "image",
-        "name": "hp_white",
-        "src": "./assets/images/hp_white.png"
     },
     {
         "type": "image",

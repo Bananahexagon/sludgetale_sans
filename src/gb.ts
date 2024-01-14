@@ -6,6 +6,8 @@ import { Dict } from "./lib/utils";
 
 export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
     damage(arg0: number): void; soul: SpriteT, hp: number
+}, Game: {
+    color: { white: string, blue: string, orange: string }
 }) => {
     let gbDict: Dict<any> = {}
     class Blaster extends Sprite {
@@ -67,7 +69,7 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
                     this.y + cos360(this.d) * len / -2,
                     this.width * this.size / 5 * (1 + sin360(this.age * 10) * 0.2),
                     len,
-                    { "white": "#ffffff", "blue": "#008cff", "orange": "#ff8a00" }[this.color],
+                    Game.color[this.color],
                     this.d + 180,
                     Math.min((this.b_d + this.b_s + this.c_t - this.age) / 15, 1),
                     "center++"

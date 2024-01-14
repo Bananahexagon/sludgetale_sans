@@ -21,7 +21,7 @@ export const Game = {
             heal: -20,
             text: "パンはパンでも食べられないパンはな～んだ",
             behavior: "default"
-        },{
+        }, {
             name: "唐揚げ",
             heal: 20,
             text: "生殖器の唐揚げｱｱｱｱｧｧｧ----wwwwwwwwwwww",
@@ -35,12 +35,17 @@ export const Game = {
         {
             name: "筋トレ", text: "筋トレをした。HPが増えた！", behavior: (Core, player) => {
                 Core.aLib.play("determination")
-                player.hp_max+=12;
+                player.hp_max += 12;
                 player.hp += 12;
             }
         },
     ] as { name: string, text: string, behavior: behavior }[],
-    clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!"
+    clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!",
+    color: {
+        white: "#99867a",
+        blue: "#5c7d99",
+        orange: "#997d5c"
+    },
 }
 
 type behavior = "default" | ((Core: CoreT, player: { hp: number, hp_max: number }) => void);

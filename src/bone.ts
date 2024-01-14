@@ -13,6 +13,8 @@ type Move = number | {
 
 export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
     damage(arg0: number, color?: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
+},Game: {
+    color: { white: string, blue: string, orange: string }
 }) => {
     interface Bone {
         life: number,
@@ -72,7 +74,7 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
             cLib.drawRect(
                 this.x + sin360(this.d) * this.b_width * 6 / 6,
                 this.y + cos360(this.d) * this.b_width * 6 / 6,
-                this.b_width, this.len + this.b_width * 2 / 6, { "white": "#ffffff", "blue": "#008cff", "orange": "#ff8a00" }[this.color], this.d, 1, "start"
+                this.b_width, this.len + this.b_width * 2 / 6, Game.color[this.color], this.d, 1, "start"
             );
             cLib.stamp(`bone_head_${this.color}`,
                 this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,

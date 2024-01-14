@@ -26,14 +26,14 @@ export const main = async () => {
     }
     let timer = 0;
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
-    const Box = BoxFnsGen(Core.cLib, soul);
+    const Box = BoxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
-    const player = soulObjGen(soul, Game, Core, scene, Box.box,Core.b_tick);
+    const player = soulObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
     {
         if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
-        const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
-        const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player);
+        const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
+        const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player);
         box.set(320, 160, 0, 562, 132);
         const enemy = {
@@ -239,7 +239,7 @@ export const main = async () => {
             } else if (sub_scene == "enemy_attack") {
                 box.set(320, 160, 0, 132, 132)
                 let timer = 0;
-                let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180,"blue");
+                let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180, "blue");
                 await Core.for(0, i => i < Game.enemy_attack[0] && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -317,7 +317,7 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name:string,hp: number, hp_max: number, lv: number }) => () => {
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number }) => () => {
     write(player.name, 32, 75, 0, 300, "white", 0, 0, "status");
     write("lv", 134, 75, 0, 300, "white", 0, 0, "status");
     const hp_len = Math.max(2, `${player.hp_max}`.length);
@@ -331,6 +331,6 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
 
     cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp_max * 1.2, 21, "red", 0, 1, "start");
     cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp * 1.2, 21, "yellow", 0, 1, "start");
-    cLib.stamp("hp_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start");
-    cLib.stamp("kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start");
+    cLib.stamp("hp_kr_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1,                       { left: 0, top: 0 , width: 23, height: 10 });
+    cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
 };

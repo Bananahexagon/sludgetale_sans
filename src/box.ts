@@ -1,7 +1,9 @@
 import { SpriteT, cLibT } from "./lib/types";
 import { cos360, sin360 } from "./lib/utils";
 
-export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
+export const BoxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
+    color: { white: string, blue: string, orange: string }
+}) => {
     class Wall {
         dx: number;
         dy: number;
@@ -96,7 +98,7 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
         draw() {
             const x = this.dx + 320 * sin360(this.dd)
             const y = this.dy + 320 * cos360(this.dd)
-            cLib.drawRect(x, y, 640, 640, "#ffffff88", this.dd, 1, "center++");
+            cLib.drawRect(x, y, 640, 640, Game.color.white, this.dd, 1, "center++");
         }
         is_jumpable() {
             const d = this.dd
@@ -136,7 +138,7 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT) => {
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
                 const wy = e.dy + 640 * cos360(e.dd);
-                cLib.drawRect(wx, wy, 1280, 1280, "#ffffff", e.dd, 1, "center++");
+                cLib.drawRect(wx, wy, 1280, 1280, Game.color.white, e.dd, 1, "center++");
             });
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
