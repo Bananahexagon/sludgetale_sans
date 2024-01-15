@@ -30,6 +30,10 @@ export const Game = {
             behavior: "default"
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
+    start: {
+        speak: "よっ",
+        attack: () => { },
+    } as { speak: string, attack: () => void } | "none",
     enemy_speak: ["唐揚げ食べたい"],
     enemy_attack: [300],
     actions: [
@@ -44,9 +48,9 @@ export const Game = {
     ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!",
     styles: {
-        player_hp: "green"  ,
-        player_kr: "purple" ,
-        player_hp_back:  "red_dark",
+        player_hp: "green",
+        player_kr: "purple",
+        player_hp_back: "red_dark",
         enemy_hp: "yellow",
         enemy_hp_back: "red_dark"
     },
@@ -55,7 +59,7 @@ export const Game = {
         blue: "#5c7d99",
         orange: "#997d5c",
         yellow: "#99935c",
-        green:"#5c9962",
+        green: "#5c9962",
         red: "#995c5c",
         red_dark: "#803333",
         purple: "#995c5c"

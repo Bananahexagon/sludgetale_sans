@@ -432,5 +432,10 @@ export default [
         "type": "audio",
         "name": "warning",
         "src": "./assets/audios/warning.wav"
+    },
+    {
+        "type": "audio",
+        "name": "tick",
+        "src": "./assets/audios/tick.wav"
     }
 ]

@@ -30,7 +30,7 @@ export const main = async () => {
     const box = Box.box;
     const player = soulObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
     {
-        if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
+        //if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
@@ -41,10 +41,31 @@ export const main = async () => {
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
+        await Core.for(0, i => i < 30, i => {
+            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+            if (i % 10 == 0) Core.aLib.play("tick")
+            if (i % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 100)
+        })
+        await Core.for(0, i => i < 30, i => {
+            const ratio = (1 - i / 30) ** 3;
+            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+            Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 100, (1-i/30));
+        })
+        await Core.for(0, i => i < 10, i => {
+            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+            box.draw();
+            enemy.s.stamp();
+            const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+            [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, i == 0));
+            hp_bar();
+            [player.soul.x, player.soul.y] = [49.5, 27]
+            player.stamp();
+            Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
+        })
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_",Game.flavor[0], 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const txt = new Font.Plane("_", Game.flavor[0], 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
