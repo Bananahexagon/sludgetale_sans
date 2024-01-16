@@ -11,7 +11,7 @@ type Move = number | {
     fn: (age: number) => number
 };
 
-export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
+const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
     damage(arg0: number, color?: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
 },Game: {
     color: { white: string, blue: string, orange: string }
@@ -214,4 +214,11 @@ export const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, playe
         stab: stabBone,
         process
     }
+}
+
+type boneFnsT = ReturnType<typeof boneFnsGen>
+
+export {
+    boneFnsGen,
+    boneFnsT
 }

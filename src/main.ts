@@ -4,7 +4,7 @@ import { Dict, Opt, sin360, distance, cos360 } from "./lib/utils";
 import config from "./config.json";
 import { boneFnsGen } from "./bone";
 import { fontFnsGen, Plane as FontPlaneT } from "./font";
-import { BoxFnsGen } from "./box";
+import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game } from "./game.json"
 import { soulObjGen } from "./soul";
@@ -26,7 +26,7 @@ export const main = async () => {
     }
     let timer = 0;
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
-    const Box = BoxFnsGen(Core.cLib, soul, Game);
+    const Box = boxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
     const player = soulObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
     {
@@ -35,33 +35,63 @@ export const main = async () => {
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Game);
-        box.set(320, 160, 0, 562, 132);
+        let turn = 0;
+        box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         const enemy = {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
-        await Core.for(0, i => i < 30, i => {
+        await Core.for(0, i => i < 75, i => {
+            const j = Math.max(0, Math.min(45, i - 15));
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-            if (i % 10 == 0) Core.aLib.play("tick")
-            if (i % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 100)
+            Core.cLib.stamp("soul", 220, 240);
+            Font.write("play", 270, 250, 0, 200, "yellow", 0, 0, "en");
+            Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (j / 45));
         })
         await Core.for(0, i => i < 30, i => {
-            const ratio = (1 - i / 30) ** 3;
+            const j = Math.min(24, i);
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-            Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 100, (1-i/30));
-        })
-        await Core.for(0, i => i < 10, i => {
-            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-            box.draw();
-            enemy.s.stamp();
-            const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-            [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, i == 0));
-            hp_bar();
-            [player.soul.x, player.soul.y] = [49.5, 27]
-            player.stamp();
-            Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
-        })
+            if (j % 10 == 0) Core.aLib.play("tick")
+            if (j % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 100)
+        });
+        Core.aLib.play("battle_start")
+        if (Game.start == "none") {
+            await Core.for(0, i => i < 30, i => {
+                const ratio = (1 - i / 30) ** 3;
+                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 100, (1 - i / 30));
+            });
+            await Core.for(0, i => i < 10, i => {
+                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                box.draw();
+                enemy.s.stamp();
+                const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, i == 0));
+                hp_bar();
+                [player.soul.x, player.soul.y] = [49.5, 27]
+                player.stamp();
+                Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
+            });
+        } else {
+            await Core.for(0, i => i < 30, i => {
+                const ratio = (1 - i / 30) ** 3;
+                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                Core.cLib.stamp("soul", 320, 240 * ratio + (1 - ratio) * 160, 0, 100, (1 - i / 30));
+            });
+            await Core.for(0, i => i < 10, i => {
+                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+                box.draw();
+                enemy.s.stamp();
+                const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
+                [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
+                hp_bar();
+                [player.soul.x, player.soul.y] = [320, 160]
+                player.stamp();
+                Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
+            });
+
+        }
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -236,12 +266,12 @@ export const main = async () => {
                 let timer = 0;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
                 const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
+                const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
                 await Core.while(() => sub_scene == "enemy_speak" && (scene.v == "battle" && sub_scene == "enemy_speak"), () => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     player.move()
                     timer++;
-                    const ratio = 1 - Math.max(1 - timer / 15, 0) ** 4;
-                    box.set(320, 160, 30 * ratio + 0 * (1 - ratio), 132 * ratio + 562 * (1 - ratio), 132)
+                    b_y.yield(timer);
                     box.draw();
                     box.judge();
                     enemy.s.stamp();
@@ -251,17 +281,17 @@ export const main = async () => {
                     player.stamp();
                     hp_bar();
                     quote.process();
-                    if (!(quote.solved && ratio == 1)) {
+                    if (!(quote.solved && 15 <= timer)) {
                         quote.write();
                     } else {
                         sub_scene = "enemy_attack"
                     }
                 })
-                box.set(320, 160, 0, 562, 132)
+                b_y.finish();
             } else if (sub_scene == "enemy_attack") {
-                box.set(320, 160, 0, 132, 132)
                 let timer = 0;
                 let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180, "blue");
+                
                 await Core.for(0, i => i < Game.enemy_attack[0] && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -277,10 +307,11 @@ export const main = async () => {
                 })
                 Bone.boneDict = {};
                 Blaster.gbDict = {};
+                const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 15, 4);
                 await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     const ratio = 1 - Math.max(1 - (i + 1) / 15, 0) ** 4;
                     player.move()
-                    box.set(320, 160, 0 * ratio + 30 * (1 - ratio), 562 * ratio + 132 * (1 - ratio), 132)
+                    b_y.yield(i);
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     box.judge();
@@ -290,6 +321,7 @@ export const main = async () => {
                     player.stamp();
                     hp_bar();
                 })
+                b_y.finish();
                 sub_scene = "command";
             } else if (sub_scene == "clear") {
                 const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");

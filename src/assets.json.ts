@@ -437,5 +437,10 @@ export default [
         "type": "audio",
         "name": "tick",
         "src": "./assets/audios/tick.wav"
+    },
+    {
+        "type": "audio",
+        "name": "battle_start",
+        "src": "./assets/audios/battle_start.wav"
     }
 ]

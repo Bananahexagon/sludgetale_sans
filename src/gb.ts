@@ -4,7 +4,7 @@ import { Dict } from "./lib/utils";
 
 
 
-export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
+const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
     damage(arg0: number): void; soul: SpriteT, hp: number
 }, Game: {
     color: { white: string, blue: string, orange: string }
@@ -112,3 +112,8 @@ export const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player:
         process
     }
 }
+
+
+type gbFnsT = ReturnType<typeof gbFnsGen>
+
+export { gbFnsGen, gbFnsT }

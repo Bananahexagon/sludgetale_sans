@@ -1,7 +1,8 @@
 import { SpriteT, cLibT } from "./lib/types";
 import { cos360, sin360 } from "./lib/utils";
 
-export const BoxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
+
+const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
     class Wall {
@@ -126,13 +127,33 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             this.walls = [] as Wall2[];
             box.init();
         },
-        set(x?: number, y?: number, d?: number, w?: number, h?: number) {
-            this.center_x = x || this.center_x;
-            this.center_y = y || this.center_y;
-            this.dire = d || this.dire;
-            this.width = w || this.width;
-            this.height = h || this.height;
+        set(arg: { x?: number, y?: number, d?: number, w?: number, h?: number }) {
+            this.center_x = arg.x ?? this.center_x;
+            this.center_y = arg.y ?? this.center_y;
+            this.dire = arg.d ?? this.dire;
+            this.width = arg.w ?? this.width;
+            this.height = arg.h ?? this.height;
             box.update();
+        },
+        move(arg: { x?: number, y?: number, d?: number, w?: number, h?: number }, frame: number, speed: number = 1) {
+            const f = {
+                x: this.center_x,
+                y: this.center_y,
+                d: this.dire,
+                w: this.width,
+                h: this.height,
+            }
+            const y = (i: number) => {
+                const j = Math.max(0, Math.min(i, frame));
+                const ratio = 1 - (1 - j / frame) ** speed;
+                this.center_x = (arg.x ?? f.x) * ratio + f.x * (1 - ratio);
+                this.center_y = (arg.y ?? f.y) * ratio + f.y * (1 - ratio);
+                this.dire = (arg.d ?? f.d) * ratio + f.d * (1 - ratio);
+                this.width = (arg.w ?? f.w) * ratio + f.w * (1 - ratio);
+                this.height = (arg.h ?? f.h) * ratio + f.h * (1 - ratio);
+                box.update();
+            }
+            return { yield: y, finish: ()=>this.set(arg) }
         },
         draw() {
             this.walls.forEach(e => {
@@ -199,4 +220,11 @@ export const BoxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
     }
     box.init();
     return { Wall, box };
+}
+
+type boxFnsT = ReturnType<typeof boxFnsGen>
+
+export {
+    boxFnsGen,
+    boxFnsT
 }
