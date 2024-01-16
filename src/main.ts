@@ -3,11 +3,11 @@ import { CoreT, SpriteT, SpriteClassT, cLibT } from "./lib/types";
 import { Dict, Opt, sin360, distance, cos360 } from "./lib/utils";
 import config from "./config.json";
 import { boneFnsGen } from "./bone";
-import { fontFnsGen, Plane as FontPlaneT } from "./font";
+import { fontFnsGen, PlaneT as FontPlaneT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
-import { Game } from "./game.json"
-import { soulObjGen } from "./soul";
+import { Game } from "./game"
+import { playerObjGen } from "./soul";
 
 export const main = async () => {
     const Core = await init(config);
@@ -28,20 +28,21 @@ export const main = async () => {
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
     const Box = boxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
-    const player = soulObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
+    const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
     {
         //if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Game);
-        let turn = 0;
-        box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         const enemy = {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
+        const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar ,scene})
+        let turn = 0;
+        box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         await Core.for(0, i => i < 75, i => {
             const j = Math.max(0, Math.min(45, i - 15));
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -53,14 +54,14 @@ export const main = async () => {
             const j = Math.min(24, i);
             Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (j % 10 == 0) Core.aLib.play("tick")
-            if (j % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 100)
+            if (j % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 80)
         });
         Core.aLib.play("battle_start")
-        if (Game.start == "none") {
+        if (start_turn == "none") {
             await Core.for(0, i => i < 30, i => {
                 const ratio = (1 - i / 30) ** 3;
                 Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-                Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 100, (1 - i / 30));
+                Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 80, (1 - i / 30));
             });
             await Core.for(0, i => i < 10, i => {
                 Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -77,7 +78,7 @@ export const main = async () => {
             await Core.for(0, i => i < 30, i => {
                 const ratio = (1 - i / 30) ** 3;
                 Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-                Core.cLib.stamp("soul", 320, 240 * ratio + (1 - ratio) * 160, 0, 100, (1 - i / 30));
+                Core.cLib.stamp("soul", 320, 240 * ratio + (1 - ratio) * 160, 0, 80, (1 - i / 30));
             });
             await Core.for(0, i => i < 10, i => {
                 Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -91,11 +92,14 @@ export const main = async () => {
                 Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
             });
 
+            await start_turn();
+            Bone.boneDict = {};
+            Blaster.gbDict = {};
         }
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", Game.flavor[0], 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const txt = new Font.Plane("_", Turns[turn].flavor, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
@@ -265,7 +269,7 @@ export const main = async () => {
                 player.soul.alpha = 1;
                 let timer = 0;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
-                const quote = new Font.Plane("_", Game.enemy_speak[0], 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
+                const quote = new Font.Plane("_", Turns[turn].quote, 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
                 await Core.while(() => sub_scene == "enemy_speak" && (scene.v == "battle" && sub_scene == "enemy_speak"), () => {
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
@@ -291,8 +295,8 @@ export const main = async () => {
             } else if (sub_scene == "enemy_attack") {
                 let timer = 0;
                 let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180, "blue");
-                
-                await Core.for(0, i => i < Game.enemy_attack[0] && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
+
+                await Core.for(0, i => i < 0 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     player.move()
@@ -309,7 +313,6 @@ export const main = async () => {
                 Blaster.gbDict = {};
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 15, 4);
                 await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
-                    const ratio = 1 - Math.max(1 - (i + 1) / 15, 0) ** 4;
                     player.move()
                     b_y.yield(i);
                     Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);

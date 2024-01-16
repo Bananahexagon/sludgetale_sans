@@ -1,4 +1,4 @@
-import { Game } from "./game.json";
+import { Game } from "./game";
 
 import fontDataEn from "./data/font_en.json";
 import fontDataStatus from "./data/font_status.json";
@@ -23,7 +23,7 @@ type charDataT = {
 
 type FontDataT = typeof fontDataEn;
 
-export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
+const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     const fontData = {
         en: fontDataEn,
         status: fontDataStatus,
@@ -311,37 +311,12 @@ export const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => 
     }
 }
 
-const tmp = class Plane {
-    str_now: string;
-    len_now: number;
-    str: string;
-    x: number;
-    y: number;
-    direction: number;
-    size: number;
-    color: string;
-    spacing_x: number;
-    spacing_y: number;
-    speed: number;
-    font: FontDataT;
-    len_allow: number;
-    constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string) {
-        this.str_now = "";
-        this.len_now = 0;
-        this.str = str
-        this.x = x;
-        this.y = y;
-        this.direction = d;
-        this.size = size;
-        this.color = color;
-        this.spacing_x = spacing_x;
-        this.spacing_y = spacing_y;
-        this.speed = speed;
-        this.font = undefined as unknown as FontDataT;
-        this.len_allow = 0;
-    }
-    write() { };
-    process() { };
-    delete() { };
+type fontFnsT = ReturnType<typeof fontFnsGen>;
+
+type PlaneT = fontFnsT["Plane"]
+
+export {
+    fontFnsGen,
+    fontFnsT,
+    PlaneT
 }
-export type Plane = typeof tmp;

@@ -224,7 +224,10 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
 
 type boxFnsT = ReturnType<typeof boxFnsGen>
 
+type boxT = boxFnsT["box"]
+
 export {
     boxFnsGen,
-    boxFnsT
+    boxFnsT,
+    boxT
 }

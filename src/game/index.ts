@@ -1,6 +1,7 @@
-import { CoreT } from "./lib/types";
+import { CoreT } from "../lib/types";
+import { turnsGen } from "./turns";
 
-export const Game = {
+const Game = {
     lang: "ja" as "ja" | "en",
     bgm: undefined as string | undefined,
     player: {
@@ -30,12 +31,6 @@ export const Game = {
             behavior: "default"
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
-    start: {
-        speak: "よっ",
-        attack: () => { },
-    } as { speak: string, attack: () => void } | "none",
-    enemy_speak: ["唐揚げ食べたい"],
-    enemy_attack: [300],
     actions: [
         { name: "しらべる", text: "百均のマネキン 0 ATK 0 DEF\n安物のマネキンだ。", behavior: "default" },
         {
@@ -64,9 +59,10 @@ export const Game = {
         red_dark: "#803333",
         purple: "#995c5c"
     },
-    flavor: [
-        "一ターン目のテキスト(5ﾆｯｺﾘ"
-    ]
+    turnsGen
 }
 
+type GameT = typeof Game;
+
+export { Game, GameT }
 type behavior = "default" | ((Core: CoreT, player: { hp: number, hp_max: number }) => void);

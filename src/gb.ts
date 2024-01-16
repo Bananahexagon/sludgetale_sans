@@ -5,7 +5,7 @@ import { Dict } from "./lib/utils";
 
 
 const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number): void; soul: SpriteT, hp: number
+    damage(arg0: number, color: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
 }, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
@@ -23,8 +23,9 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         private c_t: number;
         private b_s: number;
         private b_d: number;
+        private d_t: number;
         private color: "white" | "blue" | "orange";
-        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number, color: "white" | "blue" | "orange") {
+        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange") {
             super(fx, fy, fd, size, `gb_${color}_1`, 1, width);
             this.s_x = fx;
             this.s_y = fy;
@@ -35,6 +36,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.c_t = ct;
             this.b_s = bs;
             this.b_d = bd;
+            this.d_t = dt;
             this.gb_width = width;
             this.age = 0;
             this.id = Blaster.current_id;
@@ -71,7 +73,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                     len,
                     Game.color[this.color],
                     this.d + 180,
-                    Math.min((this.b_d + this.b_s + this.c_t - this.age) / 15, 1),
+                    Math.max(0, Math.min(1 - (this.age - (this.b_d + this.b_s + this.c_t)) / this.d_t, 1)),
                     "center++"
                 );
             }
@@ -86,8 +88,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             const relative_y = player.soul.y - this.y;
             const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-            if (this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
-                player.damage(1);
+            if (this.age <= this.b_s + this.c_t + this.b_d && this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
+                player.damage(1, this.color);
             }
         }
         public static process() {
@@ -98,7 +100,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 gb.judge();
                 gb.age++;
                 if (gb.b_d + gb.b_s == gb.age) aLib.play("gb_fire", 1)
-                if (gb.b_d + gb.b_s + gb.c_t <= gb.age) delete gbDict[id]
+                if (gb.b_d + gb.b_s + gb.c_t + gb.d_t <= gb.age) delete gbDict[id]
             }
         }
         private static current_id = 0;

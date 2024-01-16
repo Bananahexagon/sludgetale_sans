@@ -1,9 +1,9 @@
 import { CoreT } from "./lib/types";
 import { Ref } from "./lib/utils";
-import { Game as G } from "./game.json";
+import { Game as G } from "./game";
 import { SpriteT } from "./lib/types";
 
-export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
+const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
     scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }, b_tick: (() => void)[]) => {
     const player = ({
         name:Game.player.name,
@@ -13,12 +13,12 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
         soul: soul,
         stamp() {
             this.soul.costume = {
-                0: "soul_red",
+                0: "soul",
                 1: "soul_blue",
-            }[this.type] ?? "soul_red";
+            }[this.type] ?? "soul";
             this.soul.stamp();
         },
-        type: 1,
+        type: 0,
 
         damage(d: number, color: "white" | "blue" | "orange" = "white") { },
         move() { }
@@ -72,3 +72,10 @@ export const soulObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
     };
     return player
 };
+
+type playerT = ReturnType<typeof playerObjGen>
+
+export {
+    playerObjGen,
+    playerT,
+}
