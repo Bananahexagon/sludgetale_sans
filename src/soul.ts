@@ -5,8 +5,9 @@ import { SpriteT } from "./lib/types";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
     scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }, b_tick: (() => void)[]) => {
+    let damage_time = 0;
     const player = ({
-        name:Game.player.name,
+        name: Game.player.name,
         lv: Game.player.lv,
         hp: Game.player.hp_max,
         hp_max: Game.player.hp_max,
@@ -17,10 +18,11 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
                 1: "soul_blue",
             }[this.type] ?? "soul";
             this.soul.stamp();
+            if (0 < damage_time) Core.cLib.stamp("soul_black", this.soul.x, this.soul.y, 0, 80, 0.5)
         },
         type: 0,
 
-        damage(d: number, color: "white" | "blue" | "orange" = "white") { },
+        damage(color: "white" | "blue" | "orange" = "white", d?: number) { },
         move() { }
     })
     const b_jump = (() => {
@@ -58,12 +60,13 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
         }
     }
     let [bx, by] = [0, 0];
-    b_tick.push(() => { bx = soul.x, by = soul.y });
-    player.damage = function (d: number, color: "white" | "blue" | "orange" = "white") {
-        if (
-            color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y)) {
-            this.hp -= d;
-            Core.aLib.play("damage", 2);
+    b_tick.push(() => { bx = soul.x; by = soul.y; damage_time--; });
+    player.damage = function (color: "white" | "blue" | "orange" = "white", d?: number) {
+        if (damage_time <= 0 && (color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y))) {
+            console.log(damage_time);
+            damage_time = Game.player.damage_time;
+            this.hp -= d ?? Game.player.damage;
+            Core.aLib.play("damage");
             color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y)
             if (this.hp <= 0) {
                 scene.v = "game_over";

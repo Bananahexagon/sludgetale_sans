@@ -12,8 +12,8 @@ type Move = number | {
 };
 
 const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number, color?: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
-},Game: {
+    damage(color?: "white" | "blue" | "orange",val?:number): void; soul: SpriteT, hp: number
+}, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
     interface Bone {
@@ -99,7 +99,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
                 const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
                 if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
-                    player.damage(1, this.color);
+                    player.damage(this.color);
                 }
             }
 
@@ -191,7 +191,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             //const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
             if (turned_y < 0) {
-                player.damage(1, this.color);
+                player.damage(this.color);
             }
             this.move(-640);
         }

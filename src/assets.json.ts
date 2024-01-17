@@ -8,6 +8,11 @@ export default [
     },
     {
         "type": "image",
+        "name": "soul_black",
+        "src": "./assets/images/soul_black.png"
+    },
+    {
+        "type": "image",
         "name": "soul_blue",
         "src": "./assets/images/soul_blue.png"
     },
@@ -410,8 +415,8 @@ export default [
     },
     {
         "type": "audio",
-        "name": "megalovania",
-        "src": "./assets/audios/megalovania.wav"
+        "name": "megalopollution",
+        "src": "./assets/audios/megalopollution.wav"
     },
     {
         "type": "audio",

@@ -20,7 +20,6 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         Gb.process();
     }
     const b_tick = () => {
-        Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
         player.move()
         box.judge();
     }
@@ -60,13 +59,17 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         await speak("！仮置きテキスト！", 2)
         await Core.for(0, i => i < 300 && scene.v != "game_over", i => {
             b_tick()
-            if (i % 10 == 0) {
-                const d = i * 3;
-                const [s, c] = [sin360(d), cos360(d)]
-                new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 90, 200, 0.5, 15, 15, 15,5, "white");
+            if (i % 5 == 0) {
+                let d = i * 3;
+                let [s, c] = [sin360(d), cos360(d)]
+                new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 180, 200, 0.5, 30, 10, 15, 5, "white", 1);
+                d += 180;
+                [s, c] = [sin360(d), cos360(d)]
+                new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 180, 200, 0.5, 30, 10, 15, 5, "white", 0);
             }
             a_tick()
         })
+        await Core.for(0, i => i < 60 && scene.v != "game_over", i => { b_tick(); a_tick() })
         Gb.gbDict = {};
         if (scene.v != "game_over") {
             await speak("へへ...", 2)

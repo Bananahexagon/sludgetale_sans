@@ -3,12 +3,14 @@ import { turnsGen } from "./turns";
 
 const Game = {
     lang: "ja" as "ja" | "en",
-    bgm: undefined as string | undefined,
+    bgm: "megalopollution" as string | undefined,
     player: {
-        name: "bhex",
+        name: "banahex",
         attack: 2500,
         lv: 19,
         hp_max: 92,
+        damage: 1,
+        damage_time: 1
     },
     enemy: {
         x: 320,

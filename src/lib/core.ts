@@ -137,13 +137,15 @@ export const init = async (config: configT): Promise<CoreT> => {
         inputMouse.x = p.x;
         inputMouse.y = p.y;
     });
-    let b_tick: (() => void)[]=[];
-    let a_tick: (() => void)[]=[];
+    let b_tick: (() => void)[] = [];
+    let a_tick: (() => void)[] = [];
     {
         let bk = {
             up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
         }
-        b_tick.push( () => {
+        b_tick.push(() => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            cLib.drawRect(320, 240, 640, 480, "#000", 0, 1);
             (["up", "down", "left", "right", "z", "x", "c", "d"] as ("up" | "down" | "left" | "right" | "z" | "x" | "c" | "d")[]).forEach(e => {
                 if (bk[e]) {
                     inputKeys.f[e] = false;
@@ -151,7 +153,7 @@ export const init = async (config: configT): Promise<CoreT> => {
             })
             bk = { ...inputKeys.f }
         })
-        a_tick.push( () => {
+        a_tick.push(() => {
             aLib.tick();
         })
     }

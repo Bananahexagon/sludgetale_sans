@@ -5,7 +5,7 @@ import { Dict } from "./lib/utils";
 
 
 const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(arg0: number, color: "white" | "blue" | "orange"): void; soul: SpriteT, hp: number
+    damage(color?: "white" | "blue" | "orange", arg?: number): void; soul: SpriteT, hp: number
 }, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
@@ -24,8 +24,10 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         private b_s: number;
         private b_d: number;
         private d_t: number;
+        private c_s: number;
+        private gain: number;
         private color: "white" | "blue" | "orange";
-        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange") {
+        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number | { v: number, s: number }, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange", gain: number = 1) {
             super(fx, fy, fd, size, `gb_${color}_1`, 1, width);
             this.s_x = fx;
             this.s_y = fy;
@@ -33,7 +35,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.t_x = tx;
             this.t_y = ty;
             this.t_d = td;
-            this.c_t = ct;
+            this.c_t = typeof ct == "number" ? ct : ct.v;
+            this.c_s = typeof ct == "number" ? 4 : ct.s;
             this.b_s = bs;
             this.b_d = bd;
             this.d_t = dt;
@@ -41,13 +44,14 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.age = 0;
             this.id = Blaster.current_id;
             this.color = color;
+            this.gain=gain;
             gbDict[this.id] = this;
             Blaster.current_id++
-            aLib.play("gb_charge", 1)
+            aLib.play("gb_charge", 1, gain)
         }
         private move_self() {
             if (this.age < this.c_t) {
-                let ratio = ((this.c_t - this.age) ** 4) / (this.c_t ** 4);
+                let ratio = ((this.c_t - this.age) ** this.c_s) / (this.c_t ** this.c_s);
                 this.x = ratio * this.s_x + (1 - ratio) * this.t_x;
                 this.y = ratio * this.s_y + (1 - ratio) * this.t_y;
                 this.d = ratio * this.s_d + (1 - ratio) * this.t_d;
@@ -66,10 +70,11 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         private draw() {
             const len = 4800;
             if (this.b_s + this.c_t < this.age) {
+                const age = this.age - this.b_s + this.c_t;
                 cLib.drawRect(
                     this.x + sin360(this.d) * len / -2,
                     this.y + cos360(this.d) * len / -2,
-                    this.width * this.size / 5 * (1 + sin360(this.age * 10) * 0.2),
+                    this.width * this.size / 5 * (1 + sin360(age * 10) * 0.2),
                     len,
                     Game.color[this.color],
                     this.d + 180,
@@ -88,8 +93,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             const relative_y = player.soul.y - this.y;
             const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-            if (this.age <= this.b_s + this.c_t + this.b_d && this.b_s + this.c_t <= this.age && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
-                player.damage(1, this.color);
+            if (this.b_s + this.c_t <= this.age && this.age <= this.b_s + this.c_t + this.b_d && 0 > turned_y && this.gb_width * this.size / 10 > turned_x && turned_x > -this.gb_width * this.size / 10) {
+                player.damage(this.color);
             }
         }
         public static process() {
@@ -99,8 +104,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 gb.draw();
                 gb.judge();
                 gb.age++;
-                if (gb.b_d + gb.b_s == gb.age) aLib.play("gb_fire", 1)
-                if (gb.b_d + gb.b_s + gb.c_t + gb.d_t <= gb.age) delete gbDict[id]
+                if (gb.c_t == gb.age) aLib.play("gb_fire", 1, gb.gain)
+                if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) delete gbDict[id]
             }
         }
         private static current_id = 0;

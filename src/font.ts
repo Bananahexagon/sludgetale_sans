@@ -302,12 +302,39 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
      *    { str: "text", color: "white", spacing_x: 0, spacing_y: 0, speed: 2 },
      *])
      */
+    const len = (s: string, f: string) => {
+        const font = ((f) => {
+            switch (f) {
+                case "status":
+                    return fontData.status;
+                case "damage":
+                    return fontData.damage as FontDataT;
+                case "ja":
+                case "jp":
+                    return fontData.ja as unknown as FontDataT;
+                case "en":
+                    return fontData.en;
+                case "default":
+                default:
+                    return fontData[Game.lang] as unknown as FontDataT;
+            }
+        })(f)
+        let r = 0;
+        for (let i = 0; i < s.length; i++) {
+            const c = s[i];
+            const f = (c in font ? font[c as keyof Omit<typeof font,"props">] : font.space);
+            if (i + 1 < s.length) r += font.props.width_basic;
+            r += f.width;
+        }
+        return r;
+    }
     return {
         write,
         Super,
         Plane,
         process,
         dict: displayDict as (Plane | Super)[],
+        len,
     }
 }
 

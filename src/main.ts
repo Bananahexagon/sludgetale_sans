@@ -16,7 +16,6 @@ export const main = async () => {
     {
         let cursor = 0;
         await Core.while(() => (scene.v === "menu"), () => {
-            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
             if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
             Core.cLib.stamp("soul", 220, -cursor * 50 + 240);
@@ -30,17 +29,16 @@ export const main = async () => {
     const box = Box.box;
     const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
     {
-        //if (Game.bgm != undefined) setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000);
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
-        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Game);
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game);
         const enemy = {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
         };
-        const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar ,scene})
+        const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = 0;
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         await Core.for(0, i => i < 75, i => {
@@ -52,7 +50,6 @@ export const main = async () => {
         })
         await Core.for(0, i => i < 30, i => {
             const j = Math.min(24, i);
-            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
             if (j % 10 == 0) Core.aLib.play("tick")
             if (j % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 80)
         });
@@ -60,11 +57,9 @@ export const main = async () => {
         if (start_turn == "none") {
             await Core.for(0, i => i < 30, i => {
                 const ratio = (1 - i / 30) ** 3;
-                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                 Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 80, (1 - i / 30));
             });
             await Core.for(0, i => i < 10, i => {
-                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                 box.draw();
                 enemy.s.stamp();
                 const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
@@ -77,11 +72,9 @@ export const main = async () => {
         } else {
             await Core.for(0, i => i < 30, i => {
                 const ratio = (1 - i / 30) ** 3;
-                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                 Core.cLib.stamp("soul", 320, 240 * ratio + (1 - ratio) * 160, 0, 80, (1 - i / 30));
             });
             await Core.for(0, i => i < 10, i => {
-                Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                 box.draw();
                 enemy.s.stamp();
                 const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
@@ -96,6 +89,7 @@ export const main = async () => {
             Bone.boneDict = {};
             Blaster.gbDict = {};
         }
+        if (Game.bgm !== undefined) { Core.aLib.play(Game.bgm as string); setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000); }
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -104,7 +98,6 @@ export const main = async () => {
                 let command = 0;
                 let result: undefined | Plane = undefined;
                 await Core.while(() => sub_scene == "command" && (scene.v == "battle" && sub_scene == "command"), () => {
-                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     enemy.s.stamp();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
@@ -272,7 +265,6 @@ export const main = async () => {
                 const quote = new Font.Plane("_", Turns[turn].quote, 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
                 await Core.while(() => sub_scene == "enemy_speak" && (scene.v == "battle" && sub_scene == "enemy_speak"), () => {
-                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     player.move()
                     timer++;
                     b_y.yield(timer);
@@ -298,7 +290,6 @@ export const main = async () => {
 
                 await Core.for(0, i => i < 0 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     timer++;
-                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     player.move()
                     box.judge();
                     Bone.process();
@@ -315,7 +306,6 @@ export const main = async () => {
                 await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     player.move()
                     b_y.yield(i);
-                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     box.judge();
                     enemy.s.stamp();
@@ -329,7 +319,6 @@ export const main = async () => {
             } else if (sub_scene == "clear") {
                 const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 await Core.loop(() => {
-                    Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
                     box.draw();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
@@ -375,25 +364,33 @@ export const main = async () => {
 };
 
 const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number },
-    Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }) => {
+    len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }) => {
+    const name_len = len(player.name, "status");
     const hp_color = Game.color[Game.styles.player_hp] ?? Game.styles.player_hp;
     const kr_color = Game.color[Game.styles.player_kr] ?? Game.styles.player_kr;
     const hp_back = Game.color[Game.styles.player_hp_back] ?? Game.styles.player_hp_back;
     return () => {
         write(player.name, 32, 75, 0, 300, "white", 0, 0, "status");
-        write("lv", 134, 75, 0, 300, "white", 0, 0, "status");
+        write("lv", 62 + name_len * 3, 75, 0, 300, "white", 0, 0, "status");
         const hp_len = Math.max(2, `${player.hp_max}`.length);
         const lv_len = Math.max(2, `${player.lv}`.length);
         hp_len * 3 * 5;
         lv_len * 3 * 5;
-        write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 173, 75, 0, 300, "white", 0, 0, "status");
-        write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`, player.hp_max * 1.2 + 276 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
-        write("/", player.hp_max * 1.2 + 285 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
-        write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`, player.hp_max * 1.2 + 309 + hp_len * 3 * 5 + lv_len * 3 * 5, 77, 0, 300, "white", 0, 0, "status");
+        write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 101 + name_len * 3
+            , 75, 0, 300, "white", 0, 0, "status");
+        write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`,
+            player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
+            , 77, 0, 300, "white", 0, 0, "status");
+        write("/",
+            player.hp_max * 1.2 + 213 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
+            , 77, 0, 300, "white", 0, 0, "status");
+        write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`,
+            player.hp_max * 1.2 + 237 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
+            , 77, 0, 300, "white", 0, 0, "status");
 
-        cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp_max * 1.2, 21, hp_back, 0, 1, "start");
-        cLib.drawRect(226 + lv_len * 3 * 5, 59, player.hp * 1.2, 21, hp_color, 0, 1, "start");
-        cLib.stamp("hp_kr_white", 194 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
-        cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 237 + lv_len * 3 * 5, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
+        cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp_max * 1.2, 21, hp_back, 0, 1, "start");
+        cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp * 1.2, 21, hp_color, 0, 1, "start");
+        cLib.stamp("hp_kr_white", 122 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
+        cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
     };
 }
