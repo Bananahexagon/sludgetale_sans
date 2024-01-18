@@ -4,6 +4,7 @@ import { turnsGen } from "./turns";
 const Game = {
     lang: "ja" as "ja" | "en",
     bgm: "megalopollution" as string | undefined,
+    turn_progress: "fight" as "fight" | "normal" | "random" | "stop",
     player: {
         name: "banahex",
         attack: 2500,

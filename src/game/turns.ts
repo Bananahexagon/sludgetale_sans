@@ -24,35 +24,68 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         player.move()
         box.judge();
     }
+    const bubble = (a: number) => Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, a, "start");
+    const speak = async (tx: string, speed: number) => {
+        const quote = new Font.Plane("_", tx, 420, 360, 0, 100, "black", 0, 0, speed, Game.lang, true, "sans");
+        await Core.while(() => !quote.solved, () => {
+            b_tick();
+            a_tick();
+            bubble(1)
+            Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
+            quote.process();
+            quote.write();
+        })
+    }
 
     const turns = () => [
         {
             flavor: "何かが始まる...",
-            quote: "...",
-            attack: () => { },
+            proc: async (first: boolean) => {
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+                if (first) {
+                    await speak("...", 2);
+                } else {
+                    await speak("...", 2);
+                }
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+            },
+        },
+        {
+            flavor: "！仮置きテキスト！",
+            proc: async (first: boolean) => {
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 232, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+                if (first) {
+                    await speak("どうした？\nお前だっていつも避けてるだろ？", 2);
+                } else {
+                    await speak("...", 2);
+                }
+                //TODO
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+            },
         }
     ]
 
 
     const start = (async () => {
-        const speak = async (tx: string, speed: number) => {
-            const quote = new Font.Plane("_", tx, 420, 360, 0, 100, "black", 0, 0, speed, Game.lang, true, "sans");
-            await Core.while(() => !quote.solved, () => {
-                b_tick();
-                a_tick();
-                Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
-                quote.process();
-                quote.write();
-            })
-        }
         {
-            const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 4)
-            await Core.for(0, i => i < 10, i => {
-                b_tick();
-                a_tick();
-                b_y.yield(i);
-                Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, i / 10, "start");
-            })
+            const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 2)
+            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
             b_y.finish();
         }
         await speak("！仮置きテキスト！", 2)
@@ -61,7 +94,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         await Core.for(0, i => i < 300 && scene.v != "game_over", i => {
             b_tick()
             if (i % 5 == 0) {
-                let d = i * 3;
+                let d = i * 4;
                 let [s, c] = [sin360(d), cos360(d)]
                 new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 180, 200, 0.5, 30, 10, 15, 5, "white", 1);
                 d += 180;
@@ -76,12 +109,8 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             await speak("へへ...", 2)
             await speak("さっさと始めようぜ", 2)
             {
-                const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 4)
-                await Core.for(0, i => i < 10, i => {
-                    b_tick();
-                    a_tick();
-                    b_y.yield(i);
-                })
+                const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
                 b_y.finish();
             }
         }

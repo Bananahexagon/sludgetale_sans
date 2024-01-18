@@ -1,5 +1,5 @@
 import { init } from "./lib/core";
-import { Opt, sin360, distance, cos360 } from "./lib/utils";
+import { Opt, sin360, distance, cos360, Ref } from "./lib/utils";
 import { boneFnsGen } from "./bone";
 import { fontFnsGen, PlaneT as FontPlaneT } from "./font";
 import { boxFnsGen } from "./box";
@@ -29,6 +29,7 @@ export const main = async () => {
     const Box = boxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
     const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
+    const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
     {
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
@@ -41,7 +42,7 @@ export const main = async () => {
             avoid: Game.enemy.avoid,
         };
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
-        let turn = 0;
+        let turn = { v: 0, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         await Core.for(0, i => i < 75, i => {
             const j = Math.max(0, Math.min(45, i - 15));
@@ -95,7 +96,7 @@ export const main = async () => {
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", Turns[turn].flavor, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const txt = new Font.Plane("_", Turns[turn.v].flavor, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
@@ -168,13 +169,14 @@ export const main = async () => {
                                     enemy.avoid ? 0 : Game.player.attack * (1 - Math.abs(choice[1] - 48) * 0.8 / 48) * (1 + (Math.random() - 0.5) / 10)
                                 ));
                                 enemy.hp -= choice[3];
-                                Core.aLib.play("slash")
+                                Core.aLib.play("slash");
+                                if (turn_progress.v == "fight") turn.v += 1;
                             }
                             if (96 <= choice[1] && choice[1] < 156) {
                                 const jump = Math.max(0, -(choice[1] - 96) * (choice[1] - 126) / 5);
                                 Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)
                             } else if (choice[1] == 156) {
-                                sub_scene = "enemy_speak"
+                                sub_scene = "enemy"
                             }
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300, ratio, "center", ratio);
                             Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300, ratio);
@@ -197,11 +199,11 @@ export const main = async () => {
                             };
                         } else if (choice[0] == 3) {
                             if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
-                            if (Core.inputKeys.f.z) sub_scene = "enemy_speak";
+                            if (Core.inputKeys.f.z) sub_scene = "enemy";
                             Font.write("*", 80, 205, 0, 200);
-                            Font.write("Spare", 110, 205, 0, 200);
+                            Font.write(Game.lang == "ja" ? "見逃す" : "Spare", 110, 205, 0, 200);
                             Font.write("*", 80, 165, 0, 200);
-                            Font.write("Quit", 110, 165, 0, 200);
+                            Font.write(Game.lang == "ja" ? "逃げる" : "Quit", 110, 165, 0, 200);
                             [player.soul.x, player.soul.y] = [55, 195 - choice[1] * 40];
                         }
                     } else if (choice.length == 3) {
@@ -214,7 +216,7 @@ export const main = async () => {
                             if (!result.solved) {
                                 result.write();
                                 Font.write("*", 50, 205, 0, 200);
-                            } else sub_scene = "enemy_speak"
+                            } else sub_scene = "enemy"
                         } else if (choice[0] == 2) {
                             player.soul.alpha = 0;
                             if (result === undefined) {
@@ -225,7 +227,7 @@ export const main = async () => {
                             if (!result.solved) {
                                 result.write();
                                 Font.write("*", 50, 205, 0, 200);
-                            } else sub_scene = "enemy_speak"
+                            } else sub_scene = "enemy"
                         } else if (choice[0] == 3) { }
                     } else if (choice.length == 4) {
                         if (choice[0] == 0) {
@@ -261,7 +263,7 @@ export const main = async () => {
                             }
                             enemy.s.alpha = 0 < enemy.hp ? 1 : 1 - Math.min(1, Math.max(choice[2] - 93, 0) / 25);
                             if (choice[2] == 128) {
-                                sub_scene = enemy.hp <= 0 ? "clear" : "enemy_speak";
+                                sub_scene = enemy.hp <= 0 ? "clear" : "enemy";
                             };
                             const ratio = 1 - Math.min(20, Math.max(0, choice[2] - 108)) / 20;
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300, ratio, "center", ratio);
@@ -270,65 +272,14 @@ export const main = async () => {
                         }
                     }
                     player.stamp();
-
                 })
-            } else if (sub_scene == "enemy_speak") {
+                if (turn_progress.v == "normal") turn.v += 1;
+            } else if (sub_scene == "enemy") {
                 player.soul.alpha = 1;
-                let timer = 0;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
-                const quote = new Font.Plane("_", Turns[turn].quote, 420, 360, 0, 100, "black", 0, 0, 1, Game.lang, true, "talk_default");
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
-                await Core.while(() => sub_scene == "enemy_speak" && (scene.v == "battle" && sub_scene == "enemy_speak"), () => {
-                    player.move()
-                    timer++;
-                    b_y.yield(timer);
-                    box.draw();
-                    box.judge();
-                    enemy.s.stamp();
-                    Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, 1, "start");
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.stamp();
-                    hp_bar();
-                    quote.process();
-                    if (!(quote.solved && 15 <= timer)) {
-                        quote.write();
-                    } else {
-                        sub_scene = "enemy_attack"
-                    }
-                })
-                b_y.finish();
-            } else if (sub_scene == "enemy_attack") {
-                let timer = 0;
-                let test_b = new Bone.normal(320, 160, 0, 10, 80, 0, 0, 5, 0, 180, "blue");
-
-                await Core.for(0, i => i < 0 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
-                    timer++;
-                    player.move()
-                    box.judge();
-                    Bone.process();
-                    box.draw();
-                    enemy.s.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.stamp();
-                    hp_bar();
-                })
-                Bone.boneMap.clear();
-                Blaster.gbMap.clear();
-                const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 15, 4);
-                await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
-                    player.move()
-                    b_y.yield(i);
-                    box.draw();
-                    box.judge();
-                    enemy.s.stamp();
-                    const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
-                    [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-                    player.stamp();
-                    hp_bar();
-                })
-                b_y.finish();
+                console.log(turn);
+                await Turns[turn.v].proc(turn.first)
                 sub_scene = "command";
             } else if (sub_scene == "clear") {
                 const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
