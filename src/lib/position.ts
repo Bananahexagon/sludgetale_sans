@@ -1,4 +1,5 @@
-import { configT, CanvasProps } from "./types";
+import { configT } from "../config.json";
+import { CanvasProps } from "./canvas";
 import { sin360, cos360 } from "./utils";
 
 export const PositionLibGen = (canvas: HTMLCanvasElement, config: configT, props: CanvasProps) => {

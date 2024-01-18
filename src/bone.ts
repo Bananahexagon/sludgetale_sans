@@ -1,6 +1,7 @@
-import { SpriteClassT, SpriteT, aLibT, cLibT } from "./lib/types";
+import { aLibT } from "./lib/audios";
+import { cLibT } from "./lib/canvas";
+import { SpriteClassT, SpriteT } from "./lib/sprite";
 import { sin360, cos360 } from "./lib/utils";
-import { Dict } from "./lib/utils";
 
 type Move = number | {
     type: "sin" | "cos",
@@ -12,7 +13,7 @@ type Move = number | {
 };
 
 const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
-    damage(color?: "white" | "blue" | "orange",val?:number): void; soul: SpriteT, hp: number
+    damage(color?: "white" | "blue" | "orange", val?: number): void; soul: SpriteT, hp: number
 }, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
@@ -23,7 +24,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         draw(): void,
         judge(): void,
     }
-    let boneDict: Dict<any> = {}
+    let boneMap = new Map<string, any>();
     class normalBone extends Sprite implements Bone {
         start_x: number;
         start_y: number;
@@ -55,7 +56,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.b_width = width;
             this.life = life;
             this.color = color
-            boneDict[this.id] = this;
+            boneMap.set(this.id, this);
         }
         move_self() {
             this.age++;
@@ -147,7 +148,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.t4 = t4;
             this.life = t1 + t2 + t3 + t4;
             this.color = color;
-            boneDict[this.id] = this;
+            boneMap.set(this.id, this);
             aLib.play("warning");
         }
         move_self(): void {
@@ -198,18 +199,18 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         private static current_id = 0;
     }
     const process = () => {
-        for (const id in boneDict) {
-            const bone = boneDict[id] as Bone;
+        boneMap.forEach((b, id, boneMap) => {
+            const bone = b as Bone;
             if (bone.age < bone.life) {
                 bone.move_self();
                 bone.draw();
                 bone.judge();
             }
-            else delete boneDict[id];
-        }
+            else boneMap.delete(id);
+        })
     };
     return {
-        boneDict: boneDict as Dict<Bone>,
+        boneMap: boneMap as Map<string, Bone>,
         normal: normalBone,
         stab: stabBone,
         process

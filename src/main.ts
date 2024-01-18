@@ -1,13 +1,14 @@
 import { init } from "./lib/core";
-import { CoreT, SpriteT, SpriteClassT, cLibT } from "./lib/types";
-import { Dict, Opt, sin360, distance, cos360 } from "./lib/utils";
-import config from "./config.json";
+import { Opt, sin360, distance, cos360 } from "./lib/utils";
 import { boneFnsGen } from "./bone";
 import { fontFnsGen, PlaneT as FontPlaneT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game } from "./game"
 import { playerObjGen } from "./soul";
+import { config } from "./config.json";
+import { SpriteT } from "./lib/sprite";
+import { cLibT } from "./lib/canvas";
 
 export const main = async () => {
     const Core = await init(config);
@@ -37,6 +38,7 @@ export const main = async () => {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
             hp_max: Game.enemy.hp,
+            avoid: Game.enemy.avoid,
         };
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = 0;
@@ -86,10 +88,10 @@ export const main = async () => {
             });
 
             await start_turn();
-            Bone.boneDict = {};
-            Blaster.gbDict = {};
+            Bone.boneMap.clear();
+            Blaster.gbMap.clear();
         }
-        if (Game.bgm !== undefined) { Core.aLib.play(Game.bgm as string); setInterval(() => Core.aLib.play(Game.bgm as string), Core.Audios[Game.bgm].data.duration * 1000); }
+        if (Game.bgm !== undefined) Core.aLib.play_html(Game.bgm as string, 0, true);
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
@@ -163,7 +165,7 @@ export const main = async () => {
                             if (choice[1] < 96 && Core.inputKeys.f.z) {
                                 choice.push(0);
                                 choice.push(Math.floor(
-                                    Game.player.attack * (1 - Math.abs(choice[1] - 48) * 0.8 / 48) * (1 + (Math.random() - 0.5) / 10)
+                                    enemy.avoid ? 0 : Game.player.attack * (1 - Math.abs(choice[1] - 48) * 0.8 / 48) * (1 + (Math.random() - 0.5) / 10)
                                 ));
                                 enemy.hp -= choice[3];
                                 Core.aLib.play("slash")
@@ -228,23 +230,35 @@ export const main = async () => {
                     } else if (choice.length == 4) {
                         if (choice[0] == 0) {
                             player.soul.alpha = 0;
-                            if (choice[2] < 48) Core.cLib.stamp(`slash_${Math.floor(choice[2] / 8) % 6}`, 320, 300, 0, 200)
-                            else if (choice[2] == 48 && 1 <= choice[3]) Core.aLib.play("e_damage")
-                            if (48 <= choice[2] && choice[2] < 108) {
-                                if (1 <= choice[3]) {
-                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, 120, 20, Game.color[Game.styles.enemy_hp_back as keyof typeof Game.color] ?? Game.styles.enemy_hp_back, 0, 1, "start")
-                                    Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, Math.max(0, enemy.hp / enemy.hp_max * 120), 20, Game.color[Game.styles.enemy_hp as keyof typeof Game.color] ?? Game.styles.enemy_hp, 0, 1, "start")
-                                    const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
-                                    const px = (`${choice[3]}`.length * 8) - ((`${choice[3]}`.match(/1/) ?? []).length * 3) - 1
-                                    Font.write(`${choice[3]}`, Game.enemy.x - px * 2, Game.enemy.y + 20 + jump, 0, 400, "red", 0, 0, "damage");
-                                    const ratio = ((107 - choice[2]) ** 6) / (60 ** 6);
-                                    enemy.s.x = Game.enemy.x + (choice[2] % 2 * 2 - 1) * ratio * 20;
-                                    if (enemy.hp <= 0 && choice[2] == 93) Core.aLib.play("dust")
-                                } else {
+                            if (choice[2] < 48) Core.cLib.stamp(`slash_${Math.floor(choice[2] / 8) % 6}`, 320, 300, 0, 200);
+                            else if (choice[2] == 48 && 1 <= choice[3]) Core.aLib.play("e_damage");
+                            if (!enemy.avoid) {
+                                if (48 <= choice[2] && choice[2] < 108) {
+                                    if (1 <= choice[3]) {
+                                        Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, 120, 20, Game.color[Game.styles.enemy_hp_back as keyof typeof Game.color] ?? Game.styles.enemy_hp_back, 0, 1, "start")
+                                        Core.cLib.drawRect(Game.enemy.x - 60, Game.enemy.y - 20, Math.max(0, enemy.hp / enemy.hp_max * 120), 20, Game.color[Game.styles.enemy_hp as keyof typeof Game.color] ?? Game.styles.enemy_hp, 0, 1, "start")
+                                        const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
+                                        const px = (`${choice[3]}`.length * 8) - ((`${choice[3]}`.match(/1/) ?? []).length * 3) - 1
+                                        Font.write(`${choice[3]}`, Game.enemy.x - px * 2, Game.enemy.y + 20 + jump, 0, 400, "red", 0, 0, "damage");
+                                        const ratio = ((107 - choice[2]) ** 6) / (60 ** 6);
+                                        enemy.s.x = Game.enemy.x + (choice[2] % 2 * 2 - 1) * ratio * 20;
+                                        if (enemy.hp <= 0 && choice[2] == 93) Core.aLib.play("dust")
+                                    } else {
+                                        const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
+                                        Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)
+                                    }
+                                };
+                            } else {
+                                const ratio =
+                                    choice[2] < 32 ? 1 - ((32 - choice[2]) / 32) ** 3
+                                        : choice[2] < 76 ? 1
+                                            : choice[2] < 108 ? ((108 - choice[2]) / 32) ** 3 : 0
+                                enemy.s.x = Game.enemy.x + ratio * 100;
+                                if (48 <= choice[2] && choice[2] < 108) {
                                     const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
                                     Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)
-                                }
-                            };
+                                };
+                            }
                             enemy.s.alpha = 0 < enemy.hp ? 1 : 1 - Math.min(1, Math.max(choice[2] - 93, 0) / 25);
                             if (choice[2] == 128) {
                                 sub_scene = enemy.hp <= 0 ? "clear" : "enemy_speak";
@@ -300,8 +314,8 @@ export const main = async () => {
                     player.stamp();
                     hp_bar();
                 })
-                Bone.boneDict = {};
-                Blaster.gbDict = {};
+                Bone.boneMap.clear();
+                Blaster.gbMap.clear();
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 15, 4);
                 await Core.for(0, i => i < 15 && (scene.v == "battle" && sub_scene == "enemy_attack"), (i) => {
                     player.move()
@@ -332,6 +346,7 @@ export const main = async () => {
         };
     }
     {
+        Core.aLib.pause_html(Game.bgm as string);
         timer = 0;
         let broken_hearts: SpriteT[] = [];
         await Core.while(() => (scene.v === "game_over"), () => {

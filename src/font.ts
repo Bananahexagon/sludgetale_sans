@@ -1,11 +1,11 @@
 import { Game } from "./game";
-
 import fontDataEn from "./data/font_en.json";
 import fontDataStatus from "./data/font_status.json";
 import fontDataDamage from "./data/font_damage.json";
 import fontDataJa from "./data/font_ja.json";
-
-import { aLibT, cLibT, inputKeysT } from "./lib/types";
+import { cLibT } from "./lib/canvas";
+import { aLibT } from "./lib/audios";
+import { inputKeysT } from "./lib/core";
 
 const set_ja = (() => {
     let s = new Set<string>();
@@ -31,12 +31,12 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         ja: fontDataJa
     };
     let current_id = 0;
-    let displayDict: { [keys: string]: any } = {}
+    let displayMap: { [keys: string]: any } = {}
     class Font {
         name: string
         constructor(name: string) { this.name = name }
         delete() {
-            delete displayDict[this.name];
+            delete displayMap[this.name];
         }
     }
 
@@ -86,7 +86,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                         return fontData[Game.lang] as unknown as FontDataT;
                 }
             })(font)
-            displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
+            displayMap[name == "_" ? `auto$${current_id++}` : name] = this;
             this.z = z;
             this.process();
         }
@@ -137,7 +137,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         process() {
             const input_str_length = this.data.reduce((a, c) => a + c.str.length, 0);
             if (this._.len_allow == input_str_length && inputKeys.z && this.z) {
-                delete displayDict[this.name];
+                delete displayMap[this.name];
                 return;
             } else if (inputKeys.x) {
                 this._.len_allow = input_str_length;
@@ -216,7 +216,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                 }
             })(font)
             this.len_allow = 0;
-            displayDict[name == "_" ? `auto$${current_id++}` : name] = this;
+            displayMap[name == "_" ? `auto$${current_id++}` : name] = this;
             this.voice = voice;
             this.resolve = () => { };
             this.promise = (() => new Promise((resolve) => { this.resolve = resolve }))();
@@ -267,7 +267,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
             if (this.str.length <= this.len_allow && inputKeys.z && this.z) {
                 this.resolve();
                 this.solved = true;
-                delete displayDict[this.name];
+                delete displayMap[this.name];
             } else if (inputKeys.x) {
                 this.len_allow = this.str.length;
             } else if (this.len_allow < this.str.length) {
@@ -292,8 +292,8 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
 
 
     const process = () => {
-        for (const name in displayDict) {
-            displayDict[name].process()
+        for (const name in displayMap) {
+            displayMap[name].process()
         };
     };
     /*
@@ -333,7 +333,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         Super,
         Plane,
         process,
-        dict: displayDict as (Plane | Super)[],
+        Map: displayMap as (Plane | Super)[],
         len,
     }
 }

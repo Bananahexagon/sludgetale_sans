@@ -1,6 +1,3 @@
-import { Dict } from "./utils"
-import { aLibT } from "./types";
-
 export const frameLibGen = (b_tick: (() => void)[], a_tick: (() => void)[]) => {
     const fW = (condition: () => boolean, proc: () => void, resolve: () => void) => {
         if (condition()) { b_tick.forEach(e=>e()); proc(); a_tick.forEach(e=>e()); requestAnimationFrame(() => fW(condition, proc, resolve)) } else { resolve() }

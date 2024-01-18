@@ -1,25 +1,41 @@
-import { configT, aLibT } from "./types";
-import { sin360, cos360, Dict } from "./utils";
-
-export const AudioLibGen = (Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }>): aLibT => {
+const AudioLibGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioElement, time: number }>) => {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const play = (name: string, delay: number = 0, gain: number = 1) => {
-        if (delay <= Audios[name].time) {
+        const audio = Audios.get(name)!;
+        if (delay <= audio.time) {
             const gainNode = ctx.createGain();
             const source = ctx.createBufferSource();
-            source.buffer = Audios[name].ctx;
+            source.buffer = audio.ctx;
             gainNode.gain.setValueAtTime(gain, ctx.currentTime);
             source.connect(gainNode)
             gainNode.connect(ctx.destination);
             source.start(0);
-            Audios[name].time = 0;
+            audio.time = 0;
         }
     }
     const tick = () => {
-        for (const n in Audios) {
-            Audios[n].time++;
-        }
+        Audios.forEach((audio) => {
+            audio.time++;
+        })
     }
-    return { play, tick }
+    const play_html = (name: string, time: number = -1, loop: boolean = false) => {
+        const tag = Audios.get(name)!.data;
+        if (time != -1) tag.currentTime = 0;
+        tag.play();
+        tag.loop = loop;
+    }
+    const pause_html = (name: string, loop: boolean = false) => {
+        const tag = Audios.get(name)!.data;
+        tag.pause();
 
+    }
+    return { play, tick, play_html, pause_html }
+
+}
+
+type aLibT = ReturnType<typeof AudioLibGen>
+
+export {
+    AudioLibGen,
+    aLibT
 }

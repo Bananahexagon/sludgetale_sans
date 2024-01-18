@@ -1,6 +1,7 @@
-import { SpriteClassT, SpriteT, aLibT, cLibT } from "./lib/types";
+import { aLibT } from "./lib/audios";
+import { cLibT } from "./lib/canvas";
+import { SpriteClassT, SpriteT } from "./lib/sprite";
 import { sin360, cos360 } from "./lib/utils";
-import { Dict } from "./lib/utils";
 
 
 
@@ -9,7 +10,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
 }, Game: {
     color: { white: string, blue: string, orange: string }
 }) => {
-    let gbDict: Dict<any> = {}
+    let gbMap = new Map<number, any>();
     class Blaster extends Sprite {
         private s_x: number;
         private s_y: number;
@@ -44,8 +45,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.age = 0;
             this.id = Blaster.current_id;
             this.color = color;
-            this.gain=gain;
-            gbDict[this.id] = this;
+            this.gain = gain;
+            gbMap.set(this.id, this);
             Blaster.current_id++
             aLib.play("gb_charge", 1, gain)
         }
@@ -98,15 +99,14 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             }
         }
         public static process() {
-            for (const id in gbDict) {
-                const gb = gbDict[id] as Blaster;
+            gbMap.forEach((gb: Blaster, id, Map) => {
                 gb.move_self();
                 gb.draw();
                 gb.judge();
                 gb.age++;
                 if (gb.c_t == gb.age) aLib.play("gb_fire", 1, gb.gain)
-                if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) delete gbDict[id]
-            }
+                if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) gbMap.delete(id)
+            })
         }
         private static current_id = 0;
     }
@@ -114,7 +114,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         Blaster.process();
     };
     return {
-        gbDict: gbDict as Dict<Blaster>,
+        gbMap: gbMap as Map<number, Blaster>,
         gb: Blaster,
         process
     }

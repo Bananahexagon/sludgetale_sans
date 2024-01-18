@@ -1,5 +1,3 @@
-import { Dict } from "./utils";
-import { Assets } from "./types";
 import json from "../assets.json";
 
 export const loadAssets = async (audioContext: AudioContext): Promise<Assets> => {
@@ -8,9 +6,9 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
         src: string,
         name: string,
     }
-    const Images: Dict<HTMLImageElement> = {};
-    const Audios: Dict<{ ctx: AudioBuffer, data: HTMLAudioElement, time: number }> = {};
-    const Fonts: Dict<FontFace> = {};
+    const Images: Map<string, HTMLImageElement> = new Map();
+    const Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioElement, time: number }> = new Map();
+    const Fonts: Map<string, FontFace> = new Map();
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
     index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
@@ -19,7 +17,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                 const image = new Image();
                 image.src = e.src;
                 image.onload = () => {
-                    Images[e.name] = image;
+                    Images.set(e.name, image);
                     resolve();
                 }
             } break;
@@ -32,7 +30,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                     (async () => {
                         const response = await fetch(e.src);
                         const audioData = await response.arrayBuffer();
-                        Audios[e.name] = { ctx: await audioContext.decodeAudioData(audioData), data: audio, time: Infinity };
+                        Audios.set(e.name, { ctx: await audioContext.decodeAudioData(audioData), data: audio, time: Infinity });
                         audio.onload = () => resolve();
                     })().then(resolve);
                 })
@@ -50,7 +48,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                             (async () => {
                                 const font = new FontFace(e.name, f);
                                 await font.load();
-                                Fonts[e.name] = font;
+                                Fonts.set(e.name, font);
                                 await document.fonts.add(font);
                             })()
                         )
@@ -61,5 +59,11 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
         }
     })));
     await Promise.all(promises);
-    return { Images,  Audios, Fonts };
+    return { Images, Audios, Fonts };
 };
+
+type Assets = {
+    Images: Map<string, HTMLImageElement>,
+    Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioElement, time: number }>,
+    Fonts: Map<string, FontFace>,
+}

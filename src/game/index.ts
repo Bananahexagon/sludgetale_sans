@@ -1,4 +1,4 @@
-import { CoreT } from "../lib/types";
+import { CoreT } from "../lib/core";
 import { turnsGen } from "./turns";
 
 const Game = {
@@ -19,6 +19,7 @@ const Game = {
         hp: 10000,
         costume: "sans",
         size: 200,
+        avoid: true
     },
     items: [
         {

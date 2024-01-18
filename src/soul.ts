@@ -1,7 +1,8 @@
-import { CoreT } from "./lib/types";
+
 import { Ref } from "./lib/utils";
 import { Game as G } from "./game";
-import { SpriteT } from "./lib/types";
+import { SpriteT } from "./lib/sprite";
+import { CoreT } from "./lib/core";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
     scene: Ref<string>, box: { judge: () => void, is_jumpable: () => boolean }, b_tick: (() => void)[]) => {

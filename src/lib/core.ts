@@ -1,13 +1,12 @@
-import { Dict } from "./utils";
-import { CoreT, configT, cLibT, aLibT } from "./types";
 import { frameLibGen } from "./frame";
 import { loadAssets } from "./loader";
-import { CanvasLibGen } from "./canvas";
+import { CanvasLibGen,cLibT } from "./canvas";
 import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
-import { AudioLibGen } from "./audios";
+import { AudioLibGen ,aLibT} from "./audios";
+import { configT } from "../config.json";
 
-export const init = async (config: configT): Promise<CoreT> => {
+const init = async (config: configT) => {
     const canvas = document.getElementById(config.canvas_name) as HTMLCanvasElement;
     canvas.height = config.stage_height * config.display_quality;
     canvas.width = config.stage_width * config.display_quality;
@@ -176,4 +175,12 @@ export const init = async (config: configT): Promise<CoreT> => {
         a_tick,
         b_tick
     }
+}
+
+type CoreT = Awaited<ReturnType<typeof init>>
+type inputKeysT = CoreT["inputKeys"];
+export {
+    init,
+    CoreT,
+    inputKeysT
 }

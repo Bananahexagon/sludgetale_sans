@@ -3,7 +3,8 @@ import { boneFnsT } from "../bone";
 import { boxFnsT, boxT } from "../box";
 import { fontFnsT } from "../font";
 import { gbFnsT } from "../gb";
-import { CoreT, SpriteT } from "../lib/types";
+import { CoreT } from "../lib/core";
+import { SpriteT } from "../lib/sprite";
 import { Ref, cos360, sin360 } from "../lib/utils";
 import { playerT } from "../soul";
 
@@ -70,7 +71,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             a_tick()
         })
         await Core.for(0, i => i < 60 && scene.v != "game_over", i => { b_tick(); a_tick() })
-        Gb.gbDict = {};
+        Gb.gbMap.clear();
         if (scene.v != "game_over") {
             await speak("へへ...", 2)
             await speak("さっさと始めようぜ", 2)

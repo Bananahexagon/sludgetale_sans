@@ -1,10 +1,10 @@
-import { configT, CanvasProps, cLibT } from "./types";
 import { sin360, cos360 } from "./utils";
+import { configT } from "../config.json";
 
-export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, Images: { [keys: string]: HTMLImageElement, }, Fonts: { [keys: string]: FontFace }, config: configT, props: CanvasProps): cLibT => {
+const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, Images: Map<string, HTMLImageElement>, Fonts: Map<string, FontFace>, config: configT, props: CanvasProps) => {
     const stamp = (name: string, dx: number, dy: number, dd: number = 0, size: number = 100, alpha: number = 1, align: "center" | "start" = "center", ex_width: number = 1, box?: { left: number, top: number, width: number, height: number, }, absolute = false) => {
         if (absolute) {
-            const costume = Images[name];
+            const costume = Images.get(name)!;
             const [sx, sy, sw, sh] = box === undefined ? [0, 0, costume.width, costume.height] : [box.left, box.top, box.width, box.height];
             ctx.globalAlpha = alpha;
             switch (align) {
@@ -125,4 +125,19 @@ export const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
         drawText,
         strokeRect,
     }
+}
+
+type cLibT = ReturnType<typeof CanvasLibGen>
+
+type CanvasProps = {
+    size: number,
+    x: number,
+    y: number,
+    d: number,
+}
+
+export {
+    CanvasLibGen,
+    cLibT,
+    CanvasProps
 }

@@ -1,7 +1,7 @@
-import { CoreT, cLibT, SpriteClassT } from "./types";
-import { Dict, Opt, sin360, cos360 } from "./utils"
+import { cLibT } from "./canvas";
+import { Opt, sin360, cos360 } from "./utils"
 
-export const SpriteLibGen = (cLib: cLibT): SpriteClassT => {
+const SpriteLibGen = (cLib: cLibT) => {
     type Self = {
         x: number,
         y: number,
@@ -46,4 +46,13 @@ export const SpriteLibGen = (cLib: cLibT): SpriteClassT => {
         }
     }
     return Sprite;
+}
+
+type SpriteClassT = ReturnType<typeof SpriteLibGen>;
+type SpriteT = InstanceType<SpriteClassT>
+
+export {
+    SpriteLibGen,
+    SpriteClassT,
+    SpriteT
 }

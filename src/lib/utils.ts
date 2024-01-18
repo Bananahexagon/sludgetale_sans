@@ -87,11 +87,6 @@ class Res<T, E> {
     }
 }
 
-
-type Dict<T> = {
-    [keys: string]: T,
-}
-
 type Ref<T> = {
     v: T
 }
@@ -107,7 +102,6 @@ const distance = (lx: number, ly: number, rx: number, ry: number): number => {
 export {
     Opt,
     Res,
-    Dict,
     sin360,
     cos360,
     tan360,

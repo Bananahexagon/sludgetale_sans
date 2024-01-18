@@ -1,4 +1,5 @@
-import { SpriteT, cLibT } from "./lib/types";
+import { cLibT } from "./lib/canvas";
+import { SpriteT } from "./lib/sprite";
 import { cos360, sin360 } from "./lib/utils";
 
 
