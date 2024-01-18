@@ -36,14 +36,7 @@ const Game = {
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
     actions: [
-        { name: "しらべる", text: "百均のマネキン 0 ATK 0 DEF\n安物のマネキンだ。", behavior: "default" },
-        {
-            name: "筋トレ", text: "筋トレをした。HPが増えた！", behavior: (Core, player) => {
-                Core.aLib.play("determination")
-                player.hp_max += 12;
-                player.hp += 12;
-            }
-        },
+        { name: "しらべる", text: "サンズ 2 ATK 1 DEF\n最も楽な敵。", behavior: "default" },
     ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!",
     styles: {

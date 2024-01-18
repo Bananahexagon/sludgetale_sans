@@ -279,7 +279,7 @@ export const main = async () => {
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
                 const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
                 console.log(turn);
-                await Turns[turn.v].proc(turn.first)
+                if (turn.v < Turns.length) await Turns[turn.v].proc(turn.first)
                 sub_scene = "command";
             } else if (sub_scene == "clear") {
                 const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
