@@ -22,9 +22,9 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
             if (0 < damage_time) Core.cLib.stamp("soul_black", this.soul.x, this.soul.y, 0, 80, 0.5)
         },
         type: 0,
-
         damage(color: "white" | "blue" | "orange" = "white", d?: number) { },
-        move() { }
+        move() { },
+        slam(s?: number) { }
     })
     const b_jump = (() => {
         let j = 0;
@@ -56,15 +56,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
                 if (Core.inputKeys.left) soul.x -= soul_speed;
             } break;
             case 1: {
-                b_jump()
+                if (!blue_slamming.is) b_jump()
             }
         }
     }
     let [bx, by] = [0, 0];
-    b_tick.push(() => { bx = soul.x; by = soul.y; damage_time--; });
+    const blue_slamming = { is: false, s: 0 };
     player.damage = function (color: "white" | "blue" | "orange" = "white", d?: number) {
         if (damage_time <= 0 && (color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y))) {
-            console.log(damage_time);
             damage_time = Game.player.damage_time;
             this.hp -= d ?? Game.player.damage;
             Core.aLib.play("damage");
@@ -74,6 +73,21 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT,
             }
         }
     };
+    player.slam = function slam(s: number = 40) {
+        Core.aLib.play("soul_slamming")
+        player.type = 1;
+        blue_slamming.is = true;
+        blue_slamming.s = s;
+    }
+    const slamming = () => {
+        if (blue_slamming.is) {
+            soul.y -= blue_slamming.s;
+            if (box.is_jumpable()) {
+                blue_slamming.is = false;
+            }
+        }
+    }
+    b_tick.push(() => { bx = soul.x; by = soul.y; damage_time--; slamming() });
     return player
 };
 

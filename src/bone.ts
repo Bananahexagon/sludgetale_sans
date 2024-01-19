@@ -191,7 +191,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             const relative_y = player.soul.y - this.y;
             //const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-            if (turned_y < 0) {
+            if (turned_y < 0 && this.t1 <= this.age) {
                 player.damage(this.color);
             }
             this.move(-640);

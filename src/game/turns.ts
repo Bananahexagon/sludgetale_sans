@@ -6,7 +6,7 @@ import { gbFnsT } from "../gb";
 import { CoreT } from "../lib/core";
 import { SpriteT } from "../lib/sprite";
 import { Ref, cos360, sin360 } from "../lib/utils";
-import { playerT } from "../soul";
+import { playerT } from "../player";
 
 export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT }, hp_bar: () => void, scene: Ref<string> }) {
     const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene } = arg;
@@ -67,7 +67,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     b_y.finish();
                 }
                 if (first) {
-                    await speak("どうした？\nお前だっていつも避けてるだろ？", 2);
+                    await speak("どうした？\nお前だっていつも\n避けてるだろ？", 2);
                 } else {
                     await speak("...", 2);
                 }
@@ -91,7 +91,14 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         await speak("！仮置きテキスト！", 2)
         await speak("！仮置きテキスト！", 2)
         await speak("！仮置きテキスト！", 2)
-        await Core.for(0, i => i < 300 && scene.v != "game_over", i => {
+        player.slam();
+        new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
+        await Core.for(0, i => i < 40 && scene.v != "game_over", i => {
+            b_tick();
+            a_tick();
+        })
+        player.type = 0;
+        await Core.for(0, i => i < 180 && scene.v != "game_over", i => {
             b_tick()
             if (i % 5 == 0) {
                 let d = i * 4;
@@ -105,6 +112,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         })
         await Core.for(0, i => i < 60 && scene.v != "game_over", i => { b_tick(); a_tick() })
         Gb.gbMap.clear();
+        Bone.boneMap.clear();
         if (scene.v != "game_over") {
             await speak("へへ...", 2)
             await speak("さっさと始めようぜ", 2)

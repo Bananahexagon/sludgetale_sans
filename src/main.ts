@@ -5,7 +5,7 @@ import { fontFnsGen, PlaneT as FontPlaneT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game } from "./game"
-import { playerObjGen } from "./soul";
+import { playerObjGen } from "./player";
 import { config } from "./config.json";
 import { SpriteT } from "./lib/sprite";
 import { cLibT } from "./lib/canvas";
@@ -96,7 +96,7 @@ export const main = async () => {
         while (scene.v == "battle") {
             if (sub_scene == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", Turns[turn.v].flavor, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const txt = new Font.Plane("_", Turns[turn.v]?.flavor ?? "！フレーバーテキストが見つかりません！", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
@@ -170,7 +170,7 @@ export const main = async () => {
                                 ));
                                 enemy.hp -= choice[3];
                                 Core.aLib.play("slash");
-                                if (turn_progress.v == "fight") turn.v += 1;
+                                if (turn_progress.v == "fight") { turn.v += 1; turn.first = true };
                             }
                             if (96 <= choice[1] && choice[1] < 156) {
                                 const jump = Math.max(0, -(choice[1] - 96) * (choice[1] - 126) / 5);
@@ -277,10 +277,10 @@ export const main = async () => {
             } else if (sub_scene == "enemy") {
                 player.soul.alpha = 1;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
-                const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 15, 4);
                 console.log(turn);
-                if (turn.v < Turns.length) await Turns[turn.v].proc(turn.first)
+                await Turns[turn.v]?.proc(turn.first)
                 sub_scene = "command";
+                turn.first = false;
             } else if (sub_scene == "clear") {
                 const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 await Core.loop(() => {
@@ -297,7 +297,7 @@ export const main = async () => {
         };
     }
     {
-        Core.aLib.pause_html(Game.bgm as string);
+        Core.aLib?.pause_html(Game.bgm as string);
         timer = 0;
         let broken_hearts: SpriteT[] = [];
         await Core.while(() => (scene.v === "game_over"), () => {

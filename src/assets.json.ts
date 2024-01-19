@@ -447,9 +447,15 @@ export default [
         "type": "audio",
         "name": "battle_start",
         "src": "./assets/audios/battle_start.wav"
-    }, {
+    }, 
+    {
         "type": "audio",
         "name": "sans",
         "src": "./assets/audios/sans.wav"
+    }, 
+    {
+        "type": "audio",
+        "name": "soul_slamming",
+        "src": "./assets/audios/soul_slamming.wav"
     }
 ]
