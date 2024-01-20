@@ -1,2 +1,2 @@
 import { main } from "./main";
-window.onload = main;
+window.onload = async () => { while (true) await main() };

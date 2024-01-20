@@ -56,7 +56,7 @@ export const main = async () => {
             hp_max: Game.enemy.hp,
             avoid: Game.enemy.avoid,
             stamp: (typeof Game.enemy.costume == "string") ? (state: typeof Game.enemy.state) => s.stamp() : Game.enemy.costume(s, Core),
-            state: Game.enemy.state,
+            state: JSON.parse(JSON.stringify(Game.enemy.state)),
             custom: Game.enemy.custom ?? {}
         }
     })();
