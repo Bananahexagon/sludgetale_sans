@@ -341,6 +341,56 @@ export default [
         "name": "bone_stab_white",
         "src": "./assets/images/bone_stab_white.png"
     },
+    {
+        "type": "image",
+        "name": "sans_head_0",
+        "src": "./assets/images/sans/head_0.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_leg",
+        "src": "./assets/images/sans/leg.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_0",
+        "src": "./assets/images/sans/body_0.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_1",
+        "src": "./assets/images/sans/body_1.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_2",
+        "src": "./assets/images/sans/body_2.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_3",
+        "src": "./assets/images/sans/body_3.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_4",
+        "src": "./assets/images/sans/body_4.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_5",
+        "src": "./assets/images/sans/body_5.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_6",
+        "src": "./assets/images/sans/body_6.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_body_7",
+        "src": "./assets/images/sans/body_7.png"
+    },
     //
     //
     //

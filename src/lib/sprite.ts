@@ -7,7 +7,7 @@ const SpriteLibGen = (cLib: cLibT) => {
         y: number,
         d: number,
         size: number,
-        costume: string,
+        costume?: string,
         alpha: number,
         width: number,
         stamp: () => void,
@@ -18,11 +18,11 @@ const SpriteLibGen = (cLib: cLibT) => {
         y: number;
         d: number;
         size: number;
-        costume: string;
+        costume?: string;
         alpha: number;
         width: number;
         act_: undefined | ((self: Self) => void);
-        constructor(x: number, y: number, d: number = 0, size: number = 100, costume: string = "", alpha: number = 0, width: number = 1, act?: (self: Self) => void) {
+        constructor(x: number, y: number, d: number = 0, size: number = 100, costume?: string, alpha: number = 0, width: number = 1, act?: (self: Self) => void) {
             this.x = x;
             this.y = y;
             this.d = d;
@@ -33,7 +33,7 @@ const SpriteLibGen = (cLib: cLibT) => {
             this.act_ = act;
         }
         stamp() {
-            if (this.alpha != 0) {
+            if (this.alpha != 0 && this.costume != undefined) {
                 cLib.stamp(this.costume, this.x, this.y, this.d, this.size, this.alpha, "center", this.width);
             }
         }

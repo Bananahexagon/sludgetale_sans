@@ -48,19 +48,24 @@ export const main = async () => {
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
     const Box = boxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
-    const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick,is_hp_inf);
+    const enemy = (() => {
+        const s = new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, typeof Game.enemy.costume == "string" ? Game.enemy.costume : undefined, 1);
+        return {
+            s,
+            hp: Game.enemy.hp,
+            hp_max: Game.enemy.hp,
+            avoid: Game.enemy.avoid,
+            stamp: (typeof Game.enemy.costume == "string") ? (state: typeof Game.enemy.state) => s.stamp() : Game.enemy.costume(s, Core),
+            state: Game.enemy.state
+        }
+    })();
+    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf);
     const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
     {
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
-        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game,is_hp_inf);
-        const enemy = {
-            s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
-            hp: Game.enemy.hp,
-            hp_max: Game.enemy.hp,
-            avoid: Game.enemy.avoid,
-        };
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf);
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = { v: 0, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
@@ -77,7 +82,7 @@ export const main = async () => {
             });
             await Core.for(0, i => i < 10, i => {
                 box.draw();
-                enemy.s.stamp();
+                enemy.stamp(enemy.state);
                 const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                 [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, i == 0));
                 hp_bar();
@@ -92,7 +97,7 @@ export const main = async () => {
             });
             await Core.for(0, i => i < 10, i => {
                 box.draw();
-                enemy.s.stamp();
+                enemy.stamp(enemy.state);
                 const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                 [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
                 hp_bar();
@@ -115,7 +120,7 @@ export const main = async () => {
                 let result: undefined | Plane = undefined;
                 await Core.while(() => sub_scene == "command" && (scene.v == "battle" && sub_scene == "command"), () => {
                     box.draw();
-                    enemy.s.stamp();
+                    enemy.stamp(enemy.state);
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
                     [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, command == i && choice.length == 0));
                     hp_bar();

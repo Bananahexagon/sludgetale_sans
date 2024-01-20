@@ -8,13 +8,13 @@ import { SpriteT } from "../lib/sprite";
 import { Ref, cos360, sin360 } from "../lib/utils";
 import { playerT } from "../player";
 
-export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT }, hp_bar: () => void, scene: Ref<string> }) {
+export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string> }) {
     const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene } = arg;
     const a_tick = () => {
         Bone.process();
         box.draw();
         hp_bar();
-        enemy.s.stamp();
+        enemy.stamp(enemy.state);
         player.stamp();
         const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
         [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
@@ -126,8 +126,8 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         new Gb.gb(480, 320, 45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
         await Core.for(0, i => i < 120 && scene.v != "game_over", i => { b_tick(); a_tick() })
         player.slam(0);
-        new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
-        await Core.for(0, i => i < 140 && scene.v != "game_over", i => {
+        new Bone.stab(320, 80, 0, 122, 80, 15, 25, 25, 20, "white");
+        await Core.for(0, i => i < 80 && scene.v != "game_over", i => {
             b_tick();
             a_tick();
         })

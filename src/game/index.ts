@@ -1,4 +1,6 @@
+import { cLibT } from "../lib/canvas";
 import { CoreT } from "../lib/core";
+import { SpriteT } from "../lib/sprite";
 import { turnsGen } from "./turns";
 
 const Game = {
@@ -13,15 +15,31 @@ const Game = {
         damage: 1,
         damage_time: 1
     },
-    enemy: {
-        x: 320,
-        y: 320,
-        name: "サンズ",
-        hp: 10000,
-        costume: "sans",
-        size: 200,
-        avoid: true
-    },
+    enemy: (() => {
+        const state = {
+            body: { c: 0, x: 0, y: 0 },
+            head: { c: 0, x: 0, y: 0 }
+        }
+        return {
+            x: 320,
+            y: 320,
+            name: "サンズ",
+            hp: 10000,
+            costume: (s: SpriteT, Core: CoreT) => (st: typeof state) => {
+                const y = s.y - 42;
+                Core.cLib.stamp("sans_leg", s.x, y, 0, 200, 1);
+                Core.cLib.stamp(`sans_body_${st.body.c}`,
+                    s.x + st.body.x + ({ 0: 0, 1: 9, 2: 0, 3: 2, 4: 8, 5: 3, 6: 22, 7: 21 }[st.body.c] ?? 0),
+                    y + st.body.y + 38 + ({ 0: 0, 1: 0, 2: 0, 3: 21, 4: 16, 5: -5, 6: 0, 7: 0 }[st.body.c] ?? 0),
+                    0, 200, 1
+                );
+                Core.cLib.stamp(`sans_head_${st.head.c}`, s.x + st.head.x, y + st.head.y + 82, 0, 200, 1);
+            },
+            state,
+            size: 200,
+            avoid: true
+        }
+    })(),
     items: [
         {
             name: "腐ったパン",

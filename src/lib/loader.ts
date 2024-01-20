@@ -14,6 +14,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
     index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
         switch (e.type) {
             case "image": {
+                if (Images.has(e.name)) throw new Error()
                 const image = new Image();
                 image.src = e.src;
                 image.onload = () => {
@@ -22,6 +23,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                 }
             } break;
             case "audio": {
+                if (Audios.has(e.name)) throw new Error()
                 const audio = new Audio(e.src);
                 audio.autoplay = false;
                 audio.muted = true;
@@ -37,6 +39,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
 
             } break;
             case "font": {
+                if (Fonts.has(e.name)) throw new Error();
                 (async () => {
                     const response = await fetch(e.src);
                     const cssFontFace = await response.text();
