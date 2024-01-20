@@ -66,7 +66,7 @@ export const main = async () => {
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
-        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf);
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf, Game.player.karma);
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = { v: 0, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
@@ -351,8 +351,8 @@ export const main = async () => {
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number },
-    len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }, is_hp_inf: Ref<boolean>) => {
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, kr: number, hp_max: number, lv: number },
+    len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }, is_hp_inf: Ref<boolean>, karma: boolean) => {
     const name_len = len(player.name, "status");
     const hp_color = Game.color[Game.styles.player_hp] ?? Game.styles.player_hp;
     const kr_color = Game.color[Game.styles.player_kr] ?? Game.styles.player_kr;
@@ -373,19 +373,18 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
                 , 77, 0, 300, "white", 0, 0, "status");
         } else {
             write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`,
-                player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
-                , 77, 0, 300, "white", 0, 0, "status");
-            write("/",
-                player.hp_max * 1.2 + 213 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
-                , 77, 0, 300, "white", 0, 0, "status");
-            write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`,
-                player.hp_max * 1.2 + 237 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
-                , 77, 0, 300, "white", 0, 0, "status");
+                player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3, 77, 0, 300,
+                (0 < player.kr) ? "purple" : "white", 0, 0, "status");
+            write("/", player.hp_max * 1.2 + 213 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3, 77, 0, 300,
+                (0 < player.kr) ? "purple" : "white", 0, 0, "status");
+            write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`, player.hp_max * 1.2 + 237 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3, 77, 0, 300,
+                (0 < player.kr) ? "purple" : "white", 0, 0, "status");
         }
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp_max * 1.2, 21, hp_back, 0, 1, "start");
-        cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp * 1.2, 21, hp_color, 0, 1, "start");
+        cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp * 1.2, 21, kr_color, 0, 1, "start");
+        cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, (player.hp - player.kr) * 1.2, 21, hp_color, 0, 1, "start");
         cLib.stamp("hp_kr_white", 122 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
-        cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
+        if (karma) cLib.stamp((0 < player.kr) ? "hp_kr_purple" : "hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
 
     };
 }

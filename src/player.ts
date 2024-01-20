@@ -15,6 +15,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         name: Game.player.name,
         lv: Game.player.lv,
         hp: Game.player.hp_max,
+        kr: 0,
         hp_max: Game.player.hp_max,
         soul: soul,
         stamp() {
@@ -147,6 +148,8 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
             if (!is_hp_inf.v) {
                 damage_time = Game.player.damage_time;
                 this.hp -= d ?? Game.player.damage;
+                if (Game.player.karma) this.kr += d ?? Game.player.damage;
+                if (this.hp <= this.kr) this.kr = this.hp - 1;
             }
             Core.aLib.play("damage");
             if (this.hp <= 0) {
@@ -179,7 +182,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         enemy.custom.slam(blue_slamming.d, blue_slamming.f, enemy.state)
         blue_slamming.f++
     }
-    b_tick.push(() => { bx = soul.x; by = soul.y; damage_time--; slamming() });
+    let kr_count = 0;
+    b_tick.push(() => {
+        bx = soul.x; by = soul.y; damage_time--; slamming();
+        kr_count += player.kr ** (1 / 3) / 10;
+        player.kr = Math.max(0, player.kr - Math.floor(kr_count));
+        player.hp -= Math.floor(kr_count);
+        kr_count = kr_count % 1;
+    });
     return player
 };
 

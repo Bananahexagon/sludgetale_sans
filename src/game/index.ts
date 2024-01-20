@@ -14,7 +14,8 @@ const Game = {
         lv: 19,
         hp_max: 92,
         damage: 1,
-        damage_time: 1
+        damage_time: 1,
+        karma: true,
     },
     enemy: (() => {
         const state = {
@@ -127,7 +128,7 @@ const Game = {
         green: "#5c9962",
         red: "#995c5c",
         red_dark: "#803333",
-        purple: "#995c5c"
+        purple: "#995c99"
     },
     turnsGen
 }
