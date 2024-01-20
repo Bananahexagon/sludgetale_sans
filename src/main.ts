@@ -14,27 +14,47 @@ export const main = async () => {
     const Core = await init(config);
     let [scene, sub_scene] = [{ v: "menu" }, "command"];
     const Font = fontFnsGen(Core.cLib, Core.aLib, Core.inputKeys);
+    const is_hp_inf: Ref<boolean> = { v: false };
     {
         let cursor = 0;
         await Core.while(() => (scene.v === "menu"), () => {
             if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
             if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
-            Core.cLib.stamp("soul", 220, -cursor * 50 + 240);
-            Font.write("play", 270, 250, 0, 200, "yellow", 0, 0, "en");
-            if (Core.inputKeys.f.z) { scene.v = "battle"; Core.aLib.play("cursor_confirm") }
+            Core.cLib.stamp("soul", 220, -cursor * 50 + 265);
+            Font.write("play", 270, 275, 0, 200, cursor == 0 ? "yellow" : "white", 0, 0, "en");
+            Font.write("inf HP", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
+            cursor = Math.max(Math.min(cursor, 1), 0)
+            if (Core.inputKeys.f.z) switch (cursor) {
+                case 0: {
+                    scene.v = "battle";
+                    Core.aLib.play("cursor_confirm")
+                } break;
+                case 1: {
+                    is_hp_inf.v = !is_hp_inf.v
+                    Core.aLib.play("cursor_move")
+                } break;
+            }
         });
     }
+    await Core.for(0, i => i < 75, i => {
+        const j = Math.max(0, Math.min(45, i - 15));
+        Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
+        Core.cLib.stamp("soul", 220, 265);
+        Font.write("play", 270, 275, 0, 200, "yellow", 0, 0, "en");
+        Font.write("inf HP", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
+        Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (j / 45));
+    })
     let timer = 0;
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
     const Box = boxFnsGen(Core.cLib, soul, Game);
     const box = Box.box;
-    const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick);
+    const player = playerObjGen(soul, Game, Core, scene, Box.box, Core.b_tick,is_hp_inf);
     const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
     {
         timer = 0;
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
-        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game);
+        const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game,is_hp_inf);
         const enemy = {
             s: new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, Game.enemy.costume, 1),
             hp: Game.enemy.hp,
@@ -44,13 +64,6 @@ export const main = async () => {
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = { v: 0, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
-        await Core.for(0, i => i < 75, i => {
-            const j = Math.max(0, Math.min(45, i - 15));
-            Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
-            Core.cLib.stamp("soul", 220, 240);
-            Font.write("play", 270, 250, 0, 200, "yellow", 0, 0, "en");
-            Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (j / 45));
-        })
         await Core.for(0, i => i < 30, i => {
             const j = Math.min(24, i);
             if (j % 10 == 0) Core.aLib.play("tick")
@@ -297,7 +310,7 @@ export const main = async () => {
         };
     }
     {
-        Core.aLib?.pause_html(Game.bgm as string);
+        Core.aLib.pause_html(Game.bgm as string);
         timer = 0;
         let broken_hearts: SpriteT[] = [];
         await Core.while(() => (scene.v === "game_over"), () => {
@@ -330,7 +343,7 @@ export const main = async () => {
 };
 
 const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, hp_max: number, lv: number },
-    len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }) => {
+    len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }, is_hp_inf: Ref<boolean>) => {
     const name_len = len(player.name, "status");
     const hp_color = Game.color[Game.styles.player_hp] ?? Game.styles.player_hp;
     const kr_color = Game.color[Game.styles.player_kr] ?? Game.styles.player_kr;
@@ -344,19 +357,26 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
         lv_len * 3 * 5;
         write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 101 + name_len * 3
             , 75, 0, 300, "white", 0, 0, "status");
-        write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`,
-            player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
-            , 77, 0, 300, "white", 0, 0, "status");
-        write("/",
-            player.hp_max * 1.2 + 213 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
-            , 77, 0, 300, "white", 0, 0, "status");
-        write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`,
-            player.hp_max * 1.2 + 237 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
-            , 77, 0, 300, "white", 0, 0, "status");
 
+        if (is_hp_inf.v) {
+            write("infinity",
+                player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
+                , 77, 0, 300, "white", 0, 0, "status");
+        } else {
+            write(`${("0".repeat(hp_len) + player.hp).slice(-hp_len)}`,
+                player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
+                , 77, 0, 300, "white", 0, 0, "status");
+            write("/",
+                player.hp_max * 1.2 + 213 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
+                , 77, 0, 300, "white", 0, 0, "status");
+            write(`${("0".repeat(hp_len) + player.hp_max).slice(-hp_len)}`,
+                player.hp_max * 1.2 + 237 + hp_len * 3 * 5 + lv_len * 3 * 5 + name_len * 3
+                , 77, 0, 300, "white", 0, 0, "status");
+        }
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp_max * 1.2, 21, hp_back, 0, 1, "start");
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp * 1.2, 21, hp_color, 0, 1, "start");
         cLib.stamp("hp_kr_white", 122 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
         cLib.stamp("hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
+
     };
 }

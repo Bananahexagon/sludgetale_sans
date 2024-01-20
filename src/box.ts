@@ -59,17 +59,18 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
         draw() {
             cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd, 1, "center++");
         }
-        is_jumpable() {
-            const d = this.dd
+        is_jumpable(sd: number) {
+            const d = this.dd;
             const relative_x = soul.x - this.dx;
-            const relative_y = soul.y - 3 - this.dy;
+            const relative_y = soul.y - this.dy;
             const turned_x = relative_x * cos360(d) + relative_y * -sin360(d);
             const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
+            const d_trans = Math.abs((d-sd)%360);
             return (
                 this.len / 2 > turned_x && turned_x > -this.len / 2 && (
-                    this.relative == "minus" && turned_y > -(this.width / 2 + this.soul_size) ||
-                    this.relative == "plus" && (this.width / 2 + this.soul_size) > turned_y
-                ) && 135 <= d && d <= 225);
+                    this.relative == "minus" && turned_y > -(this.width / 2 + this.soul_size - 3) ||
+                    this.relative == "plus" && (this.width / 2 + this.soul_size + 3) > turned_y
+                ) && 135 <= d_trans && d_trans <= 225);
         }
     }
     class Wall2 {
@@ -95,20 +96,19 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
                 soul.x = returned_x + this.dx;
                 soul.y = returned_y + this.dy;
             }
-
         }
         draw() {
             const x = this.dx + 320 * sin360(this.dd)
             const y = this.dy + 320 * cos360(this.dd)
             cLib.drawRect(x, y, 640, 640, Game.color.white, this.dd, 1, "center++");
         }
-        is_jumpable() {
-            const d = this.dd
+        is_jumpable(sd: number) {
+            const d = this.dd;
             const relative_x = soul.x - this.dx;
-            const relative_y = soul.y - 3 - this.dy;
-            const turned_x = relative_x * cos360(d) + relative_y * -sin360(d);
+            const relative_y = soul.y - this.dy;
             const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
-            return (turned_y > -this.width) && 135 <= d && d <= 225;
+            const d_trans = Math.abs((d-sd)%360);
+            return (turned_y > -this.width - 3) && 135 <= d_trans && d_trans <= 225;
         }
     }
     const box = {
@@ -154,7 +154,7 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
                 this.height = (arg.h ?? f.h) * ratio + f.h * (1 - ratio);
                 box.update();
             }
-            return { yield: y, finish: ()=>this.set(arg) }
+            return { yield: y, finish: () => this.set(arg) }
         },
         draw() {
             this.walls.forEach(e => {
@@ -215,8 +215,8 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             this.walls.push(new Wall2(0, 0, 180, this.thickness));
             this.walls.push(new Wall2(0, 0, 270, this.thickness));
         },
-        is_jumpable() {
-            return this.walls.some(v => v.is_jumpable())
+        is_jumpable(sd: number) {
+            return this.walls.some(v => v.is_jumpable(sd))
         }
     }
     box.init();

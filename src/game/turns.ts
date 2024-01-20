@@ -91,36 +91,55 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         await speak("！仮置きテキスト！", 2)
         await speak("！仮置きテキスト！", 2)
         await speak("！仮置きテキスト！", 2)
-        player.slam();
+        player.slam(0);
         new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
         await Core.for(0, i => i < 40 && scene.v != "game_over", i => {
             b_tick();
             a_tick();
         })
+        player.slam(3)
+        new Bone.stab(400, 160, 270, 122, 65, 20, 25, 125, 20, "white");
+        new Bone.stab(240, 160, 90, 122, 65, 20, 25, 125, 20, "white");
+        await Core.for(0, i => i < 30 && scene.v != "game_over", i => {
+            b_tick();
+            a_tick();
+        })
         player.type = 0;
-        await Core.for(0, i => i < 180 && scene.v != "game_over", i => {
+        await Core.for(0, i => i < 120 && scene.v != "game_over", i => {
             b_tick()
             if (i % 5 == 0) {
                 let d = i * 4;
                 let [s, c] = [sin360(d), cos360(d)]
-                new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 180, 200, 0.5, 30, 10, 15, 5, "white", 1);
-                d += 180;
-                [s, c] = [sin360(d), cos360(d)]
-                new Gb.gb(320 + 120 * s, 160 + 120 * c, d, 320 + 960 * s, 160 + 960 * c, d + 180, 200, 0.5, 30, 10, 15, 5, "white", 0);
+                new Bone.normal(220, 60, 0, 8, 65 + s * 25, 5, 0, 0, 0, 80);
+                new Bone.normal(220, 260, 180, 8, 65 - s * 25, 5, 0, 0, 0, 80);
+                new Bone.normal(420, 60, 0, 8, 65 + s * 25, -5, 0, 0, 0, 80);
+                new Bone.normal(420, 260, 180, 8, 65 - s * 25, -5, 0, 0, 0, 80);
             }
             a_tick()
         })
-        await Core.for(0, i => i < 60 && scene.v != "game_over", i => { b_tick(); a_tick() })
+        await Core.for(0, i => i < 30 && scene.v != "game_over", i => { b_tick(); a_tick() })
+        new Gb.gb(320, 320, 0, 320, 960, 90, 300, 1, 30, 20, 30, 20, "white")
+        new Gb.gb(480, 160, 90, 320, 1120, 180, 300, 1, 30, 20, 30, 20, "white")
+        await Core.for(0, i => i < 50 && scene.v != "game_over", i => { b_tick(); a_tick() })
+        new Gb.gb(320, 360, 0, 320, 1120, 0, 600, 1, 40, 20, 30, 20, Math.floor(Math.random() * 2) == 0 ? "blue" : "orange")
+        new Gb.gb(160, 320, -45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
+        new Gb.gb(480, 320, 45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
+        await Core.for(0, i => i < 120 && scene.v != "game_over", i => { b_tick(); a_tick() })
+        player.slam(0);
+        new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
+        await Core.for(0, i => i < 140 && scene.v != "game_over", i => {
+            b_tick();
+            a_tick();
+        })
+        if (scene.v == "game_over") return;
+        await speak("へへ...", 2)
+        await speak("さっさと始めようぜ", 2)
         Gb.gbMap.clear();
         Bone.boneMap.clear();
-        if (scene.v != "game_over") {
-            await speak("へへ...", 2)
-            await speak("さっさと始めようぜ", 2)
-            {
-                const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
-                await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
-                b_y.finish();
-            }
+        {
+            const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+            b_y.finish();
         }
     }) as (() => Promise<void>) | "none";
     return ({

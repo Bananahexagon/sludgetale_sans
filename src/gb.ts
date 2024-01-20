@@ -61,7 +61,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 this.y = this.t_y;
                 this.d = this.t_d;
             }
-            if (this.b_s + this.c_t <= this.age && -640 < this.x && this.x < 640 && -640 < this.y && this.y < 640) {
+            if (this.b_s + this.c_t <= this.age && -960 < this.x && this.x < 960 && -960 < this.y && this.y < 960) {
                 let far = ((this.age - (this.b_s + this.c_t)) ** 2);
                 this.x = this.t_x;
                 this.y = this.t_y;
@@ -70,7 +70,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         }
         private draw() {
             const len = 4800;
-            if (this.b_s + this.c_t < this.age) {
+            if (this.b_s + this.c_t <= this.age) {
                 const age = this.age - this.b_s + this.c_t;
                 cLib.drawRect(
                     this.x + sin360(this.d) * len / -2,
@@ -104,7 +104,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 gb.draw();
                 gb.judge();
                 gb.age++;
-                if (gb.c_t == gb.age) aLib.play("gb_fire", 1, gb.gain)
+                if (gb.c_t + gb.b_s == gb.age) aLib.play("gb_fire", 1, gb.gain)
                 if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) gbMap.delete(id)
             })
         }

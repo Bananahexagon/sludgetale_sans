@@ -64,6 +64,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.y = this.start_y + normalBone.get_move(this.move_y, this.age);
             this.d = this.start_d + normalBone.get_move(this.move_d, this.age);
             this.len = this.start_len + normalBone.get_move(this.move_len, this.age);
+            this.move(this.b_width * 3 / 6, this.d - 90)
         }
         draw() {
             cos360(this.d)
@@ -84,16 +85,6 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             );
         }
         judge() {
-            //cLib.drawRect(
-            //    this.x,
-            //    this.y,
-            //    this.width, this.len + this.width * 14 / 6, "red", this.d, "start"
-            //);
-            //cLib.drawRect(
-            //    this.x + sin360(this.d) * (this.len / 2 + this.width * 7 / 6) + cos360(this.d) * this.width * 3 / 6,
-            //    this.y + cos360(this.d) * (this.len / 2 + this.width * 7 / 6) - sin360(this.d) * this.width * 3 / 6,
-            //    this.width, this.len + this.width * 14 / 6, "blue", this.d, "center++"
-            //);
             {
                 const relative_x = player.soul.x - this.x;
                 const relative_y = player.soul.y - this.y;
