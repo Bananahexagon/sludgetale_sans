@@ -5,7 +5,10 @@ import { SpriteT } from "./lib/sprite";
 import { CoreT } from "./lib/core";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<string>,
-    enemy: { state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } } },
+    enemy: {
+        custom: { slam: (d: 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } }) => void },
+        state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } }
+    },
     box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>) => {
     let damage_time = 0;
     const player = ({
@@ -173,38 +176,8 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
             }
         }
         //custom
-        {
-            const f = blue_slamming.f;
-            const d = blue_slamming.d;
-            enemy.state.body.c = 0
-            const dc = [[4, 5, 7], [7, 0, 0], [4, 3, 7], [7, 6, 7]];
-            const dx = [
-                [0, 0, 0, 0],
-                [2, -2, 0, 0],
-                [0, 0, 0, 0],
-                [-2, 2, 4, 2]
-            ]; const dy = [
-                [2, -2, -4, -2],
-                [0, 0, 0, 0],
-                [-2, 2, 4, 2],
-                [0, 0, 6, 7]
-            ];
-            if (false) 0;
-            else if (f < 4) enemy.state.body.c = dc[d][0];
-            else if (f < 26) enemy.state.body.c = dc[d][1];
-            else if (f < 30) enemy.state.body.c = dc[d][2];
-            if (false) 0;
-            else if (f < 2)  enemy.state.body.x = dx[d][0];
-            else if (f < 4)  enemy.state.body.x = dx[d][1];
-            else if (f < 26) enemy.state.body.x = dx[d][2];
-            else if (f < 30) enemy.state.body.x = dx[d][3];
-            if (false) 0;
-            else if (f < 2)  enemy.state.body.y = dy[d][0];
-            else if (f < 4)  enemy.state.body.y = dy[d][1];
-            else if (f < 26) enemy.state.body.y = dy[d][2];
-            else if (f < 30) enemy.state.body.y = dy[d][3];
-        }
-        blue_slamming.f++;
+        enemy.custom.slam(blue_slamming.d, blue_slamming.f, enemy.state)
+        blue_slamming.f++
     }
     b_tick.push(() => { bx = soul.x; by = soul.y; damage_time--; slamming() });
     return player

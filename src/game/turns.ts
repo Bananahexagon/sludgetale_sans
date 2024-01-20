@@ -121,12 +121,12 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         new Gb.gb(320, 320, 0, 320, 960, 90, 300, 1, 30, 20, 30, 20, "white")
         new Gb.gb(480, 160, 90, 320, 1120, 180, 300, 1, 30, 20, 30, 20, "white")
         await Core.for(0, i => i < 50 && scene.v != "game_over", i => { b_tick(); a_tick() })
-        new Gb.gb(320, 360, 0, 320, 1120, 0, 600, 1, 40, 20, 30, 20, Math.floor(Math.random() * 2) == 0 ? "blue" : "orange")
+        new Gb.gb(320, 360, 0, 320, 1120, 0, 700, 1, 40, 20, 30, 20, Math.floor(Math.random() * 2) == 0 ? "blue" : "orange")
         new Gb.gb(160, 320, -45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
         new Gb.gb(480, 320, 45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
         await Core.for(0, i => i < 120 && scene.v != "game_over", i => { b_tick(); a_tick() })
         player.slam(0);
-        new Bone.stab(320, 80, 0, 122, 80, 15, 25, 25, 20, "white");
+        new Bone.stab(320, 80, 0, 122, 80, 15, 25, 15, 20, "white");
         await Core.for(0, i => i < 80 && scene.v != "game_over", i => {
             b_tick();
             a_tick();

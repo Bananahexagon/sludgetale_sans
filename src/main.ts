@@ -20,10 +20,10 @@ export const main = async () => {
         await Core.while(() => (scene.v === "menu"), () => {
             if (Core.inputKeys.f.up) { cursor--; Core.aLib.play("cursor_move") }
             if (Core.inputKeys.f.down) { cursor++; Core.aLib.play("cursor_move") }
+            cursor = Math.max(Math.min(cursor, 1), 0)
             Core.cLib.stamp("soul", 220, -cursor * 50 + 265);
             Font.write("play", 270, 275, 0, 200, cursor == 0 ? "yellow" : "white", 0, 0, "en");
             Font.write("inf HP", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
-            cursor = Math.max(Math.min(cursor, 1), 0)
             if (Core.inputKeys.f.z) switch (cursor) {
                 case 0: {
                     scene.v = "battle";
@@ -56,7 +56,8 @@ export const main = async () => {
             hp_max: Game.enemy.hp,
             avoid: Game.enemy.avoid,
             stamp: (typeof Game.enemy.costume == "string") ? (state: typeof Game.enemy.state) => s.stamp() : Game.enemy.costume(s, Core),
-            state: Game.enemy.state
+            state: Game.enemy.state,
+            custom: Game.enemy.custom ?? {}
         }
     })();
     const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf);

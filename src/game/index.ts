@@ -1,6 +1,7 @@
 import { cLibT } from "../lib/canvas";
 import { CoreT } from "../lib/core";
 import { SpriteT } from "../lib/sprite";
+import { cos360, sin360 } from "../lib/utils";
 import { turnsGen } from "./turns";
 
 const Game = {
@@ -37,7 +38,31 @@ const Game = {
             },
             state,
             size: 200,
-            avoid: true
+            avoid: true,
+            custom: {
+                slam: (d: 0 | 1 | 2 | 3, f: number, st: typeof state) => {
+                    st.body.c = 0
+                    const dc = [[4, 5, 7], [7, 0, 0], [4, 3, 7], [7, 6, 7]];
+                    const dx = [
+                        [0, 0, 0, 0],
+                        [2, -2, 0, 0],
+                        [0, 0, 0, 0],
+                        [-2, 2, 4, 2]
+                    ]; const dy = [
+                        [2, -2, -4, -2],
+                        [0, 0, 0, 0],
+                        [-2, 2, 4, 2],
+                        [0, 0, 0, 0]
+                    ];
+                    let i_c = f < 4 ? 0 : f < 26 ? 1 : f < 30 ? 2 : 3;
+                    st.body.c = dc[d][i_c] ?? 0;
+                    let i_p = f < 2 ? 0 : f < 4 ? 1 : f < 26 ? 2 : f < 30 ? 3 : 4;
+                    st.body.x = dx[d][i_p] ?? 0;
+                    st.body.y = dy[d][i_p] ?? 0;
+                    st.head.x = dx[d][i_p] ?? 0;
+                    st.head.y = dy[d][i_p] ?? 0;
+                }
+            }
         }
     })(),
     items: [
