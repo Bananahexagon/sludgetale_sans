@@ -23,7 +23,7 @@ export const main = async () => {
             cursor = Math.max(Math.min(cursor, 1), 0)
             Core.cLib.stamp("soul", 220, -cursor * 50 + 265);
             Font.write("play", 270, 275, 0, 200, cursor == 0 ? "yellow" : "white", 0, 0, "en");
-            Font.write("inf HP", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
+            Font.write("HP INF", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
             if (Core.inputKeys.f.z) switch (cursor) {
                 case 0: {
                     scene.v = "battle";
@@ -41,7 +41,7 @@ export const main = async () => {
         Core.ctx.clearRect(0, 0, Core.canvas.width, Core.canvas.height);
         Core.cLib.stamp("soul", 220, 265);
         Font.write("play", 270, 275, 0, 200, "yellow", 0, 0, "en");
-        Font.write("inf HP", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
+        Font.write("HP INF", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
         Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (j / 45));
     })
     let timer = 0;
@@ -119,7 +119,7 @@ export const main = async () => {
                 type Plane = typeof txt;
                 let command = 0;
                 let result: undefined | Plane = undefined;
-                await Core.while(() => sub_scene == "command" && (scene.v == "battle" && sub_scene == "command"), () => {
+                await Core.while(() => sub_scene == "command" && scene.v == "battle", () => {
                     box.draw();
                     enemy.stamp(enemy.state);
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
@@ -212,8 +212,10 @@ export const main = async () => {
                                 choice.push(0);
                                 const behavior = Game.items[choice[1]].behavior;
                                 if (behavior == "default") {
-                                    player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
-                                    Core.aLib.play("heal");
+                                    if (!is_hp_inf.v || 0 < Game.items[choice[1]].heal) player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
+                                    if (0 < Game.items[choice[1]].heal) Core.aLib.play("heal");
+                                    else Core.aLib.play("damage");
+                                    if (player.hp <= 0) scene.v = "game_over"
                                 } else behavior(Core, player);
                             };
                         } else if (choice[0] == 3) {
@@ -240,6 +242,7 @@ export const main = async () => {
                             player.soul.alpha = 0;
                             if (result === undefined) {
                                 result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
+                                Game.items.splice(choice[1], 1)
                             } else {
                                 result.process();
                             }
@@ -274,7 +277,7 @@ export const main = async () => {
                                     choice[2] < 32 ? 1 - ((32 - choice[2]) / 32) ** 3
                                         : choice[2] < 76 ? 1
                                             : choice[2] < 108 ? ((108 - choice[2]) / 32) ** 3 : 0
-                                enemy.s.x = Game.enemy.x + ratio * 100;
+                                enemy.s.x = Game.enemy.x - ratio * 100;
                                 if (48 <= choice[2] && choice[2] < 108) {
                                     const jump = Math.max(0, -(choice[2] - 48) * (choice[2] - 78) / 5);
                                     Core.cLib.stamp("damage_miss", Game.enemy.x, Game.enemy.y + 20 + jump, 0, 400)

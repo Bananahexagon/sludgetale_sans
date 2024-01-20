@@ -25,8 +25,8 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         box.judge();
     }
     const bubble = (a: number) => Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, a, "start");
-    const speak = async (tx: string, speed: number) => {
-        const quote = new Font.Plane("_", tx, 420, 360, 0, 100, "black", 0, 0, speed, Game.lang, true, "sans");
+    const speak = async (tx: string, speed: number, voice: boolean = true) => {
+        const quote = new Font.Plane("_", tx, 420, 360, 0, 100, "black", 0, 0, speed, Game.lang, true, voice ? "sans" : undefined);
         await Core.while(() => !quote.solved, () => {
             b_tick();
             a_tick();
@@ -88,9 +88,17 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
             b_y.finish();
         }
-        await speak("！仮置きテキスト！", 2)
-        await speak("！仮置きテキスト！", 2)
-        await speak("！仮置きテキスト！", 2)
+        await speak("今日は素敵な日だ。", 2)
+        await speak("花はいつものように咲き、\n川のせせらぎが\n聞こえてくる。", 2)
+        await speak("こんな日には、\nお前のような奴は...", 2)
+        Core.aLib.play("tick");
+        await Core.for(0, i => i < 10 && scene.v != "game_over", i => {
+            b_tick();
+            a_tick();
+            Core.cLib.drawRect(320, 240, 640, 480, "#000")
+        })
+        enemy.state.head.c = 5;
+        await speak("二度と息が吸えなく\nなってもいいよな。", 4, false);
         player.slam(0);
         new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
         await Core.for(0, i => i < 40 && scene.v != "game_over", i => {
@@ -132,8 +140,13 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             a_tick();
         })
         if (scene.v == "game_over") return;
-        await speak("へへ...", 2)
-        await speak("さっさと始めようぜ", 2)
+        enemy.state.head.c = 4;
+        await speak("へへ...", 2);
+        enemy.state.head.c = 13;
+        enemy.state.body.c = 2;
+        await speak("さっさと始めようぜ", 2);
+        enemy.state.head.c = 0;
+        enemy.state.body.c = 0;
         Gb.gbMap.clear();
         Bone.boneMap.clear();
         {

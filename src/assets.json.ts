@@ -343,13 +343,78 @@ export default [
     },
     {
         "type": "image",
+        "name": "sans_leg",
+        "src": "./assets/images/sans/leg.png"
+    },
+    {
+        "type": "image",
         "name": "sans_head_0",
         "src": "./assets/images/sans/head_0.png"
     },
     {
         "type": "image",
-        "name": "sans_leg",
-        "src": "./assets/images/sans/leg.png"
+        "name": "sans_head_1",
+        "src": "./assets/images/sans/head_1.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_2",
+        "src": "./assets/images/sans/head_2.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_3",
+        "src": "./assets/images/sans/head_3.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_4",
+        "src": "./assets/images/sans/head_4.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_5",
+        "src": "./assets/images/sans/head_5.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_6",
+        "src": "./assets/images/sans/head_6.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_7",
+        "src": "./assets/images/sans/head_7.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_8",
+        "src": "./assets/images/sans/head_8.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_9",
+        "src": "./assets/images/sans/head_9.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_10",
+        "src": "./assets/images/sans/head_10.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_11",
+        "src": "./assets/images/sans/head_11.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_12",
+        "src": "./assets/images/sans/head_12.png"
+    },
+    {
+        "type": "image",
+        "name": "sans_head_13",
+        "src": "./assets/images/sans/head_13.png"
     },
     {
         "type": "image",
@@ -497,12 +562,12 @@ export default [
         "type": "audio",
         "name": "battle_start",
         "src": "./assets/audios/battle_start.wav"
-    }, 
+    },
     {
         "type": "audio",
         "name": "sans",
         "src": "./assets/audios/sans.wav"
-    }, 
+    },
     {
         "type": "audio",
         "name": "soul_slamming",

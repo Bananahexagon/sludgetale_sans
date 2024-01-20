@@ -19,7 +19,7 @@ const Game = {
     enemy: (() => {
         const state = {
             body: { c: 0, x: 0, y: 0 },
-            head: { c: 0, x: 0, y: 0 }
+            head: { c: 4, x: 0, y: 0 }
         }
         return {
             x: 320,
@@ -67,14 +67,44 @@ const Game = {
     })(),
     items: [
         {
-            name: "腐ったパン",
-            heal: -20,
-            text: "パンはパンでも食べられないパンはな～んだ",
+            name: "パイ",
+            heal: 99,
+            text: "バタースコッチシナモンパイを食べた。\nHPがまんたんになった！",
             behavior: "default"
         }, {
-            name: "唐揚げ",
-            heal: 20,
-            text: "生殖器の唐揚げｱｱｱｱｧｧｧ----wwwwwwwwwwww",
+            name: "高級バナナ",
+            heal: 60,
+            text: "高級バナナを食べた。\nHPが60回復した！",
+            behavior: "default"
+        }, {
+            name: "からあげ",
+            heal: 45,
+            text: "唐揚げを食べた。\nHPが45回復した！",
+            behavior: "default"
+        }, {
+            name: "からあげ",
+            heal: 45,
+            text: "唐揚げを食べた。\nHPが45回復した！",
+            behavior: "default"
+        }, {
+            name: "からあげ",
+            heal: 45,
+            text: "唐揚げを食べた。\nHPが45回復した！",
+            behavior: "default"
+        }, {
+            name: "抹茶バウム",
+            heal: 42,
+            text: "抹茶バウムを食べた。\nHPが42回復した！",
+            behavior: "default"
+        }, {
+            name: "ハンバーガー",
+            heal: 40,
+            text: "ハンバーガーを食べた。\nHPが40回復した！",
+            behavior: "default"
+        }, {
+            name: "ハンバーガー",
+            heal: 40,
+            text: "ハンバーガーを食べた。\nHPが40回復した！",
             behavior: "default"
         },
     ] as { name: string, heal: number, text: string, behavior: behavior }[],
