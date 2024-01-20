@@ -1,2 +1,2 @@
-import { main } from "./main";
-window.onload = async () => { while (true) await main() };
+import { entry } from "./main";
+window.onload = entry;

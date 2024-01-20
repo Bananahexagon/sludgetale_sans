@@ -11,7 +11,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
     const Fonts: Map<string, FontFace> = new Map();
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
-    index.forEach((e: AssetData) => promises.push(new Promise((resolve) => {
+    index.forEach((e: AssetData) => Images.has(e.name)||Audios.has(e.name)||Fonts.has(e.name) ? 0 : promises.push(new Promise((resolve) => {
         switch (e.type) {
             case "image": {
                 if (Images.has(e.name)) throw new Error()

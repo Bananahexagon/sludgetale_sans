@@ -152,7 +152,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 if (this.hp <= this.kr) this.kr = this.hp - 1;
             }
             Core.aLib.play("damage");
-            if (this.hp <= 0) {
+            if (!(player.hp > 0)) {
                 scene.v = "game_over";
             }
         }
@@ -189,6 +189,9 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         player.kr = Math.max(0, player.kr - Math.floor(kr_count));
         player.hp -= Math.floor(kr_count);
         kr_count = kr_count % 1;
+        if (!(player.hp > 0)) {
+            scene.v = "game_over";
+        }
     });
     return player
 };
