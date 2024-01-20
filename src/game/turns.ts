@@ -62,7 +62,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             flavor: "！仮置きテキスト！",
             proc: async (first: boolean) => {
                 {
-                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 232, h: 132 }, 10, 2)
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 82, h: 132 }, 10, 2)
                     await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
                     b_y.finish();
                 }
@@ -71,12 +71,37 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                 } else {
                     await speak("...", 2);
                 }
-                //TODO
+                for (let i = 0; i < 4; i++) {
+                    player.slam(0)
+                    await Core.for(0, i => i < 70, i => {
+                        b_tick();
+                        if (i % 35 == 0) {
+                            new Bone.normal(270, 60, 0, 5, 40, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 60, 0, 5, 40, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 260, 180, 5, 120, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 260, 180, 5, 120, -4, 0, 0, 0, 25);
+                        }
+                        a_tick();
+                    })
+                    player.slam(2)
+                    await Core.for(0, i => i < 70, i => {
+                        b_tick();
+                        if (i % 35 == 0) {
+                            new Bone.normal(270, 260, 180, 5, 40, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 260, 180, 5, 40, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 60, 0, 5, 120, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 60, 0, 5, 120, -4, 0, 0, 0, 25);
+                        }
+                        a_tick();
+                    })
+                }
                 {
                     const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
                     await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
                     b_y.finish();
                 }
+                Gb.gbMap.clear();
+                Bone.boneMap.clear();
             },
         }
     ]
@@ -100,7 +125,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         enemy.state.head.c = 5;
         await speak("二度と息が吸えなく\nなってもいいよな。", 4, false);
         player.slam(0);
-        new Bone.stab(320, 80, 0, 122, 80, 20, 25, 45, 20, "white");
+        new Bone.stab(320, 80, 0, 122, 70, 20, 25, 45, 20, "white");
         await Core.for(0, i => i < 40 && scene.v != "game_over", i => {
             b_tick();
             a_tick();
@@ -134,7 +159,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         new Gb.gb(480, 320, 45, 320, 960, 0, 300, 1, 40, 20, 30, 20, "white")
         await Core.for(0, i => i < 120 && scene.v != "game_over", i => { b_tick(); a_tick() })
         player.slam(0);
-        new Bone.stab(320, 80, 0, 122, 80, 15, 25, 15, 20, "white");
+        new Bone.stab(320, 80, 0, 122, 70, 15, 25, 15, 20, "white");
         await Core.for(0, i => i < 80 && scene.v != "game_over", i => {
             b_tick();
             a_tick();

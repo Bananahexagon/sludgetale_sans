@@ -42,14 +42,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 const jumpable = box.is_jumpable(0);
                 if (jumpable && Core.inputKeys.up) {
                     j = 7;
-                    soul.y += Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.y += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 } else if (!jumpable) {
                     if (0 < j && !Core.inputKeys.up) {
                         j = 0;
                     } else {
-                        j -= 0.25;
+                        j -= 1 / 4;
                     }
-                    soul.y += Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.y += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 }
             }
         })(),
@@ -59,14 +59,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 const jumpable = box.is_jumpable(90);
                 if (jumpable && Core.inputKeys.right) {
                     j = 7;
-                    soul.x += Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.x += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 } else if (!jumpable) {
                     if (0 < j && !Core.inputKeys.right) {
                         j = 0;
                     } else {
-                        j -= 0.25;
+                        j -= 1 / 4;
                     }
-                    soul.x += Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.x += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 }
             }
         })(),
@@ -76,14 +76,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 const jumpable = box.is_jumpable(180);
                 if (jumpable && Core.inputKeys.down) {
                     j = 7;
-                    soul.y -= Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.y -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 } else if (!jumpable) {
                     if (0 < j && !Core.inputKeys.down) {
                         j = 0;
                     } else {
-                        j -= 0.25;
+                        j -= 1 / 4;
                     }
-                    soul.y -= Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.y -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 }
             }
         })(),
@@ -93,14 +93,14 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 const jumpable = box.is_jumpable(270);
                 if (jumpable && Core.inputKeys.left) {
                     j = 7;
-                    soul.x -= Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.x -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 } else if (!jumpable) {
                     if (0 < j && !Core.inputKeys.left) {
                         j = 0;
                     } else {
-                        j -= 0.25;
+                        j -= 1 / 4;
                     }
-                    soul.x -= Math.sign(j) * Math.abs(j) ** 1.75 * 0.25;
+                    soul.x -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
                 }
             }
         })(),
