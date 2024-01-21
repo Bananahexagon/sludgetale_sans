@@ -94,7 +94,6 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                     player.damage(this.color);
                 }
             }
-
         }
         private static current_id = 0;
         private static get_move(move: Move, age: number): number {
@@ -119,12 +118,12 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         w: number;
         h: number;
         t1: number;
-        t2: number;
+        t2: { v: number, s: number };
         t3: number;
-        t4: number;
+        t4: { v: number, s: number };
         life: number;
         color: "white" | "blue" | "orange";
-        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number, t3: number, t4: number, color: "white" | "blue" | "orange" = "white") {
+        constructor(x: number, y: number, d: number, w: number, h: number, t1: number, t2: number | { v: number, s: number }, t3: number, t4: number | { v: number, s: number }, color: "white" | "blue" | "orange" = "white") {
             super(x, y, d, 100, `bone_stab_${color}`, 1, 1);
             this.b_x = x;
             this.b_y = y;
@@ -134,10 +133,10 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.w = w;
             this.h = h;
             this.t1 = t1;
-            this.t2 = t2;
+            this.t2 = typeof t2 == "number" ? { v: t2, s: 4 } : t2;
             this.t3 = t3;
-            this.t4 = t4;
-            this.life = t1 + t2 + t3 + t4;
+            this.t4 = typeof t4 == "number" ? { v: t4, s: 4 } : t4;
+            this.life = this.t1 + this.t2.v + this.t3 + this.t4.v;
             this.color = color;
             boneMap.set(this.id, this);
             aLib.play("warning");
@@ -147,14 +146,14 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 this.x = this.b_x;
                 this.y = this.b_y;
                 this.move(-640);
-            } else if (this.age < this.t1 + this.t2) {
+            } else if (this.age < this.t1 + this.t2.v) {
                 if (this.age == this.t1) aLib.play("stab")
                 this.x = this.b_x;
                 this.y = this.b_y;
                 this.move(-640);
-                const ratio = 1 - (1 - (this.age - this.t1) / this.t2) ** 4
+                const ratio = 1 - (1 - (this.age - this.t1) / this.t2.v) ** this.t2.s
                 this.move(ratio * this.h);
-            } else if (this.age < this.t1 + this.t2 + this.t3) {
+            } else if (this.age < this.t1 + this.t2.v + this.t3) {
                 this.x = this.b_x;
                 this.y = this.b_y;
                 this.move(-640 + this.h);
@@ -162,7 +161,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 this.x = this.b_x;
                 this.y = this.b_y;
                 this.move(-640 + this.h);
-                const ratio = 1 - (1 - (this.age - (this.t1 + this.t2 + this.t3)) / this.t4) ** 4
+                const ratio = 1 - (1 - (this.age - (this.t1 + this.t2.v + this.t3)) / this.t4.v) ** this.t4.s
                 this.move(-this.h * ratio);
             }
             this.age += 1;
