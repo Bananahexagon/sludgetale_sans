@@ -67,7 +67,6 @@ const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioEleme
                 current_char: 0,
                 current_char_true: 0,
             }
-            console.log(input)
             this.x = x;
             this.y = y;
             this.direction = d;

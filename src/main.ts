@@ -30,7 +30,6 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             Core.cLib.stamp("soul", 220, -cursor * 50 + 265);
             Font.write("play", 270, 275, 0, 200, cursor == 0 ? "yellow" : "white", 0, 0, "en");
             Font.write("HP INF", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
-            console.log(Core.inputKeys.f.z)
             if (Core.inputKeys.f.z) switch (cursor) {
                 case 0: {
                     scene.v = "battle";
@@ -298,7 +297,6 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             } else if (sub_scene.v == "enemy") {
                 player.soul.alpha = 1;
                 [player.soul.x, player.soul.y] = [box.center_x, box.center_y];
-                console.log(turn);
                 await Turns[turn.v]?.proc(turn.first)
                 sub_scene.v = "command";
                 turn.first = false;
