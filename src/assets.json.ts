@@ -78,6 +78,16 @@ export default [
     },
     {
         "type": "image",
+        "name": "dt_ja_purple",
+        "src": "./assets/images/font/dt_ja_purple.png"
+    },
+    {
+        "type": "image",
+        "name": "dt_ja_green",
+        "src": "./assets/images/font/dt_ja_green.png"
+    },
+    {
+        "type": "image",
         "name": "determination_white",
         "src": "./assets/images/font/determination_white.png"
     },
@@ -108,6 +118,16 @@ export default [
     },
     {
         "type": "image",
+        "name": "determination_purple",
+        "src": "./assets/images/font/determination_purple.png"
+    },
+    {
+        "type": "image",
+        "name": "determination_green",
+        "src": "./assets/images/font/determination_green.png"
+    },
+    {
+        "type": "image",
         "name": "status_white",
         "src": "./assets/images/font/status_white.png"
     },
@@ -135,6 +155,11 @@ export default [
         "type": "image",
         "name": "status_purple",
         "src": "./assets/images/font/status_purple.png"
+    },
+    {
+        "type": "image",
+        "name": "status_green",
+        "src": "./assets/images/font/status_green.png"
     },
     {
         "type": "image",

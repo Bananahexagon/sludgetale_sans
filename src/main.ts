@@ -1,7 +1,7 @@
 import { CoreT, init } from "./lib/core";
 import { Opt, sin360, distance, cos360, Ref } from "./lib/utils";
 import { boneFnsGen } from "./bone";
-import { FontI, Plane, PlaneT, fontFnsGen, fontFnsT } from "./font";
+import { FontI, Plane, PlaneT, fontColor, fontFnsGen, fontFnsT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game, enemyState } from "./game"
@@ -343,7 +343,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
     }
 };
 
-const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: string, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, kr: number, hp_max: number, lv: number },
+const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: number, size: number, color?: fontColor, spacing_x?: number, spacing_y?: number, font?: string) => void, player: { name: string, hp: number, kr: number, hp_max: number, lv: number },
     len: (s: string, f: string) => number, Game: { color: { [keys: string]: string }, styles: { player_hp: string, player_kr: string, player_hp_back: string } }, is_hp_inf: Ref<boolean>, karma: boolean) => {
     const name_len = len(player.name, "status");
     const hp_color = Game.color[Game.styles.player_hp] ?? Game.styles.player_hp;

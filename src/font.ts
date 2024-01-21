@@ -28,6 +28,8 @@ interface FontI {
     write: () => void,
 }
 
+type fontColor = "white"|"red"|"blue"|"orange"|"purple"|"black"|"yellow";
+
 const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioElement, time: number }>, cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     const fontData = {
         en: fontDataEn,
@@ -56,7 +58,7 @@ const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioEleme
         promise: Promise<void>;
         resolve: () => void;
         solved: boolean;
-        constructor(x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color?: string, spacing_x?: number, spacing_y?: number, voice?: string }[], z: boolean) {
+        constructor(x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color?: fontColor, spacing_x?: number, spacing_y?: number, voice?: string }[], z: boolean) {
             this._ = {
                 all_str: input.reduce((a, c) => a + c.str, ""),
                 now: [{ str: "", color: input[0].color ?? "white", spacing_x: input[0].spacing_x ?? 0, spacing_y: input[0].spacing_y ?? 0, voice: input[0].voice }],
@@ -189,7 +191,7 @@ const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioEleme
         solved: boolean;
         z: boolean;
         resolve: (value: void | PromiseLike<void>) => void;
-        constructor(str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "default", z: boolean, voice?: string) {
+        constructor(str: string, x: number, y: number, d: number, size: number, color: fontColor, spacing_x: number, spacing_y: number, speed: number, font: string = "default", z: boolean, voice?: string) {
             this.str_now = "";
             this.len_now = 0;
             this.str = str
@@ -284,7 +286,7 @@ const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioEleme
         }
     };
 
-    const write = (str: string, x: number, y: number, d: number, size: number, color: string = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "default") => {
+    const write = (str: string, x: number, y: number, d: number, size: number, color: fontColor = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "default") => {
         const _ = new Plane(str, x, y, d, size, color, spacing_x, spacing_y, 0, font, false);
         _.write();
     };
@@ -332,5 +334,6 @@ export {
     fontFnsT,
     PlaneT,
     Plane,
-    FontI
+    FontI,
+    fontColor
 }
