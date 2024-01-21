@@ -189,7 +189,6 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         enemy.state.head.c = 5;
         await speak("二度と息が吸えなく\nなってもいいよな。", 4, false);
         //ここから攻撃
-        await wait(120); if (scene.v == "game_over") return;
         player.slam(0);
         new Bone.stab(320, 80, 0, 122, 70, 20, 25, 45, 20, "white");
         await wait(40); if (scene.v == "game_over") return;
