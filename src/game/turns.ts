@@ -15,7 +15,6 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         box.draw();
         hp_bar();
         enemy.stamp(enemy.state);
-        console.log(enemy.state.body.c)
         const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
         [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
         Gb.process();
@@ -41,9 +40,9 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
     const turns = () => [
         {
             flavor: () => new Font.Super(80, 205, 0, 200, Game.lang, [
-                { str: "あなたは", color: "white", speed: 2, voice: "text" },
-                { str: "最悪な時間", color: "red", speed: 4, voice: "text" },
-                { str: "を\n過ごすことになる予感がする...", color: "white", speed: 2, voice: "text" }
+                { str: "あなたは", color: "white", speed: 1, voice: "text" },
+                { str: "最悪な時間", color: "red", speed: 1, voice: "text" },
+                { str: "を\n過ごすことになる予感がする...", color: "white", speed: 1, voice: "text" }
             ], false),
             proc: async (first: boolean) => {
                 {
@@ -64,7 +63,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             },
         },
         {
-            flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 2, Game.lang, false, "text"),
+            flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
             proc: async (first: boolean) => {
                 {
                     const b_y = box.move({ x: 320, y: 160, d: 0, w: 82, h: 132 }, 10, 2)
@@ -81,10 +80,10 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     await Core.for(0, i => i < 70 && scene.v != "game_over", i => {
                         b_tick();
                         if (i % 35 == 0) {
-                            new Bone.normal(270, 60, 0, 7, 35, 4, 0, 0, 0, 25);
-                            new Bone.normal(370, 60, 0, 7, 35, -4, 0, 0, 0, 25);
-                            new Bone.normal(270, 260, 180, 7, 115, 4, 0, 0, 0, 25);
-                            new Bone.normal(370, 260, 180, 7, 115, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 60, 0, 7, 40, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 60, 0, 7, 40, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 260, 180, 7, 108, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 260, 180, 7, 108, -4, 0, 0, 0, 25);
                         }
                         a_tick();
                     })
@@ -92,10 +91,10 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     await Core.for(0, i => i < 70 && scene.v != "game_over", i => {
                         b_tick();
                         if (i % 35 == 0) {
-                            new Bone.normal(270, 260, 180, 7, 35, 4, 0, 0, 0, 25);
-                            new Bone.normal(370, 260, 180, 7, 35, -4, 0, 0, 0, 25);
-                            new Bone.normal(270, 60, 0, 7, 115, 4, 0, 0, 0, 25);
-                            new Bone.normal(370, 60, 0, 7, 115, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 260, 180, 7, 40, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 260, 180, 7, 40, -4, 0, 0, 0, 25);
+                            new Bone.normal(270, 60, 0, 7, 108, 4, 0, 0, 0, 25);
+                            new Bone.normal(370, 60, 0, 7, 108, -4, 0, 0, 0, 25);
                         }
                         a_tick();
                     })

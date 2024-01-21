@@ -1,7 +1,9 @@
+import { fontFnsT } from "../font";
 import { cLibT } from "../lib/canvas";
 import { CoreT } from "../lib/core";
 import { SpriteT } from "../lib/sprite";
 import { cos360, sin360 } from "../lib/utils";
+import { commandsGen } from "./commands";
 import { turnsGen } from "./turns";
 
 const Game = {
@@ -22,7 +24,7 @@ const Game = {
             body: { c: 0, x: 0, y: 0 },
             head: { c: 4, x: 0, y: 0 },
             moving: false,
-        }
+        } as enemyState
         return {
             x: 320,
             y: 320,
@@ -43,7 +45,7 @@ const Game = {
             avoid: true,
             custom: {
                 slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, st: typeof state) => {
-                    let is_slamming = 0 as -1 | 0 | 9 | 13;
+                    let is_slamming = 0 as -1 | 0 | 9;
                     if (!(d == -1 && b == -1)) {
                         is_slamming = -1;
                         if (d != -1) {
@@ -68,7 +70,7 @@ const Game = {
                                 st.body.y = dy[d][i_p] ?? 0;
                                 st.head.x = dx[d][i_p] ?? 0;
                                 st.head.y = dy[d][i_p] ?? 0;
-                            } else is_slamming = 13;
+                            }
                         } else {
                             const dc = [7, 0, 7, 7];
                             const dx = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
@@ -83,67 +85,20 @@ const Game = {
                             } else is_slamming = 9;
                         }
                     }
-                    console.log(is_slamming, st.moving)
-                    if (is_slamming != -1 && st.moving) {
+                    if (is_slamming != -1 && d == -1 && st.moving) {
                         const i = f - is_slamming;
-                        const j = i * 3.775;
+                        const j = i * 6;
                         const sx = sin360(j * 1);
                         const sy = sin360(j * 2);
-                        st.body.x = (Math.round(Math.sin(sx)*Math.abs(sx) ** 0.3 * 1) * 1.5 + 0) * 1;
-                        st.body.y = (Math.round(Math.sin(sy)*Math.abs(sy) ** 0.3 * 1) * 1.5 + 0) * 0.5;
-                        st.head.x = (Math.round(Math.sin(sx)*Math.abs(sx) ** 0.3 * 1) * 1.5 + 0) * 1.5;
-                        st.head.y = (Math.round(Math.sin(sy)*Math.abs(sy) ** 0.3 * 1) * 1.5 + 0) * 0.75;
+                        st.body.x = (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1) * 1.5 + 0) * 1;
+                        st.body.y = (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1) * 1.5 + 0) * 0.5;
+                        st.head.x = (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1.1) * 1.5 + 0) * 1.5;
+                        st.head.y = (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1.1) * 1.5 + 0) * 0.75;
                     }
                 }
             }
         }
     })(),
-    items: [
-        {
-            name: "パイ",
-            heal: 99,
-            text: "バタースコッチシナモンパイを食べた。\nHPがまんたんになった！",
-            behavior: "default"
-        }, {
-            name: "高級バナナ",
-            heal: 60,
-            text: "高級バナナを食べた。\nHPが60回復した！",
-            behavior: "default"
-        }, {
-            name: "からあげ",
-            heal: 45,
-            text: "唐揚げを食べた。\nHPが45回復した！",
-            behavior: "default"
-        }, {
-            name: "からあげ",
-            heal: 45,
-            text: "唐揚げを食べた。\nHPが45回復した！",
-            behavior: "default"
-        }, {
-            name: "からあげ",
-            heal: 45,
-            text: "唐揚げを食べた。\nHPが45回復した！",
-            behavior: "default"
-        }, {
-            name: "抹茶バウム",
-            heal: 42,
-            text: "抹茶バウムを食べた。\nHPが42回復した！",
-            behavior: "default"
-        }, {
-            name: "ハンバーガー",
-            heal: 40,
-            text: "ハンバーガーを食べた。\nHPが40回復した！",
-            behavior: "default"
-        }, {
-            name: "ハンバーガー",
-            heal: 40,
-            text: "ハンバーガーを食べた。\nHPが40回復した！",
-            behavior: "default"
-        },
-    ] as { name: string, heal: number, text: string, behavior: behavior }[],
-    actions: [
-        { name: "しらべる", text: "サンズ 2 ATK 1 DEF\n最も楽な敵。", behavior: "default" },
-    ] as { name: string, text: string, behavior: behavior }[],
     clear_text: "YOU WIN!! \n0EXPと0Gを獲得した!",
     styles: {
         player_hp: "green",
@@ -162,10 +117,16 @@ const Game = {
         red_dark: "#803333",
         purple: "#995c99"
     },
-    turnsGen
+    turnsGen,
+    commands: commandsGen
 } as const
+
+type enemyState = {
+    body: { c: number, x: number, y: number },
+    head: { c: number, x: number, y: number },
+    moving: boolean,
+}
 
 type GameT = typeof Game;
 
-export { Game, GameT }
-type behavior = "default" | ((Core: CoreT, player: { hp: number, hp_max: number }) => void);
+export { Game, GameT,enemyState }

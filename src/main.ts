@@ -4,7 +4,7 @@ import { boneFnsGen } from "./bone";
 import { FontI, Plane, PlaneT, fontFnsGen, fontFnsT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
-import { Game } from "./game"
+import { Game, enemyState } from "./game"
 import { playerObjGen } from "./player";
 import { config } from "./config.json";
 import { SpriteT } from "./lib/sprite";
@@ -63,7 +63,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             hp_max: Game.enemy.hp,
             avoid: Game.enemy.avoid,
             stamp: (typeof Game.enemy.costume == "string") ? (state: typeof Game.enemy.state) => s.stamp() : Game.enemy.costume(s, Core),
-            state: JSON.parse(JSON.stringify(Game.enemy.state)) as typeof Game.enemy.state,
+            state: JSON.parse(JSON.stringify(Game.enemy.state)) as enemyState,
             custom: Game.enemy.custom ?? {}
         }
     })();
@@ -74,6 +74,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf, Game.player.karma);
+        const cmdBehaviors = Game.commands({ Game, Core, Font, hp_bar, scene, enemy, box })
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
         let turn = { v: 0, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
@@ -125,7 +126,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 const txt: FontI = Turns[turn.v]?.flavor();
                 let command = 0;
                 let result: undefined | Plane = undefined;
-                await Core.while(() => sub_scene.v == "command" && scene.v == "battle", () => {
+                await Core.while(() => sub_scene.v == "command" && scene.v == "battle", async () => {
                     box.draw();
                     enemy.stamp(enemy.state);
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
@@ -206,56 +207,41 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                             Core.cLib.stamp("attack_gauge", 320, 160, 0, 300, ratio, "center", ratio);
                             Core.cLib.stamp(`attack_bar_${Math.floor(choice[1] / 8 % 2)}`, 80 + choice[1] * 5, 160, 0, 300, ratio);
                         } else if (choice[0] == 1 && choice.length == 2) {
-                            menu(Game.actions);
+                            menu(cmdBehaviors.actions);
                             if (Core.inputKeys.f.z) {
                                 choice.push(0);
-                                const behavior = Game.actions[choice[1]].behavior;
-                                if (behavior !== "default") behavior(Core, player);
                             };
                         } else if (choice[0] == 2) {
-                            menu(Game.items)
+                            menu(cmdBehaviors.items)
                             if (Core.inputKeys.f.z) {
                                 choice.push(0);
-                                const behavior = Game.items[choice[1]].behavior;
-                                if (behavior == "default") {
-                                    if (!is_hp_inf.v || 0 < Game.items[choice[1]].heal) player.hp = Math.min(player.hp_max, player.hp + Game.items[choice[1]].heal);
-                                    if (0 < Game.items[choice[1]].heal) Core.aLib.play("heal");
+                                if (cmdBehaviors.items[choice[1]].heal != 0) {
+                                    if (!is_hp_inf.v || 0 < cmdBehaviors.items[choice[1]].heal) player.hp = Math.min(player.hp_max, player.hp + cmdBehaviors.items[choice[1]].heal);
+                                    if (0 < cmdBehaviors.items[choice[1]].heal) Core.aLib.play("heal");
                                     else Core.aLib.play("damage");
                                     if (player.hp <= 0) scene.v = "game_over"
-                                } else behavior(Core, player);
+                                };
                             };
                         } else if (choice[0] == 3) {
                             if (Core.inputKeys.f.up || Core.inputKeys.f.down) { choice[1] = (choice[1] + 1) % 2; Core.aLib.play("cursor_move"); }
                             if (Core.inputKeys.f.z) sub_scene.v = "enemy";
                             Font.write("*", 80, 205, 0, 200);
-                            Font.write(Game.lang == "ja" ? "見逃す" : "Spare", 110, 205, 0, 200);
+                            Font.write(Game.lang == "ja" ? "みのがす" : "Spare", 110, 205, 0, 200);
                             Font.write("*", 80, 165, 0, 200);
-                            Font.write(Game.lang == "ja" ? "逃げる" : "Quit", 110, 165, 0, 200);
+                            Font.write(Game.lang == "ja" ? "にげる" : "Quit", 110, 165, 0, 200);
                             [player.soul.x, player.soul.y] = [55, 195 - choice[1] * 40];
                         }
                     } else if (choice.length == 3) {
                         if (choice[0] == 0) throw new Error();
                         else if (choice[0] == 1) {
-                            player.soul.alpha = 0;
-                            if (result === undefined) {
-                                result = new Font.Plane(`${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
-                            } else { result.process() }
-                            if (!result.solved) {
-                                result.write();
-                                Font.write("*", 50, 205, 0, 200);
-                            } else sub_scene.v = "enemy"
+                            const behavior = cmdBehaviors.actions[choice[1]].behavior;
+                            await behavior();
+                            sub_scene.v = "enemy"
                         } else if (choice[0] == 2) {
-                            player.soul.alpha = 0;
-                            if (result === undefined) {
-                                result = new Font.Plane(`${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
-                                Game.items.splice(choice[1], 1)
-                            } else {
-                                result.process();
-                            }
-                            if (!result.solved) {
-                                result.write();
-                                Font.write("*", 50, 205, 0, 200);
-                            } else sub_scene.v = "enemy"
+                            const behavior = cmdBehaviors.items[choice[1]].behavior;
+                            await behavior();
+                            cmdBehaviors.items.splice(choice[1], 1)
+                            sub_scene.v = "enemy"
                         } else if (choice[0] == 3) { }
                     } else if (choice.length == 4) {
                         if (choice[0] == 0) {
@@ -300,7 +286,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                         }
                     }
                     player.stamp();
-                })
+                });
                 if (turn_progress.v == "normal") turn.v += 1;
             } else if (sub_scene.v == "enemy") {
                 player.soul.alpha = 1;
@@ -374,7 +360,7 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
             , 75, 0, 300, "white", 0, 0, "status");
 
         if (is_hp_inf.v) {
-            write("infinity",
+            write("inf",
                 player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
                 , 77, 0, 300, "white", 0, 0, "status");
         } else {
@@ -390,7 +376,7 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, player.hp * 1.2, 21, kr_color, 0, 1, "start");
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, (player.hp - player.kr) * 1.2, 21, hp_color, 0, 1, "start");
         cLib.stamp("hp_kr_white", 122 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
-        if (karma) cLib.stamp((0 < player.kr) ? "hp_kr_purple" : "hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
+        cLib.stamp((0 < player.kr) ? "hp_kr_purple" : "hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, karma ? 1 : 0.5, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
 
     };
 }
