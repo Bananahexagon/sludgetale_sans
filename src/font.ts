@@ -23,27 +23,24 @@ type charDataT = {
 
 type FontDataT = typeof fontDataEn;
 
-const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
+interface FontI {
+    process: () => void,
+    write: () => void,
+}
+
+const fontFnsGen = (Audios: Map<string, { ctx: AudioBuffer, data: HTMLAudioElement, time: number }>, cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     const fontData = {
         en: fontDataEn,
         status: fontDataStatus,
         damage: fontDataDamage,
         ja: fontDataJa
     };
-    let current_id = 0;
-    let displayMap: { [keys: string]: any } = {}
-    class Font {
-        name: string
-        constructor(name: string) { this.name = name }
-        delete() {
-            delete displayMap[this.name];
-        }
-    }
 
-    class Super extends Font {
+
+    class Super implements FontI {
         _: {
             all_str: string,
-            now: { str: string, color: string, spacing_x: number, spacing_y: number }[],
+            now: { str: string, color: string, spacing_x: number, spacing_y: number, voice?: string }[],
             len_allow: number,
             count: number,
             current_char: number,
@@ -53,19 +50,22 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         y: number;
         direction: number;
         size: number;
-        data: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[]
+        data: { str: string, speed: number, color?: string, spacing_x?: number, spacing_y?: number, voice?: string }[]
         font: FontDataT;
         z: boolean;
-        constructor(name: string, x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color: string, spacing_x: number, spacing_y: number }[], z: boolean) {
-            super(name);
+        promise: Promise<void>;
+        resolve: () => void;
+        solved: boolean;
+        constructor(x: number, y: number, d: number, size: number, font: string, input: { str: string, speed: number, color?: string, spacing_x?: number, spacing_y?: number, voice?: string }[], z: boolean) {
             this._ = {
                 all_str: input.reduce((a, c) => a + c.str, ""),
-                now: [{ str: "", color: input[0].color, spacing_x: input[0].spacing_x, spacing_y: input[0].spacing_y }],
+                now: [{ str: "", color: input[0].color ?? "white", spacing_x: input[0].spacing_x ?? 0, spacing_y: input[0].spacing_y ?? 0, voice: input[0].voice }],
                 len_allow: 0,
                 count: 0,
                 current_char: 0,
                 current_char_true: 0,
             }
+            console.log(input)
             this.x = x;
             this.y = y;
             this.direction = d;
@@ -86,7 +86,9 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                         return fontData[Game.lang] as unknown as FontDataT;
                 }
             })(font)
-            displayMap[name == "_" ? `auto$${current_id++}` : name] = this;
+            this.resolve = () => 0;
+            this.promise = (() => new Promise((resolve) => { this.resolve = resolve }))();
+            this.solved = false;
             this.z = z;
             this.process();
         }
@@ -120,11 +122,11 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                     const [charData, fn] = charDataf(c)
                     if (c == "\n") {
                         x = 0;
-                        y += this.font.props.height_basic + e.spacing_y;
+                        y -= this.font.props.height_basic + e.spacing_y;
                     } else {
                         cLib.stamp(fn + "_" + e.color,
-                            this.x + (Math.cos(d) * x - Math.sin(d) * (y + charData.gap / 2)) * size / 100,
-                            this.y + (Math.sin(d) * x + Math.cos(d) * (y + charData.gap / 2)) * size / 100,
+                            this.x + (Math.cos(d) * x - Math.sin(d) * (y - charData.gap)) * size / 100,
+                            this.y + (Math.sin(d) * x + Math.cos(d) * (y - charData.gap)) * size / 100,
                             this.direction, size, 1, "start", 1, { left: charData.left, top: charData.up, width: charData.width, height: charData.height }
                         );
                         if (count + 1 < input_str_length) x += charData.width + this.font.props.width_basic + e.spacing_x;
@@ -137,8 +139,8 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         process() {
             const input_str_length = this.data.reduce((a, c) => a + c.str.length, 0);
             if (this._.len_allow == input_str_length && inputKeys.z && this.z) {
-                delete displayMap[this.name];
-                return;
+                this.resolve();
+                this.solved = true;
             } else if (inputKeys.x) {
                 this._.len_allow = input_str_length;
                 this._.current_char = input_str_length;
@@ -146,6 +148,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                 this._.len_allow += 1 / this.data[this._.count].speed;
                 this._.current_char += 1 / this.data[this._.count].speed;
             }
+            if (this._.current_char_true < Math.min(this._.len_allow, input_str_length)) this.data[this._.count].voice && Audios.has(this.data[this._.count].voice!) && aLib.play(this.data[this._.count].voice!);
             while (this._.current_char_true < Math.min(this._.len_allow, input_str_length)) {
                 this._.now[this._.count].str += this.data[this._.count].str[this._.now[this._.count].str.length];
                 this._.current_char_true++
@@ -154,9 +157,9 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                         this._.count++;
                         this._.now.push({
                             str: "",
-                            color: ((this.data[this._.count].color === undefined) ? "white" : this.data[this._.count].color),
-                            spacing_x: this.data[this._.count].spacing_x,
-                            spacing_y: this.data[this._.count].spacing_y
+                            color: this.data[this._.count].color ?? "white",
+                            spacing_x: this.data[this._.count].spacing_x ?? 0,
+                            spacing_y: this.data[this._.count].spacing_y ?? 0
                         })
                         this._.current_char -= this.data[this._.count].str.length;
                     } else {
@@ -167,7 +170,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         }
     };
 
-    class Plane extends Font {
+    class Plane implements FontI {
         str_now: string;
         len_now: number;
         str: string;
@@ -186,8 +189,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         solved: boolean;
         z: boolean;
         resolve: (value: void | PromiseLike<void>) => void;
-        constructor(name: string, str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "default", z: boolean, voice?: string) {
-            super(name);
+        constructor(str: string, x: number, y: number, d: number, size: number, color: string, spacing_x: number, spacing_y: number, speed: number, font: string = "default", z: boolean, voice?: string) {
             this.str_now = "";
             this.len_now = 0;
             this.str = str
@@ -216,7 +218,6 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
                 }
             })(font)
             this.len_allow = 0;
-            displayMap[name == "_" ? `auto$${current_id++}` : name] = this;
             this.voice = voice;
             this.resolve = () => { };
             this.promise = (() => new Promise((resolve) => { this.resolve = resolve }))();
@@ -267,7 +268,6 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
             if (this.str.length <= this.len_allow && inputKeys.z && this.z) {
                 this.resolve();
                 this.solved = true;
-                delete displayMap[this.name];
             } else if (inputKeys.x) {
                 this.len_allow = this.str.length;
             } else if (this.len_allow < this.str.length) {
@@ -285,23 +285,9 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
     };
 
     const write = (str: string, x: number, y: number, d: number, size: number, color: string = "white", spacing_x: number = 0, spacing_y: number = 0, font: string = "default") => {
-        const _ = new Plane("_", str, x, y, d, size, color, spacing_x, spacing_y, 0, font, false);
+        const _ = new Plane(str, x, y, d, size, color, spacing_x, spacing_y, 0, font, false);
         _.write();
-        _.delete();
     };
-
-
-    const process = () => {
-        for (const name in displayMap) {
-            displayMap[name].process()
-        };
-    };
-    /*
-     *Template
-     *new FontSuper("name", 64, 128, 0, 400, "determination", [
-     *    { str: "text", color: "white", spacing_x: 0, spacing_y: 0, speed: 2 },
-     *])
-     */
     const len = (s: string, f: string) => {
         const font = ((f) => {
             switch (f) {
@@ -322,7 +308,7 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         let r = 0;
         for (let i = 0; i < s.length; i++) {
             const c = s[i];
-            const f = (c in font ? font[c as keyof Omit<typeof font,"props">] : font.space);
+            const f = (c in font ? font[c as keyof Omit<typeof font, "props">] : font.space);
             if (i + 1 < s.length) r += font.props.width_basic;
             r += f.width;
         }
@@ -332,18 +318,19 @@ const fontFnsGen = (cLib: cLibT, aLib: aLibT, inputKeys: inputKeysT,) => {
         write,
         Super,
         Plane,
-        process,
-        Map: displayMap as (Plane | Super)[],
         len,
     }
 }
 
 type fontFnsT = ReturnType<typeof fontFnsGen>;
 
-type PlaneT = fontFnsT["Plane"]
+type PlaneT = fontFnsT["Plane"];
+type Plane = InstanceType<PlaneT>
 
 export {
     fontFnsGen,
     fontFnsT,
-    PlaneT
+    PlaneT,
+    Plane,
+    FontI
 }

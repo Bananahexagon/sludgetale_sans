@@ -6,15 +6,15 @@ import { CoreT } from "./lib/core";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<string>,
     enemy: {
-        custom: { slam: (d: 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } }) => void },
-        state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } }
+        custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } ,moving:boolean}) => void },
+        state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: boolean }
     },
     box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>) => {
     let damage_time = 0;
     const player = ({
         name: Game.player.name,
         lv: Game.player.lv,
-        hp: Game.player.hp_max,
+        hp: Game.player.hp_max as number,
         kr: 0,
         hp_max: Game.player.hp_max,
         soul: soul,
@@ -34,7 +34,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         type: 0,
         damage(color: "white" | "blue" | "orange" = "white", d?: number) { },
         move() { },
-        slam(d: 0 | 1 | 2 | 3, s: number = 40) { }
+        slam(d: -1 | 0 | 1 | 2 | 3, s: number = 40) { }
     })
     const b_jump = [
         (() => {
@@ -142,7 +142,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         }
     }
     let [bx, by] = [0, 0];
-    const blue_slamming = { is: false, s: 0, d: 0 as 0 | 1 | 2 | 3, f: 0 };
+    const blue_slamming = { is: false, s: 0, d: 0 as 0 | 1 | 2 | 3, f: 0, c: { d: -1 as -1 | 0 | 1 | 2 | 3, b: -1 as -1 | 0 | 1 | 2 | 3 } };
     player.damage = function (color: "white" | "blue" | "orange" = "white", d?: number) {
         if (damage_time <= 0 && (color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y))) {
             if (!is_hp_inf.v) {
@@ -152,17 +152,23 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 if (this.hp <= this.kr) this.kr = this.hp - 1;
             }
             Core.aLib.play("damage");
-            if (!(player.hp > 0)) {
+            if (!(player.hp > 0) || isNaN(player.hp + player.kr)) {
                 scene.v = "game_over";
             }
         }
     };
-    player.slam = function slam(d: 0 | 1 | 2 | 3, s: number = 40) {
-        Core.aLib.play("soul_slamming")
-        player.type = d + 1;
-        blue_slamming.is = true;
-        blue_slamming.s = s;
-        blue_slamming.d = d;
+    let bd = -1 as -1 | 0 | 1 | 2 | 3;
+    player.slam = function slam(d: -1 | 0 | 1 | 2 | 3, s: number = 40) {
+        if (d != -1) {
+            Core.aLib.play("soul_slamming")
+            player.type = d + 1;
+            blue_slamming.is = true;
+            blue_slamming.s = s;
+            blue_slamming.d = d;
+        }
+        blue_slamming.c.d = d;
+        blue_slamming.c.b = bd;
+        bd = d;
         blue_slamming.f = 0;
     }
     const slamming = () => {
@@ -179,17 +185,17 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
             }
         }
         //custom
-        enemy.custom.slam(blue_slamming.d, blue_slamming.f, enemy.state)
+        enemy.custom.slam(blue_slamming.c.d, blue_slamming.c.b, blue_slamming.f, enemy.state)
         blue_slamming.f++
     }
     let kr_count = 0;
     b_tick.push(() => {
         bx = soul.x; by = soul.y; damage_time--; slamming();
-        kr_count += player.kr ** (1 / 3) / 10;
+        kr_count += Math.abs(player.kr) ** (1 / 3) / 10;
         player.kr = Math.max(0, player.kr - Math.floor(kr_count));
         player.hp -= Math.floor(kr_count);
         kr_count = kr_count % 1;
-        if (!(player.hp > 0)) {
+        if (!(player.hp > 0) || isNaN(player.hp + player.kr)) {
             scene.v = "game_over";
         }
     });

@@ -1,7 +1,7 @@
 import { CoreT, init } from "./lib/core";
 import { Opt, sin360, distance, cos360, Ref } from "./lib/utils";
 import { boneFnsGen } from "./bone";
-import { fontFnsGen, fontFnsT } from "./font";
+import { FontI, Plane, PlaneT, fontFnsGen, fontFnsT } from "./font";
 import { boxFnsGen } from "./box";
 import { gbFnsGen } from "./gb";
 import { Game } from "./game"
@@ -12,11 +12,12 @@ import { cLibT } from "./lib/canvas";
 
 export const entry = async () => {
     const Core = await init(config);
-    let [scene, sub_scene] = [{ v: "menu" }, { v: "command" }];
-    const Font = fontFnsGen(Core.cLib, Core.aLib, Core.inputKeys);
+    const Font = fontFnsGen(Core.Audios, Core.cLib, Core.aLib, Core.inputKeys);
     const is_hp_inf: Ref<boolean> = { v: false };
-    await main(Core, scene, sub_scene, Font, is_hp_inf)
-
+    while (true) {
+        let [scene, sub_scene] = [{ v: "menu" }, { v: "command" }];
+        await main(Core, scene, sub_scene, Font, is_hp_inf)
+    }
 }
 
 const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Font: fontFnsT, is_hp_inf: Ref<boolean>): Promise<void> => {
@@ -62,7 +63,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             hp_max: Game.enemy.hp,
             avoid: Game.enemy.avoid,
             stamp: (typeof Game.enemy.costume == "string") ? (state: typeof Game.enemy.state) => s.stamp() : Game.enemy.costume(s, Core),
-            state: JSON.parse(JSON.stringify(Game.enemy.state)),
+            state: JSON.parse(JSON.stringify(Game.enemy.state)) as typeof Game.enemy.state,
             custom: Game.enemy.custom ?? {}
         }
     })();
@@ -121,8 +122,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         while (scene.v == "battle") {
             if (sub_scene.v == "command") {
                 let choice: number[] = [];
-                const txt = new Font.Plane("_", Turns[turn.v]?.flavor ?? "！フレーバーテキストが見つかりません！", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
-                type Plane = typeof txt;
+                const txt: FontI = Turns[turn.v]?.flavor();
                 let command = 0;
                 let result: undefined | Plane = undefined;
                 await Core.while(() => sub_scene.v == "command" && scene.v == "battle", () => {
@@ -238,7 +238,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                         else if (choice[0] == 1) {
                             player.soul.alpha = 0;
                             if (result === undefined) {
-                                result = new Font.Plane("_", `${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
+                                result = new Font.Plane(`${Game.actions[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
                             } else { result.process() }
                             if (!result.solved) {
                                 result.write();
@@ -247,7 +247,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                         } else if (choice[0] == 2) {
                             player.soul.alpha = 0;
                             if (result === undefined) {
-                                result = new Font.Plane("_", `${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
+                                result = new Font.Plane(`${Game.items[choice[1]].text}`, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, true, "text");
                                 Game.items.splice(choice[1], 1)
                             } else {
                                 result.process();
@@ -310,7 +310,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 sub_scene.v = "command";
                 turn.first = false;
             } else if (sub_scene.v == "clear") {
-                const result = new Font.Plane("_", Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
+                const result = new Font.Plane(Game.clear_text, 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text");
                 await Core.loop(() => {
                     box.draw();
                     const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });

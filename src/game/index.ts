@@ -20,7 +20,8 @@ const Game = {
     enemy: (() => {
         const state = {
             body: { c: 0, x: 0, y: 0 },
-            head: { c: 4, x: 0, y: 0 }
+            head: { c: 4, x: 0, y: 0 },
+            moving: false,
         }
         return {
             x: 320,
@@ -41,27 +42,58 @@ const Game = {
             size: 200,
             avoid: true,
             custom: {
-                slam: (d: 0 | 1 | 2 | 3, f: number, st: typeof state) => {
-                    st.body.c = 0
-                    const dc = [[4, 5, 7], [7, 0, 0], [4, 3, 7], [7, 6, 7]];
-                    const dx = [
-                        [0, 0, 0, 0],
-                        [2, -2, 0, 0],
-                        [0, 0, 0, 0],
-                        [-2, 2, 4, 2]
-                    ]; const dy = [
-                        [2, -2, -4, -2],
-                        [0, 0, 0, 0],
-                        [-2, 2, 4, 2],
-                        [0, 0, 0, 0]
-                    ];
-                    let i_c = f < 4 ? 0 : f < 26 ? 1 : f < 30 ? 2 : 3;
-                    st.body.c = dc[d][i_c] ?? 0;
-                    let i_p = f < 2 ? 0 : f < 4 ? 1 : f < 26 ? 2 : f < 30 ? 3 : 4;
-                    st.body.x = dx[d][i_p] ?? 0;
-                    st.body.y = dy[d][i_p] ?? 0;
-                    st.head.x = dx[d][i_p] ?? 0;
-                    st.head.y = dy[d][i_p] ?? 0;
+                slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, st: typeof state) => {
+                    let is_slamming = 0 as -1 | 0 | 9 | 13;
+                    if (!(d == -1 && b == -1)) {
+                        is_slamming = -1;
+                        if (d != -1) {
+                            const dc = [[4, 5], [7, 0], [4, 3], [7, 6]];
+                            const dx = [
+                                [0, 0, 0, 0],
+                                [2, -2, 0, 0],
+                                [0, 0, 0, 0],
+                                [-2, 2, 4, 2]
+                            ];
+                            const dy = [
+                                [2, -2, -4, -2],
+                                [0, 0, 0, 0],
+                                [-2, 2, 4, 2],
+                                [0, 0, 0, 0]
+                            ];
+                            let i_c = f < 4 ? 0 : f < 8 ? 1 : 2;
+                            if (f < 8) st.body.c = dc[d][i_c] ?? 0;
+                            let i_p = f < 4 ? 0 : f < 8 ? 1 : f < 12 ? 2 : 3;
+                            if (f < 13) {
+                                st.body.x = dx[d][i_p] ?? 0;
+                                st.body.y = dy[d][i_p] ?? 0;
+                                st.head.x = dx[d][i_p] ?? 0;
+                                st.head.y = dy[d][i_p] ?? 0;
+                            } else is_slamming = 13;
+                        } else {
+                            const dc = [7, 0, 7, 7];
+                            const dx = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+                            const dy = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+                            if (f < 5) st.body.c = f < 4 ? dc[b] ?? 0 : 0;
+                            let i_p = f < 4 ? 0 : f < 8 ? 1 : 2;
+                            if (f < 9) {
+                                st.body.x = (dx[b + 1])[i_p] ?? 0;
+                                st.body.y = (dy[b + 1])[i_p] ?? 0;
+                                st.head.x = (dx[b + 1])[i_p] ?? 0;
+                                st.head.y = (dy[b + 1])[i_p] ?? 0;
+                            } else is_slamming = 9;
+                        }
+                    }
+                    console.log(is_slamming, st.moving)
+                    if (is_slamming != -1 && st.moving) {
+                        const i = f - is_slamming;
+                        const j = i * 3.775;
+                        const sx = sin360(j * 1);
+                        const sy = sin360(j * 2);
+                        st.body.x = (Math.round(Math.sin(sx)*Math.abs(sx) ** 0.3 * 1) * 1.5 + 0) * 1;
+                        st.body.y = (Math.round(Math.sin(sy)*Math.abs(sy) ** 0.3 * 1) * 1.5 + 0) * 0.5;
+                        st.head.x = (Math.round(Math.sin(sx)*Math.abs(sx) ** 0.3 * 1) * 1.5 + 0) * 1.5;
+                        st.head.y = (Math.round(Math.sin(sy)*Math.abs(sy) ** 0.3 * 1) * 1.5 + 0) * 0.75;
+                    }
                 }
             }
         }
@@ -131,7 +163,7 @@ const Game = {
         purple: "#995c99"
     },
     turnsGen
-}
+} as const
 
 type GameT = typeof Game;
 
