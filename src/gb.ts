@@ -5,7 +5,7 @@ import { sin360, cos360 } from "./lib/utils";
 
 
 
-const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
+const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: SpriteClassT, player: {
     damage(color?: "white" | "blue" | "orange", arg?: number): void; soul: SpriteT, hp: number
 }, Game: {
     color: { white: string, blue: string, orange: string }
@@ -98,25 +98,37 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
                 player.damage(this.color);
             }
         }
-        public static process() {
+        public static process_b() {
             gbMap.forEach((gb: Blaster, id, Map) => {
                 gb.move_self();
                 gb.draw();
                 gb.judge();
-                gb.age++;
-                if (gb.c_t + gb.b_s == gb.age) aLib.play("gb_fire", 1, gb.gain)
+                if (gb.c_t + gb.b_s == gb.age) {
+                    aLib.play("gb_fire", 1, gb.gain);
+                    state.c_gap += 6;
+                }
                 if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) gbMap.delete(id)
+            })
+        }
+        public static process_a() {
+            gbMap.forEach((gb: Blaster, id, Map) => {
+                gb.draw();
+                gb.age++;
             })
         }
         private static current_id = 0;
     }
-    const process = () => {
-        Blaster.process();
+    const process_b = () => {
+        Blaster.process_b();
+    };
+    const process_a = () => {
+        Blaster.process_a();
     };
     return {
         gbMap: gbMap as Map<number, Blaster>,
         gb: Blaster,
-        process
+        process_a,
+        process_b,
     }
 }
 

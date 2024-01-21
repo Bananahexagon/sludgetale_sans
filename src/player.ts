@@ -6,10 +6,10 @@ import { CoreT } from "./lib/core";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<string>,
     enemy: {
-        custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number } ,moving:boolean}) => void },
+        custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: boolean }) => void },
         state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: boolean }
     },
-    box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>) => {
+    box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>, state: { c_gap: number },) => {
     let damage_time = 0;
     const player = ({
         name: Game.player.name,
@@ -160,6 +160,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
     let bd = -1 as -1 | 0 | 1 | 2 | 3;
     player.slam = function slam(d: -1 | 0 | 1 | 2 | 3, s: number = 40) {
         if (d != -1) {
+            state.c_gap += 3;
             Core.aLib.play("soul_slamming")
             player.type = d + 1;
             blue_slamming.is = true;

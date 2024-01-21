@@ -118,8 +118,9 @@ const Game = {
         purple: "#995c99"
     },
     turnsGen,
-    commands: commandsGen
-} as const
+    commands: commandsGen,
+    state: {c_gap: 0},
+}
 
 type enemyState = {
     body: { c: number, x: number, y: number },

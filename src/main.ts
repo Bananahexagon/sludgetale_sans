@@ -1,5 +1,5 @@
 import { CoreT, init } from "./lib/core";
-import { Opt, sin360, distance, cos360, Ref } from "./lib/utils";
+import { Opt, sin360, distance, cos360, Ref, random } from "./lib/utils";
 import { boneFnsGen } from "./bone";
 import { FontI, Plane, PlaneT, fontColor, fontFnsGen, fontFnsT } from "./font";
 import { boxFnsGen } from "./box";
@@ -67,11 +67,18 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             custom: Game.enemy.custom ?? {}
         }
     })();
-    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf);
+    const game_state = JSON.parse(JSON.stringify(Game.state)) as typeof Game.state;
+    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf,game_state);
     const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
+    Core.a_tick.push(() => {
+        game_state.c_gap = Math.floor(game_state.c_gap * 0.9 * 100) / 100;
+        const d = Math.random() * 360;
+        Core.props.canvas.x = Math.round(cos360(d) * game_state.c_gap);
+        Core.props.canvas.y = Math.round(sin360(d) * game_state.c_gap);
+    });
     {
         timer = 0;
-        const Blaster = gbFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
+        const Blaster = gbFnsGen(Core.cLib, Core.aLib, game_state, Core.Sprite, player, Game);
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf, Game.player.karma);
         const cmdBehaviors = Game.commands({ Game, Core, Font, hp_bar, scene, enemy, box })

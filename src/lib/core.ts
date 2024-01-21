@@ -1,9 +1,9 @@
 import { frameLibGen } from "./frame";
 import { loadAssets } from "./loader";
-import { CanvasLibGen,cLibT } from "./canvas";
+import { CanvasLibGen, cLibT } from "./canvas";
 import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
-import { AudioLibGen ,aLibT} from "./audios";
+import { AudioLibGen, aLibT } from "./audios";
 import { configT } from "../config.json";
 
 const init = async (config: configT) => {
@@ -158,6 +158,7 @@ const init = async (config: configT) => {
     }
     const { frameWhile, frameFor, frameLoop } = frameLibGen(b_tick, a_tick);
     return {
+        screen,
         canvas,
         ctx,
         Images,

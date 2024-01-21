@@ -11,13 +11,14 @@ import { playerT } from "../player";
 export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string> }) {
     const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene } = arg;
     const a_tick = () => {
+        Gb.process_b();
         Bone.process();
         box.draw();
         hp_bar();
         enemy.stamp(enemy.state);
         const command_draw = (x: number, y: number, n: number, s: boolean) => Core.cLib.stamp(`cmd_${Game.lang}`, x, y, 0, 100, 1, "center", 1, { left: s ? 113 : 0, top: 45 * n, width: 112, height: 44 });
         [0, 1, 2, 3].forEach(i => command_draw(320 + (i - 1.5) * 155, 27, i, false));
-        Gb.process();
+        Gb.process_a();
         player.stamp();
     }
     const b_tick = () => {
