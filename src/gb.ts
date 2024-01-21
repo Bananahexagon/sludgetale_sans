@@ -28,7 +28,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
         private c_s: number;
         private gain: number;
         private color: "white" | "blue" | "orange";
-        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number | { v: number, s: number }, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange", gain: number = 1) {
+        private vib :number
+        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number | { v: number, s: number }, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange", gain: number = 1,vib: number = 6) {
             super(fx, fy, fd, size, `gb_${color}_1`, 1, width);
             this.s_x = fx;
             this.s_y = fy;
@@ -46,6 +47,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
             this.id = Blaster.current_id;
             this.color = color;
             this.gain = gain;
+            this.vib = vib
             gbMap.set(this.id, this);
             Blaster.current_id++
             aLib.play("gb_charge", 1, gain)
@@ -105,7 +107,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
                 gb.judge();
                 if (gb.c_t + gb.b_s == gb.age) {
                     aLib.play("gb_fire", 1, gb.gain);
-                    state.c_gap += 6;
+                    state.c_gap += gb.vib;
                 }
                 if (gb.c_t + gb.b_s + gb.b_d + gb.d_t <= gb.age) gbMap.delete(id)
             })
