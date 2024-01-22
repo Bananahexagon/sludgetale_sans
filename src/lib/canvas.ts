@@ -25,10 +25,20 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
                 }
             }
         } else {
-            const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
-            const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
-            const d = dd + props.d;
-            stamp(name, x, y, d, size * props.size / 100, alpha, align, ex_width, box, true);
+            switch (props.align) {
+                case "center": {
+                    const x = (cos360(props.d) * (dx - 320) - sin360(props.d) * (dy - 240) + props.x) * props.size / 100 + 320;
+                    const y = (sin360(props.d) * (dx - 320) + cos360(props.d) * (dy - 240) + props.y) * props.size / 100 + 240;
+                    const d = dd - props.d;
+                    stamp(name, x, y, d, size * props.size / 100, alpha, align, ex_width, box, true);
+                } break;
+                case "start": {
+                    const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
+                    const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
+                    const d = dd - props.d;
+                    stamp(name, x, y, d, size * props.size / 100, alpha, align, ex_width, box, true);
+                } break;
+            }
         }
     };
     const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number, type: "center++" | "center" | "start" = "center", absolute = false) => {
@@ -59,79 +69,74 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
             ctx.fill();
             ctx.restore();
         } else {
-            const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
-            const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
-            const d = direction + props.d;
-            drawRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, true);
+            switch (props.align) {
+                case "center": {
+                    const x = (cos360(props.d) * (dx - 320) - sin360(props.d) * (dy - 240) + props.x) * props.size / 100 + 320;
+                    const y = (sin360(props.d) * (dx - 320) + cos360(props.d) * (dy - 240) + props.y) * props.size / 100 + 240;
+                    const d = direction - props.d;
+                    drawRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, true);
+                } break;
+                case "start": {
+                    const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
+                    const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
+                    const d = direction - props.d;
+                    drawRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, true);
+                } break;
+            }
         }
     };
     const strokeRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number,
         type: "center++" | "center" | "start" = "center", lw: number = 1, pos: "inner" | "outer" | "default" = "inner", absolute = false) => {
         if (absolute) {
+            ctx.globalAlpha = alpha === undefined ? 1 : alpha;
+            ctx.save();
+            switch (type) {
+                case "center++": {
+                    ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
+                    ctx.rotate(direction * Math.PI / 180);
+                    ctx.beginPath();
+                    ctx.rect((-width / 2) * config.display_quality, (-height / 2) * config.display_quality, (width) * config.display_quality, (height) * config.display_quality);
+                } break;
+                case "center": {
+                    ctx.translate((dx - width / 2) * config.display_quality, -(dy - height / 2) * config.display_quality + canvas.height);
+                    ctx.rotate(direction * Math.PI / 180);
+                    ctx.beginPath();
+                    ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
+                } break;
+                case "start": {
+                    ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
+                    ctx.rotate(direction * Math.PI / 180);
+                    ctx.beginPath();
+                    ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
+                } break;
+            }
+            ctx.lineWidth = lw * config.display_quality;
+            ctx.strokeStyle = color;
+            ctx.stroke();
+            ctx.restore();
+        } else {
             if (pos == "default") {
-                ctx.globalAlpha = alpha === undefined ? 1 : alpha;
-                ctx.save();
-                switch (type) {
-                    case "center++": {
-                        ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
-                        ctx.rotate(direction * Math.PI / 180);
-                        ctx.beginPath();
-                        ctx.rect((-width / 2) * config.display_quality, (-height / 2) * config.display_quality, (width) * config.display_quality, (height) * config.display_quality);
-                    } break;
+                switch (props.align) {
                     case "center": {
-                        ctx.translate((dx - width / 2) * config.display_quality, -(dy - height / 2) * config.display_quality + canvas.height);
-                        ctx.rotate(direction * Math.PI / 180);
-                        ctx.beginPath();
-                        ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
+                        const x = (cos360(props.d) * (dx - 320) - sin360(props.d) * (dy - 240) + props.x) * props.size / 100 + 320;
+                        const y = (sin360(props.d) * (dx - 320) + cos360(props.d) * (dy - 240) + props.y) * props.size / 100 + 240;
+                        const d = direction - props.d;
+                        strokeRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, lw, pos, true);
                     } break;
-                    case "start":
-                    default: {
-                        ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
-                        ctx.rotate(direction * Math.PI / 180);
-                        ctx.beginPath();
-                        ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
+                    case "start": {
+                        const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
+                        const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
+                        const d = direction - props.d;
+                        strokeRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, lw, pos, true);
                     } break;
                 }
-                ctx.lineWidth = lw * config.display_quality;
-                ctx.strokeStyle = color;
-                ctx.stroke();
-                ctx.restore();
             } else if (pos == "inner") {
-                strokeRect(dx - lw / 2, dy - lw / 2, width, height, color, direction, alpha, type, lw, "default")
+                strokeRect(dx - lw / 2, dy - lw / 2, width, height, color, direction, alpha, type, lw, "default", false)
             } else if (pos == "outer") {
-                strokeRect(dx + lw / 2, dy + lw / 2, width, height, color, direction, alpha, type, lw, "default")
+                strokeRect(dx + lw / 2, dy + lw / 2, width, height, color, direction, alpha, type, lw, "default", false)
             }
-        } else {
-            const x = (cos360(props.d) * dx - sin360(props.d) * dy + props.x) * props.size / 100;
-            const y = (sin360(props.d) * dx + cos360(props.d) * dy + props.y) * props.size / 100;
-            const d = direction + props.d;
-            strokeRect(x, y, width * props.size / 100, height * props.size / 100, color, d, alpha, type, lw, pos, true);
         }
     };
-    const drawLine = (lx: number, ly: number, ld: number, len: number, width: number, color: string, type: number = 0, absolute = false) => {
-        if (absolute) {
-            ctx.globalAlpha = 1;
-            ctx.beginPath();
-            switch (type) {
-                case 0: {
-                    ctx.moveTo((lx - len * Math.sin(ld) / 2) * config.display_quality, -(ly + len * Math.cos(ld) / 2) * config.display_quality + canvas.height);
-                    ctx.lineTo((lx + len * Math.sin(ld) / 2) * config.display_quality, -(ly - len * Math.cos(ld) / 2) * config.display_quality + canvas.height);
-                } break;
-                case 1: {
-                    ctx.moveTo(lx * config.display_quality, -ly * config.display_quality + canvas.height);
-                    ctx.lineTo((lx + len * Math.sin(ld)) * config.display_quality, -(ly - len * Math.cos(ld)) * config.display_quality + canvas.height);
-                } break;
-            }
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width * config.display_quality;
-            ctx.stroke();
-        } else {
-            const x = (cos360(props.d) * lx - sin360(props.d) * ly + props.x) * props.size / 100;
-            const y = (sin360(props.d) * lx + cos360(props.d) * ly + props.y) * props.size / 100;
-            const d = ld + props.d;
-            drawLine(x, y, d, len * props.size / 100, width * props.size / 100, color, type, true)
-        }
-    }
     const drawText = (tx: string, lx: number, ly: number, size: number, color: string, font: string = "serif", align: "left" | "right" | "center" | "start" | "end" = "left") => {
         ctx.globalAlpha = 1;
         const [x, y] = [lx * config.display_quality, -ly * config.display_quality + canvas.height];
@@ -143,7 +148,6 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
     return {
         stamp,
         drawRect,
-        drawLine,
         drawText,
         strokeRect,
     }
@@ -156,6 +160,7 @@ type CanvasProps = {
     x: number,
     y: number,
     d: number,
+    align: "center" | "start"
 }
 
 export {

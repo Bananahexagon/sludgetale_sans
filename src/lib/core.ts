@@ -5,6 +5,7 @@ import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
 import { AudioLibGen, aLibT } from "./audios";
 import { configT } from "../config.json";
+import { sin360 } from "./utils";
 
 const init = async (config: configT) => {
     const canvas = document.getElementById(config.canvas_name) as HTMLCanvasElement;
@@ -39,6 +40,7 @@ const init = async (config: configT) => {
             x: 0,
             y: 0,
             d: 0,
+            align: "center" as "center" | "start"
         },
     };
     const cLib: cLibT = CanvasLibGen(canvas, ctx, Images, Fonts, config, props.canvas);
@@ -142,6 +144,7 @@ const init = async (config: configT) => {
         let bk = {
             up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
         }
+        let timer = 0;
         b_tick.push(() => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             cLib.drawRect(320, 240, 640, 480, "#000", 0, 1);
@@ -151,6 +154,8 @@ const init = async (config: configT) => {
                 }
             })
             bk = { ...inputKeys.f }
+            //props.canvas.d=  sin360(timer) * 10;
+            timer += 1;
         })
         a_tick.push(() => {
             aLib.tick();

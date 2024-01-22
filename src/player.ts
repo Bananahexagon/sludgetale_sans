@@ -6,8 +6,8 @@ import { CoreT } from "./lib/core";
 
 const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<string>,
     enemy: {
-        custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: boolean }) => void },
-        state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: boolean }
+        custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: number }) => void },
+        state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: number }
     },
     box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>, state: { c_gap: number },) => {
     let damage_time = 0;

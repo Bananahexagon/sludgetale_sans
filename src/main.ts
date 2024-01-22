@@ -48,7 +48,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         Core.cLib.stamp("soul", 220, 265);
         Font.write("play", 270, 275, 0, 200, "yellow", 0, 0, "en");
         Font.write("HP INF", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
-        Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (j / 45));
+        Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (j / 45), "start", true);
     })
     let timer = 0;
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
@@ -67,7 +67,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         }
     })();
     const game_state = JSON.parse(JSON.stringify(Game.state)) as typeof Game.state;
-    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf,game_state);
+    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf, game_state);
     const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
     Core.a_tick.push(() => {
         game_state.c_gap = Math.floor(game_state.c_gap * 0.9 * 100) / 100;
@@ -103,7 +103,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 hp_bar();
                 [player.soul.x, player.soul.y] = [49.5, 27]
                 player.stamp();
-                Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
+                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1- i / 10), "start", true);
             });
         } else {
             await Core.for(0, i => i < 30, i => {
@@ -118,7 +118,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 hp_bar();
                 [player.soul.x, player.soul.y] = [320, 160]
                 player.stamp();
-                Core.cLib.drawRect(320, 240, 640, 480, "#000000", 0, (1 - i / 10));
+                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1- i / 10), "start", true);
             });
 
             await start_turn();

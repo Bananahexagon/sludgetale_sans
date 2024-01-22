@@ -23,7 +23,7 @@ const Game = {
         const state = {
             body: { c: 0, x: 0, y: 0 },
             head: { c: 4, x: 0, y: 0 },
-            moving: false,
+            moving: 0,
         } as enemyState
         return {
             x: 320,
@@ -46,6 +46,8 @@ const Game = {
             custom: {
                 slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, st: typeof state) => {
                     let is_slamming = 0 as -1 | 0 | 9;
+                    let [bx, by] = [undefined as undefined | number, undefined as undefined | number]
+                    let [hx, hy] = [undefined as undefined | number, undefined as undefined | number]
                     if (!(d == -1 && b == -1)) {
                         is_slamming = -1;
                         if (d != -1) {
@@ -66,10 +68,10 @@ const Game = {
                             if (f < 8) st.body.c = dc[d][i_c] ?? 0;
                             let i_p = f < 4 ? 0 : f < 8 ? 1 : f < 12 ? 2 : 3;
                             if (f < 13) {
-                                st.body.x = dx[d][i_p] ?? 0;
-                                st.body.y = dy[d][i_p] ?? 0;
-                                st.head.x = dx[d][i_p] ?? 0;
-                                st.head.y = dy[d][i_p] ?? 0;
+                                bx = dx[d][i_p] ?? 0;
+                                by = dy[d][i_p] ?? 0;
+                                hx = dx[d][i_p] ?? 0;
+                                hy = dy[d][i_p] ?? 0;
                             }
                         } else {
                             const dc = [7, 0, 7, 7];
@@ -78,22 +80,31 @@ const Game = {
                             if (f < 5) st.body.c = f < 4 ? dc[b] ?? 0 : 0;
                             let i_p = f < 4 ? 0 : f < 8 ? 1 : 2;
                             if (f < 9) {
-                                st.body.x = (dx[b + 1])[i_p] ?? 0;
-                                st.body.y = (dy[b + 1])[i_p] ?? 0;
-                                st.head.x = (dx[b + 1])[i_p] ?? 0;
-                                st.head.y = (dy[b + 1])[i_p] ?? 0;
+                                bx = (dx[b + 1])[i_p] ?? 0;
+                                by = (dy[b + 1])[i_p] ?? 0;
+                                hx = (dx[b + 1])[i_p] ?? 0;
+                                hy = (dy[b + 1])[i_p] ?? 0;
                             } else is_slamming = 9;
                         }
                     }
-                    if (is_slamming != -1 && d == -1 && st.moving) {
+                    {
                         const i = f - is_slamming;
                         const j = i * 6;
                         const sx = sin360(j * 1);
                         const sy = sin360(j * 2);
-                        st.body.x = (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1) * 1.5 + 0) * 1;
-                        st.body.y = (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1) * 1.5 + 0) * 0.5;
-                        st.head.x = (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1.1) * 1.5 + 0) * 1.5;
-                        st.head.y = (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1.1) * 1.5 + 0) * 0.75;
+                        const [bx2, by2, hx2, hy2] = {
+                            0: [0, 0, 0, 0],
+                            1: [
+                                (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1) * 1.5 + 0) * 1,
+                                (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1) * 1.5 + 0) * 0.5,
+                                (Math.round(Math.sin(sx) * Math.abs(sx) ** 0.2 * 1.1) * 1.5 + 0) * 1.5,
+                                (Math.round(Math.sin(sy) * Math.abs(sy) ** 0.2 * 1.1) * 1.5 + 0) * 0.75,
+                            ],
+                        }[st.moving] ?? [0, 0, 0, 0]
+                        st.body.x = bx ?? bx2;
+                        st.body.y = by ?? by2;
+                        st.head.x = hx ?? hx2;
+                        st.head.y = hy ?? hy2;
                     }
                 }
             }
@@ -119,15 +130,15 @@ const Game = {
     },
     turnsGen,
     commands: commandsGen,
-    state: {c_gap: 0},
+    state: { c_gap: 0 },
 }
 
 type enemyState = {
     body: { c: number, x: number, y: number },
     head: { c: number, x: number, y: number },
-    moving: boolean,
+    moving: number,
 }
 
 type GameT = typeof Game;
 
-export { Game, GameT,enemyState }
+export { Game, GameT, enemyState }

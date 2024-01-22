@@ -180,10 +180,10 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         await speak("花はいつものように咲き、\n川のせせらぎが\n聞こえてくる。", 2)
         await speak("こんな日には、\nお前のような奴は...", 2)
         Core.aLib.play("tick");
-        await Core.for(0, i => i < 10 && scene.v != "game_over", i => {
+        await Core.for(0, i => i < 20 && scene.v != "game_over", i => {
             b_tick();
             a_tick();
-            Core.cLib.drawRect(320, 240, 640, 480, "#000")
+            Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, 1, "start", true);
         })
         Core.aLib.play("tick");
         enemy.state.head.c = 5;
@@ -237,7 +237,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
             b_y.finish();
         }
-        enemy.state.moving = true;
+        enemy.state.moving = 1;
     }) as (() => Promise<void>) | "none";
     return ({
         0: start, 1: turns()
