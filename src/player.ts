@@ -142,7 +142,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         }
     }
     let [bx, by] = [0, 0];
-    const blue_slamming = { is: false, s: 0, d: 0 as 0 | 1 | 2 | 3, f: 0, c: { d: -1 as -1 | 0 | 1 | 2 | 3, b: -1 as -1 | 0 | 1 | 2 | 3 } };
+    const blue_slamming = { is: false, s: 0, d: 0 as 0 | 1 | 2 | 3, f: 0, c: { d: -1 as -1 | 0 | 1 | 2 | 3, b: -1 as -1 | 0 | 1 | 2 | 3, b_move: 0 } };
     player.damage = function (color: "white" | "blue" | "orange" = "white", d?: number) {
         if (damage_time <= 0 && (color == "white" || (color == "blue") !== (bx == this.soul.x && by == this.soul.y))) {
             if (!is_hp_inf.v) {
@@ -166,6 +166,10 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
             blue_slamming.is = true;
             blue_slamming.s = s;
             blue_slamming.d = d;
+            if (enemy.state.moving != 0) blue_slamming.c.b_move = enemy.state.moving;
+            enemy.state.moving = 0;
+        } else {
+            enemy.state.moving = blue_slamming.c.b_move;
         }
         blue_slamming.c.d = d;
         blue_slamming.c.b = bd;
