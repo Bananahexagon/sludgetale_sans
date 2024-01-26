@@ -154,6 +154,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
             Core.aLib.play("damage");
             if (!(player.hp > 0) || isNaN(player.hp + player.kr)) {
                 scene.v = "game_over";
+                state.c_gap += 40;
             }
         }
     };
@@ -196,7 +197,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
     let kr_count = 0;
     b_tick.push(() => {
         bx = soul.x; by = soul.y; damage_time--; slamming();
-        kr_count += Math.abs(player.kr) ** (1 / 3) / 10;
+        kr_count += Math.abs(player.kr) ** (1 / 2.5) / 25;
         player.kr = Math.max(0, player.kr - Math.floor(kr_count));
         player.hp -= Math.floor(kr_count);
         kr_count = kr_count % 1;

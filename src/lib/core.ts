@@ -5,7 +5,6 @@ import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
 import { AudioLibGen, aLibT } from "./audios";
 import { configT } from "../config.json";
-import { sin360 } from "./utils";
 
 const init = async (config: configT) => {
     const canvas = document.getElementById(config.canvas_name) as HTMLCanvasElement;

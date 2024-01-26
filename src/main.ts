@@ -326,6 +326,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             } else if (timer < 60) {
                 Core.cLib.stamp("death_0", player.soul.x, player.soul.y, 0, 80)
             } else if (timer == 60) {
+                game_state.c_gap += 50;
                 Core.aLib.play("heartbreak_2", 2)
                 for (let i = 0; i < 4; i++) {
                     let xs = Math.random() * 12 - 6;
@@ -363,7 +364,6 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
         lv_len * 3 * 5;
         write(`${("0".repeat(lv_len) + player.lv).slice(-lv_len)}`, 101 + name_len * 3
             , 75, 0, 300, "white", 0, 0, "status");
-
         if (is_hp_inf.v) {
             write("inf",
                 player.hp_max * 1.2 + 204 + lv_len * 3 * 5 + name_len * 3
@@ -382,6 +382,5 @@ const hp_bar_gen = (cLib: cLibT, write: (str: string, x: number, y: number, d: n
         cLib.drawRect(154 + lv_len * 3 * 5 + name_len * 3, 59, (player.hp - player.kr) * 1.2, 21, hp_color, 0, 1, "start");
         cLib.stamp("hp_kr_white", 122 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, 1, "start", 1, { left: 0, top: 0, width: 23, height: 10 });
         cLib.stamp((0 < player.kr) ? "hp_kr_purple" : "hp_kr_white", player.hp_max * 1.2 + 165 + lv_len * 3 * 5 + name_len * 3, 74, 0, 100, karma ? 1 : 0.5, "start", 1, { left: 0, top: 11, width: 23, height: 10 });
-
     };
 }
