@@ -45,7 +45,7 @@ const init = async (config: configT) => {
     const { Images, Audios, Fonts } = await loadAssets(audioContext, (i, m) => {
         const c = "#99867a";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        strokeRect(200, 220, 240, 40, c, 0, 1, "start", 2, "inner")
+        strokeRect(200, 220, 240, 40, c, 0, 1, "start", 2, "outer")
         drawRect(200, 220, i / m * 240, 40, c, 0, 1, "start")
     });
     const cLib: cLibT = CanvasLibGen(canvas, ctx, Images, Fonts, config, props.canvas);
