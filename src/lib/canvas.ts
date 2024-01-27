@@ -41,6 +41,23 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
             }
         }
     };
+    const { drawRect, strokeRect } = GetRect(canvas, ctx, config, props);
+    const drawText = (tx: string, lx: number, ly: number, size: number, color: string, font: string = "serif", align: "left" | "right" | "center" | "start" | "end" = "left") => {
+        ctx.globalAlpha = 1;
+        const [x, y] = [lx * config.display_quality, -ly * config.display_quality + canvas.height];
+        ctx.font = `${size * config.display_quality}px ${font}`;
+        ctx.textAlign = align;
+        ctx.fillStyle = color;
+        ctx.fillText(tx, x, y);
+    }
+    return {
+        stamp,
+        drawRect,
+        drawText,
+        strokeRect,
+    }
+}
+const GetRect = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, config: configT, props: CanvasProps,) => {
     const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number, type: "center++" | "center" | "start" = "center", absolute = false) => {
         if (absolute) {
             ctx.globalAlpha = alpha === undefined ? 1 : alpha;
@@ -137,22 +154,8 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
             }
         }
     };
-    const drawText = (tx: string, lx: number, ly: number, size: number, color: string, font: string = "serif", align: "left" | "right" | "center" | "start" | "end" = "left") => {
-        ctx.globalAlpha = 1;
-        const [x, y] = [lx * config.display_quality, -ly * config.display_quality + canvas.height];
-        ctx.font = `${size * config.display_quality}px ${font}`;
-        ctx.textAlign = align;
-        ctx.fillStyle = color;
-        ctx.fillText(tx, x, y);
-    }
-    return {
-        stamp,
-        drawRect,
-        drawText,
-        strokeRect,
-    }
+    return { drawRect, strokeRect }
 }
-
 type cLibT = ReturnType<typeof CanvasLibGen>
 
 type CanvasProps = {
@@ -166,5 +169,6 @@ type CanvasProps = {
 export {
     CanvasLibGen,
     cLibT,
-    CanvasProps
+    CanvasProps,
+    GetRect,
 }

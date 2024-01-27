@@ -1,5 +1,5 @@
 import { CoreT, init } from "./lib/core";
-import { Opt, sin360, distance, cos360, Ref, random } from "./lib/utils";
+import { sin360, distance, cos360, Ref, random } from "./lib/utils";
 import { boneFnsGen } from "./bone";
 import { FontI, Plane, PlaneT, fontColor, fontFnsGen, fontFnsT } from "./font";
 import { boxFnsGen } from "./box";

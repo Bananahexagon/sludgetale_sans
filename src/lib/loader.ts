@@ -1,6 +1,6 @@
 import json from "../assets.json";
 
-export const loadAssets = async (audioContext: AudioContext): Promise<Assets> => {
+export const loadAssets = async (audioContext: AudioContext,draw: (i:number,m: number)=>void): Promise<Assets> => {
     type AssetData = {
         type: "image" | "audio" | "font",
         src: string,
@@ -11,7 +11,10 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
     const Fonts: Map<string, FontFace> = new Map();
     const index: AssetData[] = json as unknown as AssetData[];
     const promises: Promise<void>[] = [];
+    let finished =0;
+    draw(0,index.length)
     index.forEach((e: AssetData) => Images.has(e.name)||Audios.has(e.name)||Fonts.has(e.name) ? 0 : promises.push(new Promise((resolve) => {
+        const finish = () => {finished+=1;draw(finished,index.length);resolve()}
         switch (e.type) {
             case "image": {
                 if (Images.has(e.name)) throw new Error()
@@ -19,7 +22,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                 image.src = e.src;
                 image.onload = () => {
                     Images.set(e.name, image);
-                    resolve();
+                    finish();
                 }
             } break;
             case "audio": {
@@ -34,7 +37,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                         const audioData = await response.arrayBuffer();
                         Audios.set(e.name, { ctx: await audioContext.decodeAudioData(audioData), data: audio, time: Infinity });
                         audio.onload = () => resolve();
-                    })().then(resolve);
+                    })().then(finish);
                 })
 
             } break;
@@ -57,7 +60,7 @@ export const loadAssets = async (audioContext: AudioContext): Promise<Assets> =>
                         )
                     });
                     Promise.all(promises_sub)
-                })().then(resolve)
+                })().then(finish)
             } break;
         }
     })));

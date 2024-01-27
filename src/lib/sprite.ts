@@ -1,5 +1,5 @@
 import { cLibT } from "./canvas";
-import { Opt, sin360, cos360 } from "./utils"
+import { sin360, cos360 } from "./utils"
 
 const SpriteLibGen = (cLib: cLibT) => {
     type Self = {

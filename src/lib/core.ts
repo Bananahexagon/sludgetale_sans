@@ -1,6 +1,6 @@
 import { frameLibGen } from "./frame";
 import { loadAssets } from "./loader";
-import { CanvasLibGen, cLibT } from "./canvas";
+import { CanvasLibGen, GetRect, cLibT } from "./canvas";
 import { SpriteLibGen } from "./sprite";
 import { PositionLibGen } from "./position";
 import { AudioLibGen, aLibT } from "./audios";
@@ -12,7 +12,6 @@ const init = async (config: configT) => {
     canvas.width = config.stage_width * config.display_quality;
     const ctx = canvas.getContext("2d")!;
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const { Images, Audios, Fonts } = await loadAssets(audioContext);
     const inputKeys = {
         up: false, down: false, left: false, right: false, z: false, x: false, c: false, d: false,
         f: {
@@ -42,6 +41,13 @@ const init = async (config: configT) => {
             align: "center" as "center" | "start"
         },
     };
+    const { drawRect, strokeRect } = GetRect(canvas, ctx, config, props.canvas)
+    const { Images, Audios, Fonts } = await loadAssets(audioContext, (i, m) => {
+        const c = "#99867a";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        strokeRect(200, 220, 240, 40, c, 0, 1, "start", 2, "inner")
+        drawRect(200, 220, i / m * 240, 40, c, 0, 1, "start")
+    });
     const cLib: cLibT = CanvasLibGen(canvas, ctx, Images, Fonts, config, props.canvas);
     const aLib: aLibT = AudioLibGen(Audios);
     const Sprite = SpriteLibGen(cLib);

@@ -11,7 +11,7 @@ const Game = {
     bgm: "megalopollution" as string | undefined,
     turn_progress: "fight" as "fight" | "normal" | "random" | "stop",
     player: {
-        name: "banahex",
+        name: "banhex",
         attack: 2500,
         lv: 19,
         hp_max: 92,
