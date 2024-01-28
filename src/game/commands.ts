@@ -71,7 +71,7 @@ export const commandsGen = (arg: {
                 if (Math.floor(Math.random() * 4) == 0) {
                     await flavorPlane("抹茶バウムを食べた。\nHPが40回復した！");
                     await flavorSuper([
-                        { str: "...\n", speed: 10, voice: "text" },
+                        { str: "...\n", speed: 20, voice: "text" },
                         { str: "抹茶バウムは", speed: 1, voice: "text", color: "white" },
                         { str: "抹茶バウむ君", speed: 1, voice: "text", color: "yellow" },
                         { str: "だった！\n", speed: 1, voice: "text", color: "white" },
@@ -81,7 +81,7 @@ export const commandsGen = (arg: {
                     items.push({
                         name: "メガミュウツーY",
                         heal: 35,
-                        behavior: () => flavorPlane("メガミュウツーを飲んだ。\nHPが35回復した！"),
+                        behavior: () => flavorPlane("メガミュウツーYを使った。\nHPが35回復した！"),
                     })
                 } else {
                     await flavorPlane("抹茶バウムを食べた。\nHPが40回復した！");

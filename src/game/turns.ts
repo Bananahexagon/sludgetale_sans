@@ -167,6 +167,38 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                 }
             },
         },
+        {
+            flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
+            proc: async (first: boolean) => {
+                player.type = 0;
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+                if (first) {
+                    await speak("！仮置きテキスト！", 2); //TODO
+                } else {
+                    await speak("...", 2);
+                }
+                await Core.for(0, i => i < 600 && scene.v != "game_over", i => {
+                    b_tick()
+                    if (i % 45 == 0) {
+                        let s = Math.random() * ((i % 90) / 22.5 - 1);
+                        new Bone.normal(420, 60, 0, 7, 74 +    s * 40, -0.5, 0, 0, 0, 400);
+                        new Bone.normal(420, 260, 180, 7, 74 - s * 40, -0.5, 0, 0, 0, 400);
+                    }
+                    a_tick();
+                }); if (scene.v == "game_over") return;
+                await wait(150); if (scene.v == "game_over") return;
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+                Bone.boneMap.clear()
+            },
+        },
     ] as { flavor: () => FontI, proc: (first: boolean) => Promise<void> }[]
 
 
