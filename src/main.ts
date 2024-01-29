@@ -21,6 +21,7 @@ export const entry = async () => {
 }
 
 const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Font: fontFnsT, is_hp_inf: Ref<boolean>): Promise<void> => {
+    const debug = { turn: 0, skip: false }
     {
         let cursor = 0;
         await Core.while(() => (scene.v == "menu"), () => {
@@ -30,16 +31,23 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             Core.cLib.stamp("soul", 220, -cursor * 50 + 265);
             Font.write("play", 270, 275, 0, 200, cursor == 0 ? "yellow" : "white", 0, 0, "en");
             Font.write("HP INF", 270, 225, 0, 200, is_hp_inf.v ? "yellow" : "white", 0, 0, "en");
-            if (Core.inputKeys.f.z) switch (cursor) {
-                case 0: {
-                    scene.v = "battle";
-                    Core.aLib.play("cursor_confirm")
-                } break;
-                case 1: {
-                    is_hp_inf.v = !is_hp_inf.v
-                    Core.aLib.play("cursor_move")
-                } break;
+            if (Core.inputKeys.f.d) {
+                const s = window.prompt("何ターン目にするかい？");
+                const turn = Number.parseInt(s ?? "0") ?? 0;
+                console.log(s, turn)
+                debug.skip = true; debug.turn = turn
             }
+            else
+                if (Core.inputKeys.f.z) switch (cursor) {
+                    case 0: {
+                        scene.v = "battle";
+                        Core.aLib.play("cursor_confirm")
+                    } break;
+                    case 1: {
+                        is_hp_inf.v = !is_hp_inf.v
+                        Core.aLib.play("cursor_move")
+                    } break;
+                }
         });
     }
     await Core.for(0, i => i < 75, i => {
@@ -82,7 +90,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf, Game.player.karma);
         const cmdBehaviors = Game.commands({ Game, Core, Font, hp_bar, scene, enemy, box })
         const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
-        let turn = { v: 0, first: true };
+        let turn = { v: debug.turn, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         await Core.for(0, i => i < 30, i => {
             const j = Math.min(24, i);
@@ -90,7 +98,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
             if (j % 10 < 5) Core.cLib.stamp("soul", 320, 240, 0, 80)
         });
         Core.aLib.play("battle_start")
-        if (start_turn == "none") {
+        if (start_turn == "none" || debug.skip) {
             await Core.for(0, i => i < 30, i => {
                 const ratio = (1 - i / 30) ** 3;
                 Core.cLib.stamp("soul", 320 * ratio + (1 - ratio) * 49.5, 240 * ratio + (1 - ratio) * 27, 0, 80, (1 - i / 30));
@@ -103,7 +111,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 hp_bar();
                 [player.soul.x, player.soul.y] = [49.5, 27]
                 player.stamp();
-                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1- i / 10), "start", true);
+                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1 - i / 10), "start", true);
             });
         } else {
             await Core.for(0, i => i < 30, i => {
@@ -118,7 +126,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 hp_bar();
                 [player.soul.x, player.soul.y] = [320, 160]
                 player.stamp();
-                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1- i / 10), "start", true);
+                Core.cLib.drawRect(0, 0, 640, 480, "#000", 0, (1 - i / 10), "start", true);
             });
 
             await start_turn();
@@ -329,8 +337,8 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
                 game_state.c_gap += 50;
                 Core.aLib.play("heartbreak_2", 2)
                 for (let i = 0; i < 4; i++) {
-                    let xs = Math.random() * 12 - 6;
-                    let ys = Math.random() * 8 + 4;
+                    let xs = Math.random() * 16 - 8;
+                    let ys = Math.random() * 10 + 5;
                     broken_hearts.push(new Core.Sprite(player.soul.x, player.soul.y, Math.random() * 360, 80, `death_${i + 1}`, 1, 1, (self) => {
                         self.x += xs;
                         self.y += ys;
