@@ -17,7 +17,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
         private s_d: number;
         private t_x: number;
         private t_y: number;
-        private t_d: number;
+        private t_d: number | { x: number, y: number };
         private age: number;
         private id: number;
         private gb_width: number;
@@ -28,8 +28,8 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
         private c_s: number;
         private gain: number;
         private color: "white" | "blue" | "orange";
-        private vib :number
-        constructor(tx: number, ty: number, td: number, fx: number, fy: number, fd: number, size: number, width: number, ct: number | { v: number, s: number }, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange", gain: number = 1,vib: number = 6) {
+        private vib: number
+        constructor(tx: number, ty: number, td: number | { x: number, y: number }, fx: number, fy: number, fd: number, size: number, width: number, ct: number | { v: number, s: number }, bs: number, bd: number, dt: number, color: "white" | "blue" | "orange", gain: number = 1, shake: number = 6) {
             super(fx, fy, fd, size, `gb_${color}_1`, 1, width);
             this.s_x = fx;
             this.s_y = fy;
@@ -47,7 +47,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
             this.id = Blaster.current_id;
             this.color = color;
             this.gain = gain;
-            this.vib = vib
+            this.vib = shake;
             gbMap.set(this.id, this);
             Blaster.current_id++
             aLib.play("gb_charge", 1, gain)
@@ -57,13 +57,28 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
                 let ratio = ((this.c_t - this.age) ** this.c_s) / (this.c_t ** this.c_s);
                 this.x = ratio * this.s_x + (1 - ratio) * this.t_x;
                 this.y = ratio * this.s_y + (1 - ratio) * this.t_y;
-                this.d = ratio * this.s_d + (1 - ratio) * this.t_d;
+                if (typeof this.t_d == "number") {
+                    this.d = ratio * this.s_d + (1 - ratio) * this.t_d;
+                } else {
+                    const { x: px, y: py } = this.t_d;
+                    const t_d = Math.atan((this.x - px) / (this.y - py)) / Math.PI * 180 + (this.y > py ? 0 : 180);
+                    this.d = ratio * this.s_d + (1 - ratio) * t_d;
+                }
             } else if (this.age == this.c_t) {
                 this.x = this.t_x;
                 this.y = this.t_y;
-                this.d = this.t_d;
-            }
-            if (this.b_s + this.c_t <= this.age && -960 < this.x && this.x < 960 && -960 < this.y && this.y < 960) {
+                if (typeof this.t_d == "number") {
+                    this.d = this.t_d;
+                } else {
+                    const { x: px, y: py } = this.t_d;
+                    this.d = Math.atan((this.x - px) / (this.y - py)) / Math.PI * 180 + (this.y > py ? 0 : 180);
+                }
+            } else if (this.age < this.c_t + this.b_s) {
+                if (typeof this.t_d != "number") {
+                    const { x: px, y: py } = this.t_d;
+                    this.d = Math.atan((this.x - px) / (this.y - py)) / Math.PI * 180 + (this.y > py ? 0 : 180);
+                }
+            } else if (-960 < this.x && this.x < 960 && -960 < this.y && this.y < 960) {
                 let far = ((this.age - (this.b_s + this.c_t)) ** 2);
                 this.x = this.t_x;
                 this.y = this.t_y;

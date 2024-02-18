@@ -63,8 +63,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     b_y.finish();
                 }
             },
-        },
-        {
+        }, {
             flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
             proc: async (first: boolean) => {
                 {
@@ -112,8 +111,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                 Gb.gbMap.clear();
                 Bone.boneMap.clear();
             },
-        },
-        {
+        }, {
             flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
             proc: async (first: boolean) => {
                 player.type = 0;
@@ -159,6 +157,49 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                 await wait(30); if (scene.v == "game_over") return;
                 player.slam(-1);
                 await wait(30); if (scene.v == "game_over") return;
+                player.type = 0;
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+            },
+        }, {
+            flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
+            proc: async (first: boolean) => {
+                player.type = 0;
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+                if (first) {
+                    await speak("！仮置きテキスト！", 2); //TODO
+                } else {
+                    await speak("...", 2);
+                }
+                await Core.for(0, i => i < 500 && scene.v != "game_over", i => {
+                    b_tick()
+                    if (i % 15 == 0) {
+                        const d = i * 1.5 + 90;
+                        const x = sin360(d) * 200;
+                        const y = cos360(d) * 200;
+                        new Gb.gb(320 + x, 160 + y, d, 320 + x * 3, 160 + y * 3, d + 90, 200, 0.5, 20, 10, 10, 10, "white", 0.5, 2);
+                        new Gb.gb(320 - x, 160 - y, d + 180, 320 - x * 3, 160 - y * 3, d - 90, 200, 0.5, 20, 10, 10, 10, "white", 0, 0);
+                    }
+                    if (i % 60 == 0) {
+                        const c = random(0, 1) == 1 ? "orange" : "blue";
+                        [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(([_w, _h]) => {
+                            const [w, h] = [_w * 165, _h * 110]
+                            const x = 320 + w;
+                            const y = 160 + h;
+                            const d = Math.atan((x - player.soul.x) / (y - player.soul.y)) / Math.PI * 180 + (y > player.soul.y ? 0 : 180);
+                            new Gb.gb(x, y, player.soul, 320 + 6 * w, 160 + 6 * h, d + 90, 200, 0.5, 20, 40, 10, 10, c, 1, 1);
+                        })
+                    }
+                    a_tick()
+                }); if (scene.v == "game_over") return;
+                await wait(90); if (scene.v == "game_over") return;
                 player.type = 0;
                 {
                     const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
