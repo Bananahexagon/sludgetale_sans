@@ -9,6 +9,7 @@ import { playerObjGen } from "./player";
 import { config } from "./config.json";
 import { SpriteT } from "./lib/sprite";
 import { cLibT } from "./lib/canvas";
+import { liftFnsGen } from "./lift";
 
 export const entry = async () => {
     const Core = await init(config);
@@ -61,6 +62,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
     let timer = 0;
     const soul = new Core.Sprite(320, 240, 0, 80, "soul", 1, 1);
     const Box = boxFnsGen(Core.cLib, soul, Game);
+    const Lift = liftFnsGen(Core.cLib, Box, Core.Sprite);
     const box = Box.box;
     const enemy = (() => {
         const s = new Core.Sprite(Game.enemy.x, Game.enemy.y, 0, Game.enemy.size, typeof Game.enemy.costume == "string" ? Game.enemy.costume : undefined, 1);

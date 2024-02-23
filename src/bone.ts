@@ -3,14 +3,8 @@ import { cLibT } from "./lib/canvas";
 import { SpriteClassT, SpriteT } from "./lib/sprite";
 import { sin360, cos360 } from "./lib/utils";
 
-type Move = number | {
-    type: "sin" | "cos",
-    amp: number,
-    cycle: number,
-} | {
-    type: "custom",
-    fn: (age: number) => number
-};
+type Move = number | ((age: number) => number);
+
 
 const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
     damage(color?: "white" | "blue" | "orange", val?: number): void; soul: SpriteT, hp: number
@@ -85,28 +79,18 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             );
         }
         judge() {
-            {
-                const relative_x = player.soul.x - this.x;
-                const relative_y = player.soul.y - this.y;
-                const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
-                const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-                if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
-                    player.damage(this.color);
-                }
+            const relative_x = player.soul.x - this.x;
+            const relative_y = player.soul.y - this.y;
+            const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
+            const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
+            if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
+                player.damage(this.color);
             }
         }
         private static current_id = 0;
         private static get_move(move: Move, age: number): number {
             if (typeof move == "number") return move * age;
-            switch (move.type) {
-                case "sin":
-                case "cos": {
-                    return sin360(move.cycle * age) * move.amp;
-                }
-                case "custom": {
-                    return move.fn(age)
-                }
-            }
+            else return move(age)
         };
     }
     class stabBone extends Sprite implements Bone {
@@ -189,8 +173,8 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         private static current_id = 0;
     }
     const process = () => {
-        boneMap.forEach((b, id, boneMap) => {
-            const bone = b as Bone;
+        (boneMap as Map<string, Bone>).forEach((b, id, boneMap) => {
+            const bone = b;
             if (bone.age < bone.life) {
                 bone.move_self();
                 bone.draw();
