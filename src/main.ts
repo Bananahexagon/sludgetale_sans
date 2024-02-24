@@ -91,7 +91,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         const Bone = boneFnsGen(Core.cLib, Core.aLib, Core.Sprite, player, Game);
         const hp_bar = hp_bar_gen(Core.cLib, Font.write, player, Font.len, Game, is_hp_inf, Game.player.karma);
         const cmdBehaviors = Game.commands({ Game, Core, Font, hp_bar, scene, enemy, box })
-        const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene })
+        const { 0: start_turn, 1: Turns } = Game.turnsGen({ Game, Core, Gb: Blaster, Bone, Box, Font, box, player, enemy, hp_bar, scene, Lift })
         let turn = { v: debug.turn, first: true };
         box.set({ x: 320, y: 160, d: 0, w: 562, h: 132 });
         await Core.for(0, i => i < 30, i => {

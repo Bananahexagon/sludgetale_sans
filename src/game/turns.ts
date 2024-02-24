@@ -6,10 +6,11 @@ import { gbFnsT } from "../gb";
 import { CoreT } from "../lib/core";
 import { SpriteT } from "../lib/sprite";
 import { Ref, cos360, random, sin360 } from "../lib/utils";
+import { liftFnsT } from "../lift";
 import { playerT } from "../player";
 
-export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string> }) {
-    const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene } = arg;
+export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string>, Lift:liftFnsT}) {
+    const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene, Lift } = arg;
     const a_tick = () => {
         Gb.process_b();
         Bone.process();
@@ -22,8 +23,9 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         player.stamp();
     }
     const b_tick = () => {
-        player.move()
+        player.move();
         box.judge();
+        Lift.process();
     }
     const bubble = (a: number) => Core.cLib.stamp("speech_bubble", 380, 380, 0, 150, a, "start");
     const speak = async (tx: string, speed: number, voice: boolean = true) => {
