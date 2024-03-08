@@ -77,7 +77,7 @@ const main = async (Core: CoreT, scene: Ref<string>, sub_scene: Ref<string>, Fon
         }
     })();
     const game_state = JSON.parse(JSON.stringify(Game.state)) as typeof Game.state;
-    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf, game_state);
+    const player = playerObjGen(soul, Game, Core, scene, enemy, Box.box, Core.b_tick, is_hp_inf, game_state,Lift);
     const turn_progress: Ref<"fight" | "normal" | "random" | "stop"> = { v: Game.turn_progress }
     Core.a_tick.push(() => {
         game_state.c_gap = Math.floor(game_state.c_gap * 0.9 * 100) / 100;

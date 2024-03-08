@@ -33,7 +33,7 @@ const liftFnsGen = (cLib: cLibT, Box: boxFnsT, Sprite: SpriteClassT) => {
             this.move_len = ml;
             this.len = len;
             this.age = 0;
-            this.life = 0;
+            this.life = life;
             this.id = `NB$${id++}`;
             this.wall = new Box.Wall(x, y, d, len, "center");
             liftMap.set(this.id, this);
@@ -48,9 +48,9 @@ const liftFnsGen = (cLib: cLibT, Box: boxFnsT, Sprite: SpriteClassT) => {
         }
         draw() {
             cLib.strokeRect(this.x, this.y, this.len, 7, "green", this.d, 1, "center++", 1, "inner");
-            this.move(2, this.d);
+            this.move(-4, this.d);
             cLib.strokeRect(this.x, this.y, this.len, 7, "white", this.d, 1, "center++", 1, "inner");
-            this.move(-2, this.d);
+            this.move(4, this.d);
         }
         judge() {
             this.wall.judge();
@@ -66,7 +66,14 @@ const liftFnsGen = (cLib: cLibT, Box: boxFnsT, Sprite: SpriteClassT) => {
             else Map.delete(id);
         })
     }
-    return { Lift, liftMap, process };
+    const is_jumpable = (sd: number) => {
+        let r = false;
+        (liftMap as Map<string, Lift>).forEach((l, id, Map) => {
+            r = r || l.wall.is_jumpable(sd)
+        })
+        return r;
+    }
+    return { Lift, liftMap, process, is_jumpable };
 }
 
 const get_move = (move: Move, age: number): number => {

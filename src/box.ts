@@ -65,12 +65,13 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             const relative_y = soul.y - this.dy;
             const turned_x = relative_x * cos360(d) + relative_y * -sin360(d);
             const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
-            const d_trans = Math.abs((d-sd)%360);
+            const d_trans = Math.abs((d - sd + 180) % 360);
             return (
                 this.len / 2 > turned_x && turned_x > -this.len / 2 && (
                     this.relative == "minus" && turned_y > -(this.width / 2 + this.soul_size - 3) ||
                     this.relative == "plus" && (this.width / 2 + this.soul_size + 3) > turned_y
-                ) && 135 <= d_trans && d_trans <= 225);
+                ) &&
+                135 <= d_trans && d_trans <= 225);
         }
     }
     class Wall2 {
@@ -107,7 +108,7 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             const relative_x = soul.x - this.dx;
             const relative_y = soul.y - this.dy;
             const turned_y = relative_y * cos360(d) + relative_x * sin360(d);
-            const d_trans = Math.abs((d-sd)%360);
+            const d_trans = Math.abs((d - sd) % 360);
             return (turned_y > -this.width - 3) && 135 <= d_trans && d_trans <= 225;
         }
     }

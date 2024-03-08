@@ -1,4 +1,3 @@
-
 import { Ref } from "./lib/utils";
 import { Game as G } from "./game";
 import { SpriteT } from "./lib/sprite";
@@ -9,7 +8,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         custom: { slam: (d: -1 | 0 | 1 | 2 | 3, b: -1 | 0 | 1 | 2 | 3, f: number, state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: number }) => void },
         state: { body: { c: number, x: number, y: number }, head: { c: number, x: number, y: number }, moving: number }
     },
-    box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>, state: { c_gap: number },) => {
+    box: { judge: () => void, is_jumpable: (sd: number) => boolean }, b_tick: (() => void)[], is_hp_inf: Ref<boolean>, state: { c_gap: number },Lift: { is_jumpable: (sd: number) => boolean}) => {
     let damage_time = 0;
     const player = ({
         name: Game.player.name,
@@ -36,11 +35,12 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         move() { },
         slam(d: -1 | 0 | 1 | 2 | 3, s: number = 40) { }
     })
+    const is_jumpable = (sd: number) => box.is_jumpable(sd) || Lift.is_jumpable(sd);
     const b_jump = [
         (() => {
             let j = 0;
             return () => {
-                const jumpable = box.is_jumpable(0);
+                const jumpable = is_jumpable(0);
                 if (jumpable && Core.inputKeys.up) {
                     j = 7;
                     soul.y += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
@@ -57,7 +57,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         (() => {
             let j = 0;
             return () => {
-                const jumpable = box.is_jumpable(90);
+                const jumpable = is_jumpable(90);
                 if (jumpable && Core.inputKeys.right) {
                     j = 7;
                     soul.x += Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
@@ -74,7 +74,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         (() => {
             let j = 0;
             return () => {
-                const jumpable = box.is_jumpable(180);
+                const jumpable = is_jumpable(180);
                 if (jumpable && Core.inputKeys.down) {
                     j = 7;
                     soul.y -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
@@ -91,7 +91,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
         (() => {
             let j = 0;
             return () => {
-                const jumpable = box.is_jumpable(270);
+                const jumpable = is_jumpable(270);
                 if (jumpable && Core.inputKeys.left) {
                     j = 7;
                     soul.x -= Math.sign(j) * Math.abs(j) ** 1.00 * 0.85;
@@ -186,7 +186,7 @@ const playerObjGen = (soul: SpriteT, Game: typeof G, Core: CoreT, scene: Ref<str
                 case 3: soul.y += blue_slamming.s; break;
                 case 4: soul.x += blue_slamming.s; break;
             }
-            if (box.is_jumpable((player.type - 1) * 90)) {
+            if (is_jumpable((player.type - 1) * 90)) {
                 blue_slamming.is = false;
             }
         }

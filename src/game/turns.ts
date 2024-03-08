@@ -9,7 +9,7 @@ import { Ref, cos360, random, sin360 } from "../lib/utils";
 import { liftFnsT } from "../lift";
 import { playerT } from "../player";
 
-export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string>, Lift:liftFnsT}) {
+export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gbFnsT, Bone: boneFnsT, Box: boxFnsT, Font: fontFnsT, box: boxT, player: playerT, enemy: { s: SpriteT, stamp: (state: GameT["enemy"]["state"]) => void, state: GameT["enemy"]["state"] }, hp_bar: () => void, scene: Ref<string>, Lift: liftFnsT }) {
     const { Game, Core, Gb, Bone, Box, Font, box, enemy, player, hp_bar, scene, Lift } = arg;
     const a_tick = () => {
         Gb.process_b();
@@ -265,7 +265,16 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         }
         enemy.state.moving = 1;
     }) as (() => Promise<void>) | "none";
+    const debug = (async () => {
+        player.slam(0);
+        new Lift.Lift(320, 160, 0, 60, 0, 0, 5, 0, Infinity);
+        new Lift.Lift(420, 160, 0, 60, 0, 0, 0, (n: number) => sin360(n * 3) * 10, Infinity);
+        new Lift.Lift(220, 160, 0, 60, 0, (n: number) => sin360(n * 3) * 10, 0, 0, Infinity);
+        await Core.loop(() => {
+            b_tick(); a_tick();
+        })
+    }) as (() => Promise<void>) | "none";
     return ({
-        0: start, 1: turns()
+        0: debug, 1: turns()
     })
 }
