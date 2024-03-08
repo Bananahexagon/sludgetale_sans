@@ -266,13 +266,25 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         enemy.state.moving = 1;
     }) as (() => Promise<void>) | "none";
     const debug = (async () => {
+        {
+            const b_y = box.move({ x: 320, y: 160, d: 0, w: 182, h: 132 }, 10, 2)
+            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
+            b_y.finish();
+        }
         player.slam(0);
-        new Lift.Lift(320, 160, 0, 60, 0, 0, 5, 0, Infinity);
-        new Lift.Lift(420, 160, 0, 60, 0, 0, 0, (n: number) => sin360(n * 3) * 10, Infinity);
-        new Lift.Lift(220, 160, 0, 60, 0, (n: number) => sin360(n * 3) * 10, 0, 0, Infinity);
-        await Core.loop(() => {
-            b_tick(); a_tick();
-        })
+        let lift_d = 0;
+        for (let i = 0; i < 5; i++) {
+            new Lift.Lift(i * 40 + 240, 160, 0, 22, 0, n => sin360(n * 2 + i * 40) * 25, () => lift_d, 0, Infinity);
+        }
+        await wait(30); if (scene.v == "game_over") return;
+        new Bone.stab(320, 90, 0, 190, 50, 30, 20, 520, 20);
+        await wait(270); if (scene.v == "game_over") return;
+        new Bone.stab(320, 230, 180, 190, 50, 30, 20, 250, 20);
+        player.slam(2);
+        await Core.for(0, i => i < 30, i => { b_tick(); lift_d = ((1 - i / 30) ** 4) * 180; a_tick(); }); if (scene.v == "game_over") return;
+        lift_d = 180;
+        await wait(270); if (scene.v == "game_over") return;
+        await wait(Infinity);
     }) as (() => Promise<void>) | "none";
     return ({
         0: debug, 1: turns()
