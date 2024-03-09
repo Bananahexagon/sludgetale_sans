@@ -192,6 +192,41 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     b_y.finish();
                 }
             },
+        }, {
+            flavor: () => new Font.Plane("攻撃を続けろ。", 80, 205, 0, 200, "white", 0, 0, 1, Game.lang, false, "text"),
+            proc: async () => {
+                {
+                    const b_y = box.move({ x: 320, y: 170, d: 0, w: 182, h: 152 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
+                    b_y.finish();
+                }
+                player.slam(0);
+                let lift_d_f = (i: number) => (t: number) => i + t < 360 ? 0 :
+                    i + t < 390 ? (1 - (1 - (i + t - 360) / 30) ** 2) * 180 : 180
+                Core.for(0, i => i < 720, i => {
+                    if (i % 60 == 0) {
+                        const lift_d = lift_d_f(i)
+                        new Lift.Lift(180, 200, 0, 60, 2, 0, lift_d, 0, 140);
+                        new Lift.Lift(460, 140, 0, 60, -2, 0, lift_d, 0, 140);
+                    }
+                    if (i % 50 == 0) {
+                        const y = 170 + (random(0, 2) - 1) * 60;
+                        const x = random(0, 1);
+                        if (x == 0) new Gb.gb(440, y, 90, 740, y, 0, 250, 0.5, 20, 20, 30, 10, "white");
+                        else new Gb.gb(200, y, -90, -100, y, 0, 250, 0.5, 20, 20, 30, 10, "white");
+                    }
+                    if (i == 375) player.slam(2);
+                }); if (scene.v == "game_over") return;
+                await wait(60); if (scene.v == "game_over") return;
+                Gb.gbMap.clear();
+                Bone.boneMap.clear();
+                Lift.liftMap.clear();
+                {
+                    const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+                    await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+                    b_y.finish();
+                }
+            }
         },
     ] as { flavor: () => FontI, proc: (first: boolean) => Promise<void> }[]
 
@@ -265,28 +300,8 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         }
         enemy.state.moving = 1;
     }) as (() => Promise<void>) | "none";
-    const debug = (async () => {
-        {
-            const b_y = box.move({ x: 320, y: 160, d: 0, w: 182, h: 132 }, 10, 2)
-            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
-            b_y.finish();
-        }
-        player.slam(0);
-        let lift_d = 0;
-        for (let i = 0; i < 5; i++) {
-            new Lift.Lift(i * 40 + 240, 160, 0, 22, 0, n => sin360(n * 2 + i * 40) * 25, () => lift_d, 0, Infinity);
-        }
-        await wait(30); if (scene.v == "game_over") return;
-        new Bone.stab(320, 90, 0, 190, 50, 30, 20, 520, 20);
-        await wait(270); if (scene.v == "game_over") return;
-        new Bone.stab(320, 230, 180, 190, 50, 30, 20, 250, 20);
-        player.slam(2);
-        await Core.for(0, i => i < 30, i => { b_tick(); lift_d = ((1 - i / 30) ** 4) * 180; a_tick(); }); if (scene.v == "game_over") return;
-        lift_d = 180;
-        await wait(270); if (scene.v == "game_over") return;
-        await wait(Infinity);
-    }) as (() => Promise<void>) | "none";
+    const debug = (async () => { }) as (() => Promise<void>) | "none";
     return ({
-        0: debug, 1: turns()
+        0: start, 1: turns()
     })
 }
