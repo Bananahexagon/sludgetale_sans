@@ -58,22 +58,16 @@ const CanvasLibGen = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, 
     }
 }
 const GetRect = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, config: configT, props: CanvasProps,) => {
-    const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number, type: "center++" | "center" | "start" = "center", absolute = false) => {
+    const drawRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number, type: "center" | "start" = "center", absolute = false) => {
         if (absolute) {
             ctx.globalAlpha = alpha === undefined ? 1 : alpha;
             ctx.save();
             switch (type) {
-                case "center++": {
+                case "center": {
                     ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
                     ctx.rotate(direction * Math.PI / 180);
                     ctx.beginPath();
                     ctx.rect((-width / 2) * config.display_quality, (-height / 2) * config.display_quality, (width) * config.display_quality, (height) * config.display_quality);
-                } break;
-                case "center": {
-                    ctx.translate((dx - width / 2) * config.display_quality, -(dy - height / 2) * config.display_quality + canvas.height);
-                    ctx.rotate(direction * Math.PI / 180);
-                    ctx.beginPath();
-                    ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
                 } break;
                 case "start": {
                     ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
@@ -103,22 +97,16 @@ const GetRect = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, confi
         }
     };
     const strokeRect = (dx: number, dy: number, width: number, height: number, color: string, direction: number = 0, alpha?: number,
-        type: "center++" | "center" | "start" = "center", lw: number = 1, pos: "inner" | "outer" | "default" = "inner", absolute = false) => {
+        type: "center" | "start" = "center", lw: number = 1, pos: "inner" | "outer" | "default" = "inner", absolute = false) => {
         if (absolute) {
             ctx.globalAlpha = alpha === undefined ? 1 : alpha;
             ctx.save();
             switch (type) {
-                case "center++": {
+                case "center": {
                     ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);
                     ctx.rotate(direction * Math.PI / 180);
                     ctx.beginPath();
                     ctx.rect((-width / 2) * config.display_quality, (-height / 2) * config.display_quality, (width) * config.display_quality, (height) * config.display_quality);
-                } break;
-                case "center": {
-                    ctx.translate((dx - width / 2) * config.display_quality, -(dy - height / 2) * config.display_quality + canvas.height);
-                    ctx.rotate(direction * Math.PI / 180);
-                    ctx.beginPath();
-                    ctx.rect(0, 0, (width) * config.display_quality, -(height) * config.display_quality);
                 } break;
                 case "start": {
                     ctx.translate(dx * config.display_quality, -dy * config.display_quality + canvas.height);

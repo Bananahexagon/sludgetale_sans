@@ -47,9 +47,9 @@ const liftFnsGen = (cLib: cLibT, Box: boxFnsT, Sprite: SpriteClassT) => {
             [this.wall.dx, this.wall.dy, this.wall.dd, this.wall.len] = [this.x, this.y, this.d, this.len];
         }
         draw() {
-            cLib.strokeRect(this.x, this.y, this.len, 7, "green", this.d, 1, "center++", 1, "inner");
+            cLib.strokeRect(this.x, this.y, this.len, 7, "green", this.d, 1, "center", 1, "inner");
             this.move(-4, this.d);
-            cLib.strokeRect(this.x, this.y, this.len, 7, "white", this.d, 1, "center++", 1, "inner");
+            cLib.strokeRect(this.x, this.y, this.len, 7, "white", this.d, 1, "center", 1, "inner");
             this.move(4, this.d);
         }
         judge() {

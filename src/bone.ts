@@ -1,6 +1,6 @@
 import { aLibT } from "./lib/audios";
 import { cLibT } from "./lib/canvas";
-import { SpriteClassT, SpriteT } from "./lib/sprite";
+import { Point, SpriteClassT, SpriteT } from "./lib/sprite";
 import { sin360, cos360 } from "./lib/utils";
 
 type Move = number | ((age: number) => number);
@@ -34,7 +34,8 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         b_width: number;
         life: number;
         color: "white" | "blue" | "orange";
-        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number, color: "white" | "blue" | "orange" = "white") {
+        align: "center" | "start";
+        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number, color: "white" | "blue" | "orange" = "white", align: "center" | "start" = "center") {
             super(x, y, d, width, undefined, 1, 1);
             this.start_x = x;
             this.start_y = y;
@@ -49,7 +50,8 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.id = `NB$${normalBone.current_id++}`;
             this.b_width = width;
             this.life = life;
-            this.color = color
+            this.color = color;
+            this.align = align;
             boneMap.set(this.id, this);
         }
         move_self() {
@@ -61,29 +63,40 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.move(this.b_width * 3 / 6, this.d - 90)
         }
         draw() {
-            cos360(this.d)
-            cLib.stamp(`bone_head_${this.color}`,
-                this.x + cos360(this.d) * this.b_width * 8 / 6,
-                this.y - sin360(this.d) * this.b_width * 8 / 6,
-                this.d + 180, this.b_width * 100 / 6, 1, "start"
-            );
-            cLib.drawRect(
-                this.x + sin360(this.d) * this.b_width * 6 / 6,
-                this.y + cos360(this.d) * this.b_width * 6 / 6,
-                this.b_width, this.len + this.b_width * 2 / 6, Game.color[this.color], this.d, 1, "start"
-            );
-            cLib.stamp(`bone_head_${this.color}`,
-                this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
-                this.y + cos360(this.d) * (this.len + this.b_width * 14 / 6) + sin360(this.d) * this.b_width * 2 / 6,
-                this.d, this.b_width * 100 / 6, 1, "start"
-            );
+            if (this.align == "start") {
+                cLib.stamp(`bone_head_${this.color}`,
+                    this.x + cos360(this.d) * this.b_width * 8 / 6,
+                    this.y - sin360(this.d) * this.b_width * 8 / 6,
+                    this.d + 180, this.b_width * 100 / 6, 1, "start"
+                );
+                cLib.drawRect(
+                    this.x + sin360(this.d) * this.b_width * 6 / 6,
+                    this.y + cos360(this.d) * this.b_width * 6 / 6,
+                    this.b_width, this.len + this.b_width * 2 / 6, Game.color[this.color], this.d, 1, "start"
+                );
+                cLib.stamp(`bone_head_${this.color}`,
+                    this.x + sin360(this.d) * (this.len + this.b_width * 14 / 6) - cos360(this.d) * this.b_width * 2 / 6,
+                    this.y + cos360(this.d) * (this.len + this.b_width * 14 / 6) + sin360(this.d) * this.b_width * 2 / 6,
+                    this.d, this.b_width * 100 / 6, 1, "start"
+                );
+            } else {
+                cLib.drawRect(this.x, this.y, this.b_width, this.len + this.b_width * 2 / 6, Game.color[this.color], this.d, 1, "center");
+                let p = new Point(this.x, this.y, this.d);
+                p.move(this.len / 2 + this.b_width * 7 / 12);
+                cLib.stamp(`bone_head_${this.color}`, p.x, p.y, p.d, this.b_width * 100 / 6, 1, "center");
+                p.move(-2 * (this.len / 2 + this.b_width * 7 / 12));
+                cLib.stamp(`bone_head_${this.color}`, p.x, p.y, p.d + 180, this.b_width * 100 / 6, 1, "center");
+            }
         }
         judge() {
             const relative_x = player.soul.x - this.x;
             const relative_y = player.soul.y - this.y;
             const turned_x = relative_x * cos360(this.d) + relative_y * -sin360(this.d);
             const turned_y = relative_y * cos360(this.d) + relative_x * sin360(this.d);
-            if (this.len + this.b_width * 14 / 6 > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0) {
+            const l = this.len + this.b_width * 14 / 6;
+            if (this.align == "start"
+                ? (l > turned_y && turned_y > 0 && this.b_width > turned_x && turned_x > 0)
+                : (l / 2 > turned_y && turned_y > -l / 2 && this.b_width / 2 > turned_x && turned_x > -this.b_width / 2)) {
                 player.damage(this.color);
             }
         }

@@ -300,8 +300,21 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
         }
         enemy.state.moving = 1;
     }) as (() => Promise<void>) | "none";
-    const debug = (async () => { }) as (() => Promise<void>) | "none";
+    const debug = (async () => {
+        {
+            const b_y = box.move({ x: 320, y: 160, d: 0, w: 132, h: 132 }, 10, 2)
+            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
+            b_y.finish();
+        }
+        new Bone.normal(320, 160, 0, 7, 130, 0, 0, -1, 0, Infinity,"white","center");
+        await wait(Infinity); if (scene.v == "game_over") return;
+        {
+            const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
+            await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i); })
+            b_y.finish();
+        }
+    }) as (() => Promise<void>) | "none";
     return ({
-        0: start, 1: turns()
+        0: debug, 1: turns()
     })
 }

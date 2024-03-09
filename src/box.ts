@@ -57,7 +57,7 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             }
         }
         draw() {
-            cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd, 1, "center++");
+            cLib.drawRect(this.dx, this.dy, this.len, this.width, "white", this.dd, 1, "center");
         }
         is_jumpable(sd: number) {
             const d = this.dd;
@@ -101,7 +101,7 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
         draw() {
             const x = this.dx + 320 * sin360(this.dd)
             const y = this.dy + 320 * cos360(this.dd)
-            cLib.drawRect(x, y, 640, 640, Game.color.white, this.dd, 1, "center++");
+            cLib.drawRect(x, y, 640, 640, Game.color.white, this.dd, 1, "center");
         }
         is_jumpable(sd: number) {
             const d = this.dd;
@@ -161,12 +161,12 @@ const boxFnsGen = (cLib: cLibT, soul: SpriteT, Game: {
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
                 const wy = e.dy + 640 * cos360(e.dd);
-                cLib.drawRect(wx, wy, 1280, 1280, Game.color.white, e.dd, 1, "center++");
+                cLib.drawRect(wx, wy, 1280, 1280, Game.color.white, e.dd, 1, "center");
             });
             this.walls.forEach(e => {
                 const wx = e.dx + 640 * sin360(e.dd);
                 const wy = e.dy + 640 * cos360(e.dd);
-                cLib.drawRect(wx, wy, 1280 - e.width * 2, 1280 - e.width * 2, "#000000", e.dd, 1, "center++");
+                cLib.drawRect(wx, wy, 1280 - e.width * 2, 1280 - e.width * 2, "#000000", e.dd, 1, "center");
             });
         },
         judge() {

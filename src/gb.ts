@@ -97,7 +97,7 @@ const gbFnsGen = (cLib: cLibT, aLib: aLibT, state: { c_gap: number }, Sprite: Sp
                     Game.color[this.color],
                     this.d + 180,
                     Math.max(0, Math.min(1 - (this.age - (this.b_d + this.b_s + this.c_t)) / this.d_t, 1)),
-                    "center++"
+                    "center"
                 );
             }
             if (this.age == this.b_s + this.c_t - 2) this.costume = `gb_${this.color}_2`;
