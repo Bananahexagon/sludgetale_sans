@@ -203,7 +203,8 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                 player.slam(0);
                 let lift_d_f = (i: number) => (t: number) => i + t < 360 ? 0 :
                     i + t < 390 ? (1 - (1 - (i + t - 360) / 30) ** 2) * 180 : 180
-                Core.for(0, i => i < 720, i => {
+                await Core.for(0, i => i < 720 && scene.v != "game_over", i => {
+                    b_tick()
                     if (i % 60 == 0) {
                         const lift_d = lift_d_f(i)
                         new Lift.Lift(180, 200, 0, 60, 2, 0, lift_d, 0, 140);
@@ -212,11 +213,13 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
                     if (i % 50 == 0) {
                         const y = 170 + (random(0, 2) - 1) * 60;
                         const x = random(0, 1);
-                        if (x == 0) new Gb.gb(440, y, 90, 740, y, 0, 250, 0.5, 20, 20, 30, 10, "white");
-                        else new Gb.gb(200, y, -90, -100, y, 0, 250, 0.5, 20, 20, 30, 10, "white");
+                        if (x == 0) new Gb.gb(440, y, 90, 740, y, 0, 450, 0.5, 20, 20, 30, 10, "white");
+                        else new Gb.gb(200, y, -90, -100, y, 0, 450, 0.5, 20, 20, 30, 10, "white");
                     }
                     if (i == 375) player.slam(2);
+                    a_tick();
                 }); if (scene.v == "game_over") return;
+                player.slam(-1);
                 await wait(60); if (scene.v == "game_over") return;
                 Gb.gbMap.clear();
                 Bone.boneMap.clear();
@@ -306,7 +309,7 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
             b_y.finish();
         }
-        new Bone.normal(320, 160, 0, 7, 130, 0, 0, -1, 0, Infinity,"white","center");
+        new Bone.normal(320, 160, 0, 7, 130, 0, 0, -1, 0, Infinity, "white", "center");
         await wait(Infinity); if (scene.v == "game_over") return;
         {
             const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)
