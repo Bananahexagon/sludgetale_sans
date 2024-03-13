@@ -309,7 +309,24 @@ export function turnsGen(arg: { Game: { lang: "ja" | "en" }, Core: CoreT, Gb: gb
             await Core.for(0, i => i < 10, i => { b_tick(); a_tick(); b_y.yield(i) })
             b_y.finish();
         }
-        new Bone.normal(320, 160, 0, 7, 130, 0, 0, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+30) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+90) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+150) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+210) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+270) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 120, i => sin360(i * 2+330) * 70, 0, 0, 0, Infinity, "orange", "center")
+        new Bone.normal(320, 160, 0, 7, 30, i => sin360(-i) * 30, i => cos360(-i) * 30, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 180, 7, 30, i => sin360(-i + 180) * 30, i => cos360(-i + 180) * 30, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 90, 7, 30, i => sin360(i + 90) * 40, i => cos360(i + 90) * 40, 1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 270, 7, 30, i => sin360(i - 90) * 40, i => cos360(i - 90) * 40, 1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 45, 7, 30, i => sin360(-i + 45) * 50, i => cos360(-i + 45) * 50, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 225, 7, 30, i => sin360(-i + 225) * 50, i => cos360(-i + 225) * 50, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 135, 7, 30, i => sin360(-i + 135) * 50, i => cos360(-i + 135) * 50, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, -45, 7, 30, i => sin360(-i - 45) * 50, i => cos360(-i - 45) * 50, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 0, 7, 30, i => sin360(-i) * 60, i => cos360(-i) * 60, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 180, 7, 30, i => sin360(-i + 180) * 60, i => cos360(-i + 180) * 60, -1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 90, 7, 30, i => sin360(i + 90) * 60, i => cos360(i + 90) * 60, 1, 0, Infinity, "white", "center");
+        new Bone.normal(320, 160, 270, 7, 30, i => sin360(i - 90) * 60, i => cos360(i - 90) * 60, 1, 0, Infinity, "white", "center");
         await wait(Infinity); if (scene.v == "game_over") return;
         {
             const b_y = box.move({ x: 320, y: 160, d: 0, w: 562, h: 132 }, 10, 2)

@@ -60,7 +60,9 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
             this.y = this.start_y + normalBone.get_move(this.move_y, this.age);
             this.d = this.start_d + normalBone.get_move(this.move_d, this.age);
             this.len = this.start_len + normalBone.get_move(this.move_len, this.age);
-            this.move(this.b_width * 3 / 6, this.d - 90)
+            if (this.align == "start") {
+                this.move(this.b_width * 3 / 6, this.d - 90)
+            }
         }
         draw() {
             if (this.align == "start") {

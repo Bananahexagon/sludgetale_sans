@@ -10,5 +10,5 @@ canvas {
     background-color: #000;
     inset: 0;
     image-rendering: pixelated;
-    outline: 3px solid #99867a
+    outline: 3px solid #99867a;
 }
