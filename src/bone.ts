@@ -35,7 +35,7 @@ const boneFnsGen = (cLib: cLibT, aLib: aLibT, Sprite: SpriteClassT, player: {
         life: number;
         color: "white" | "blue" | "orange";
         align: "center" | "start";
-        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number, color: "white" | "blue" | "orange" = "white", align: "center" | "start" = "center") {
+        constructor(x: number, y: number, d: number, width: number, len: number, mx: Move, my: Move, md: Move, ml: Move, life: number, color: "white" | "blue" | "orange" = "white", align: "center" | "start" = "start") {
             super(x, y, d, width, undefined, 1, 1);
             this.start_x = x;
             this.start_y = y;
